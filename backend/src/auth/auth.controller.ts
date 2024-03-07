@@ -41,11 +41,14 @@ export class AuthController {
       throw new BadRequestException("Please define your Role")
     }
     let user;
-     if(role === 'user'){
+     if(role === 'user' || role === 'admin'){
       user =   await this.authService.findByEmailInUser(email);
      }
      else if(role === 'trainer'){
       user = await this.authService.findByEmailInTrainer(email);
+     }
+     else if(role === 'vet'){
+      user = await this.authService.findByEmailInVet(email);
      }
 
     if (!user) {

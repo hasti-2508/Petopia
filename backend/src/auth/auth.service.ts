@@ -4,6 +4,7 @@ import mongoose, { mongo } from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
 import { LoginDto } from './dto/auth.dto';
 import { Trainer } from 'src/trainer/schemas/trainer.schema';
+import { Vet } from 'src/vet/schemas/vet.schema';
 // import { Twilio } from 'twilio';
 
 
@@ -14,7 +15,9 @@ constructor(
     @InjectModel(User.name)
     private UserModel: mongoose.Model<User>,
     @InjectModel(Trainer.name)
-    private TrainerModel: mongoose.Model<Trainer>
+    private TrainerModel: mongoose.Model<Trainer>,
+    @InjectModel(Vet.name)
+    private VetModel: mongoose.Model<Vet>
   ) {}
 
  
@@ -29,6 +32,13 @@ constructor(
     const user = await this.TrainerModel.findOne({email, isActive: true});
     if (!user) {
       throw new NotFoundException('Trainer not found');
+    }
+    return user;
+  }
+  async findByEmailInVet(email: string): Promise<Vet>{
+    const user = await this.VetModel.findOne({email, isActive: true});
+    if (!user) {
+      throw new NotFoundException('Vet not found');
     }
     return user;
   }
