@@ -19,14 +19,15 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { AuthGuard } from './guards/auth.guard';
-import { LoginDto } from './dto/auth.dto';
+import { LoginDto, ResetPasswordDto } from './dto/auth.dto';
+import { UserService } from 'src/user/user.service';
 
 
 @Controller()
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private jwtService: JwtService,
+    private jwtService: JwtService
   ) {}
 
   
@@ -103,6 +104,41 @@ export class AuthController {
   async logout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('jwt');
     return { message: 'Logged out' };
+  }
+
+  @Post('forgetPassword')
+  async sendPasswordResetEmail(@Body() resetPasswordDto: ResetPasswordDto)   {
+
+    const { email, role } = resetPasswordDto;
+    let user;
+     if(role === 'user' || role === 'admin'){
+      user =   await this.authService.findByEmailInUser(email);
+
+      if (!user) {
+        throw new BadRequestException('No such user found');
+      }
+  
+      await this.authService.sendPasswordResetEmail(user);
+     }
+     else if(role === 'trainer'){
+      user = await this.authService.findByEmailInTrainer(email);
+
+      if (!user) {
+        throw new BadRequestException('No such user found');
+      }
+  
+      await this.authService.sendPasswordResetEmail(user);
+     }
+     else if(role === 'vet'){
+      user = await this.authService.findByEmailInVet(email);
+
+      if (!user) {
+        throw new BadRequestException('No such user found');
+      }
+      await this.authService.sendPasswordResetEmail(user);
+     }
+
+    
   }
 
 }

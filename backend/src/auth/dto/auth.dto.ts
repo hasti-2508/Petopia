@@ -13,3 +13,22 @@ export class LoginDto {
   @IsNotEmpty()
   role: string;
 }
+
+export class ResetPasswordDto{
+
+  @IsEmail()
+  email: string
+
+  @IsString()
+  role: string
+}
+
+
+// export class ForgotPasswordDto {
+//   email: string;
+// }
+
+// export class ResetPasswordDto {
+//   token: string;
+//   newPassword: string;
+// }

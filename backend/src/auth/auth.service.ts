@@ -6,6 +6,9 @@ import { LoginDto } from './dto/auth.dto';
 import { Trainer } from 'src/trainer/schemas/trainer.schema';
 import { Vet } from 'src/vet/schemas/vet.schema';
 // import { Twilio } from 'twilio';
+import * as nodemailer from 'nodemailer';
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 @Injectable()
@@ -55,9 +58,33 @@ constructor(
 
     return user;
   }
-  
-  
- 
+
+
+  async sendPasswordResetEmail(user: User): Promise<void> {
+    const token = uuidv4();
+    user.resetToken = token;
+    user.resetTokenExpiration = new Date(Date.now() + 3600000); 
+    await user.save();
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASS_KEY
+
+      },  
+    });
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: user.email, 
+      subject: 'Password Reset Request',
+      text: `Hello, 
+      You requested a password reset. Please use the following token to reset your password: ${token}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+  }
+
+
 
 //   private twilioClient: Twilio;
 
