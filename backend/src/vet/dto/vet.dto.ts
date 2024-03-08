@@ -1,6 +1,9 @@
 import { IsEmail, IsString, IsNotEmpty, IsNumber, IsArray, IsOptional } from 'class-validator';
 
 export class CreateVetDto {
+  @IsNumber()
+  vetId: number;
+
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -53,5 +56,5 @@ export class CreateVetDto {
   @IsOptional()
   role?: string;
 
-  yearsOfExperience: number;
+  YearsOfExperience: number;
 }

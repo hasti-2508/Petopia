@@ -4,6 +4,9 @@ import { Document } from 'mongoose';
 @Schema()
 export class Vet extends Document {
   @Prop({ required: true })
+  vetId: number;
+
+  @Prop({ required: true })
   name: string;
 
   @Prop({ required: true })
@@ -27,7 +30,7 @@ export class Vet extends Document {
   @Prop({ required: true })
   state: string;
 
-  @Prop()
+  @Prop({required: true})
   YearsOfExperience: number;
 
   @Prop({ default: 'vet' })
@@ -35,7 +38,7 @@ export class Vet extends Document {
 
   @Prop()
   imageUrl: string;
-  
+
   @Prop({ type: [String] })
   imageHistory: string[];
 

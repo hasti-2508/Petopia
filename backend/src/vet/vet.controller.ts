@@ -36,6 +36,7 @@ export class VetController {
   @Post('/register')
   async register(@Body() createVetDto: CreateVetDto): Promise<Vet> {
     const {
+      vetId,
       name,
       email,
       password,
@@ -44,7 +45,7 @@ export class VetController {
       area,
       city,
       state,
-      yearsOfExperience,
+      YearsOfExperience,
       services,
     } = createVetDto;
     if (password.length < 6) {
@@ -85,7 +86,7 @@ export class VetController {
     if (!address && !area && !city && !state) {
       throw new BadRequestException('please provide complete address details');
     }
-    if (!yearsOfExperience) {
+    if (!YearsOfExperience) {
       throw new BadRequestException('Please add your years of Experience');
     }
     if (!services) {
@@ -93,6 +94,7 @@ export class VetController {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const vet = {
+      vetId,
       name,
       email,
       password: hashedPassword,
@@ -101,24 +103,24 @@ export class VetController {
       area,
       city,
       state,
-      yearsOfExperience,
-      role: 'vet',
+      YearsOfExperience,
       services,
+      role: 'vet'
     };
 
-    const existingTrainer = await this.vetService.findByWithEmail(email);
-    if (existingTrainer) {
+    const existingVet = await this.vetService.findByWithEmail(email);
+    if (existingVet) {
       throw new BadRequestException('Email already exists');
     }
-    const newTrainer = await this.vetService.register(vet);
-    return newTrainer;
+    const newVet= await this.vetService.register(vet);
+    return newVet;
   }
 
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN)
   @Get('/')
   async getTrainers() {
-    return this.vetService.findTrainer();
+    return this.vetService.findVet();
   }
 
   @Get('/:id')

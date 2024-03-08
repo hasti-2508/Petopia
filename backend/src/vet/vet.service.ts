@@ -15,7 +15,7 @@ constructor(
     private VetModel: mongoose.Model<Vet>,
   ) {}
 
-  async findTrainer(){
+  async findVet(){
     return this.VetModel.find({isActive: true}).exec();
   }
   async register(createVetDto: CreateVetDto): Promise<Vet> {
