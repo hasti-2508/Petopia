@@ -9,6 +9,9 @@ import {
 } from 'class-validator';
 
 export class CreateTrainerDto {
+@IsNumber()
+trainerId: number;
+
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -61,7 +64,7 @@ export class CreateTrainerDto {
   @IsOptional()
   role?: string;
 
-  yearsOfExperience: number;
+  YearsOfExperience: number;
 
   numberOfPetsTrained: number;
 }

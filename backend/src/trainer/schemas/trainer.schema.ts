@@ -1,31 +1,33 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-
 @Schema()
 export class Trainer extends Document {
+  @Prop({ required: true })
+  trainerId: number;
+
   @Prop({ required: true })
   name: string;
 
   @Prop({ required: true })
   email: string;
-  
-  @Prop({required: true})
+
+  @Prop({ required: true })
   password: string;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   phoneNo: number;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   address: string;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   area: string;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   city: string;
 
-  @Prop({required: true})
+  @Prop({ required: true })
   state: string;
 
   @Prop()
@@ -37,23 +39,23 @@ export class Trainer extends Document {
   @Prop({ default: 'trainer' })
   role: string;
 
-  @Prop({ type: [String] }) 
+  @Prop({ type: [String] })
   imageHistory: string[];
 
-  @Prop({ type: [String] }) 
+  @Prop({ type: [String] })
   services: string[];
 
-  @Prop({type: [Object]})
-  OnGoingTraining: Object[]
+  @Prop({ type: [Object] })
+  OnGoingTraining: Object[];
 
-  @Prop({type: [Object]})
-  TrainingHistory: Object[]
+  @Prop({ type: [Object] })
+  TrainingHistory: Object[];
 
   @Prop()
-  description: string; 
+  description: string;
 
-  @Prop({default: true})
-  isActive: boolean; 
+  @Prop({ default: true })
+  isActive: boolean;
 
   @Prop()
   imageUrl: string;

@@ -36,6 +36,7 @@ export class TrainerController {
   @Post('/register')
   async register(@Body() createTrainerDto: CreateTrainerDto): Promise<Trainer> {
     const {
+      trainerId,
       name,
       email,
       password,
@@ -44,7 +45,7 @@ export class TrainerController {
       area,
       city,
       state,
-      yearsOfExperience,
+      YearsOfExperience,
       numberOfPetsTrained,
       services,
     } = createTrainerDto;
@@ -86,7 +87,7 @@ export class TrainerController {
     if (!address && !area && !city && !state) {
       throw new BadRequestException('please provide complete address details');
     }
-    if (!yearsOfExperience) {
+    if (!YearsOfExperience) {
       throw new BadRequestException('Please add your years of Experience');
     }
     if (!services) {
@@ -94,6 +95,7 @@ export class TrainerController {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const trainer: CreateTrainerDto = {
+      trainerId,
       name,
       email,
       password: hashedPassword,
@@ -102,7 +104,7 @@ export class TrainerController {
       area,
       city,
       state,
-      yearsOfExperience,
+      YearsOfExperience,
       numberOfPetsTrained,
       role: 'trainer',
       services,
