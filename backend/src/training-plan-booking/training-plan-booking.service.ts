@@ -11,6 +11,7 @@ import { TrainingPlanBooking } from './schemas/training-plan-booking.schema';
 import { TrainingPlan } from 'src/training-plan/schemas/training-plan.schema';
 import { Trainer } from 'src/trainer/schemas/trainer.schema';
 import { AssignTrainerDto, CreateTrainingPlanBookingDto } from './dto/training-plan-booking.dto';
+import * as nodemailer from 'nodemailer';
 
 
   
@@ -85,8 +86,33 @@ import { AssignTrainerDto, CreateTrainingPlanBookingDto } from './dto/training-p
       }
   
       booking.trainerId = Trainer_Id;
+      const trainerToMail = await this.TrainerModel.findById(booking.trainerId);
+      if (trainerToMail) {
+        await this.sendEmail(trainerToMail);
+      }
       return booking.save();
   }
+
+  async sendEmail(trainer: Trainer): Promise<void> {
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASS_KEY,
+      },
+    });
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: trainer.email,
+      subject: 'Assigned Booking',
+      text: `Hello Trainer, 
+      You have assigned a training to fulfill.
+      Please, find the details and complete it on the time.`,
+    };
   
+    await transporter.sendMail(mailOptions);
+  }
+
+
   }
   

@@ -39,5 +39,6 @@ export class TrainingPlanBookingController {
 
         return this.TrainingPlanBookingService.assignTrainer(bookingId,assignTrainerDto);
     }
+
 }
 
