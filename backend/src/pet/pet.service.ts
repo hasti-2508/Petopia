@@ -1,9 +1,10 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { PetDto } from './dto/pet.dto';
+import { PetDto, PetFilterDto, PetSortDto } from './dto/pet.dto';
 import { Pet } from './schemas/pet.schema';
 import { User } from 'src/user/schemas/user.schema';
+import { Query } from 'express-serve-static-core';
 
 @Injectable()
 export class PetService {
@@ -14,15 +15,47 @@ export class PetService {
     private UserModel: mongoose.Model<User>,
   ) {}
 
-  async findPet(): Promise<Pet[]> {
-    return this.petModel.find({ isActive: true });
+  async findPet(filterDto: PetFilterDto, sortDto: PetSortDto,qu: Query): Promise<Pet[]> {
+    let query = this.petModel.find({ isActive: true });
+
+    const resPerPage = 20;
+    const currentPage = Number(qu.page) || 1;
+    const skip = resPerPage * (currentPage - 1);
+
+    if (filterDto) {
+      if (filterDto.species) {
+        query = query.where('species').equals(filterDto.species);
+      }
+      if (filterDto.breed) {
+        query = query.where('breed').equals(filterDto.breed);
+      }
+      if (filterDto.age) {
+        query = query.where('age').equals(filterDto.age);
+      }
+      if (filterDto.gender) {
+        query = query.where('gender').equals(filterDto.gender);
+      }
+      if (filterDto.city) {
+        query = query.where('city').equals(filterDto.city);
+      }
+      if (filterDto.state) {
+        query = query.where('state').equals(filterDto.state);
+      }
+    }
+
+    if (sortDto && sortDto.sortBy) {
+      const sortOrder = sortDto.sortOrder === 'desc' ? -1 : 1;
+      query = query.sort({ [sortDto.sortBy]: sortOrder });
+    }
+
+    return query.limit(resPerPage).skip(skip).exec();
   }
 
   async createPet(petDto: PetDto, userId: string): Promise<User> {
     const pet = this.petModel.create({ ...petDto, owner: userId });
     const user = await this.UserModel.findById(userId);
     user.pets.push((await pet).id);
-    user.save()
+    user.save();
     return user;
   }
 

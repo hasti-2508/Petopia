@@ -58,6 +58,9 @@ export class Trainer extends Document {
   @Prop({ default: true })
   isActive: boolean;
 
+  @Prop({default: true})
+  isAvailable: boolean;
+
   @Prop()
   imageUrl: string;
 

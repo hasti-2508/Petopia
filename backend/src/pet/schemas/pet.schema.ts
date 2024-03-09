@@ -22,6 +22,12 @@ export class Pet extends Document {
   age: number;
 
   @Prop()
+  city: string
+
+  @Prop()
+  state: string
+
+  @Prop()
   gender: string;
 
   @Prop()

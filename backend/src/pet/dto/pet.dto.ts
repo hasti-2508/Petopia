@@ -41,3 +41,17 @@ export class PetDto {
   @IsOptional()
   imageUrl: string;
 }
+
+export class PetFilterDto {
+  species?: string;
+  breed?: string;
+  age?: number;
+  gender?: string;
+  city?: string;
+  state?: string;
+}
+
+export class PetSortDto {
+  sortBy: string;
+  sortOrder: 'asc' | 'desc';
+}
