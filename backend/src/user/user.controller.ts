@@ -29,6 +29,7 @@ import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
+  jwtService: any;
   constructor(
     private userService: UserService,
     private cloudinaryService: CloudinaryService,
@@ -175,4 +176,17 @@ export class UserController {
   async deletePictureUrl(@Param('id') userId: string) {
     return await this.userService.deleteUserPictureUrl(userId);
   }
+
+  @Post('/:petId/adopt')
+  async isAdopted(@Param('petId') petId: string,
+  @Req() req) {
+    const token = req.cookies.jwt;
+        if(!token){
+            throw new NotFoundException("User Should be logged in")
+        }
+        const decodedToken = this.jwtService.decode(token) as {userId: string};
+        const userId = decodedToken.userId;
+    return await this.userService.isAdopted(petId,userId)
+  }
+
 }

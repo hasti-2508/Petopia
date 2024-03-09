@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Req, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { PetService } from './pet.service';
 import { PetDto } from './dto/pet.dto';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as path from 'path';
+import { JwtService } from '@nestjs/jwt';
 
 
 @Controller('pet')
@@ -12,6 +13,7 @@ export class PetController {
     constructor(
         private petService : PetService,
         private cloudinaryService: CloudinaryService,
+        private jwtService: JwtService
     ){}
 
 @Get()
@@ -27,8 +29,14 @@ async findPetByID(
 }
 
 @Post('/')
-async createPet(@Body() petDto: PetDto ){
-    return await this.petService.createPet(petDto)
+async createPet(@Body() petDto: PetDto,@Req() req){
+  const token = req.cookies.jwt;
+        if(!token){
+            throw new NotFoundException("User Should be logged in")
+        }
+        const decodedToken = this.jwtService.decode(token) as {userId: string};
+        const userId = decodedToken.userId;
+    return await this.petService.createPet(petDto,userId)
 }
 
 @Post(':id/uploadImage')

@@ -1,14 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { Document } from 'mongoose';
+import { Document, SchemaTypes } from 'mongoose';
+import { User } from 'src/user/schemas/user.schema';
 
 @Schema({
-    timestamps: true
+  timestamps: true,
 })
-export class Pet extends Document  {
-
+export class Pet extends Document {
   _id: mongoose.Types.ObjectId;
-
+  
   @Prop({ required: true })
   pet_name: string;
 
@@ -39,14 +39,20 @@ export class Pet extends Document  {
   @Prop()
   additional_notes: string;
 
-  @Prop({default: true})
+  @Prop({ default: true })
   isActive: string;
 
   @Prop()
   imageUrl: string;
 
-  @Prop({ type: [String] }) 
+  @Prop({ type: [String] })
   imageHistory: string[];
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'User' }] })
+  owner: User['_id'];
+
+  @Prop({ default: false })
+  isAdopted: boolean;
 }
 
 export const PetSchema = SchemaFactory.createForClass(Pet);

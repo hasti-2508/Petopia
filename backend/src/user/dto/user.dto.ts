@@ -41,4 +41,3 @@ export class CreateUserDto {
   isActive:boolean;
 }
 
-

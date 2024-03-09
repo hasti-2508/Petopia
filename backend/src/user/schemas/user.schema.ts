@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { SchemaTypes } from 'mongoose';
+import mongoose, { SchemaTypes, Document } from 'mongoose';
 import { Pet } from 'src/pet/schemas/pet.schema';
 
 @Schema({ timestamps: true })
-export class User {
+export class User extends Document {
   _id: mongoose.Types.ObjectId;
 
   @Prop({required: true})
@@ -46,8 +46,17 @@ export class User {
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Pet' }] })
   pets: Pet[];
 
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Pet' }] }) 
+  petHistory: string[];
+
   // @Prop({ type: [{ type: Schema.Types.ObjectId, ref: 'Appointment' }] })
   // appointments: Appointment[];
+
+  @Prop()
+  resetToken: string;
+
+  @Prop()
+  resetTokenExpiration: Date;
 
 }
 
