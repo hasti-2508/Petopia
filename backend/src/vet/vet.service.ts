@@ -100,4 +100,19 @@ constructor(
     return updatedVet;
   }
 
+  // async confirm(bookingId: string){
+  //   const isValidBookingId = mongoose.Types.ObjectId.isValid(bookingId);
+  //     if (!isValidBookingId) {
+  //         throw new HttpException('Invalid Booking ID', 400);
+  //     }
+  
+  //     const booking = await this.TrainingPlanBookingModel.findById(bookingId);
+  //     if (!booking) {
+  //         throw new NotFoundException("Booking not found");
+  //     }
+
+  //     booking.isCompleted = true;
+  //     return booking.save()
+  // }
+  
 }

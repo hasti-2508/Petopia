@@ -59,6 +59,13 @@ export class Vet extends Document {
 
   // @Prop({ type: [{ type: Schema.Types.ObjectId, ref: 'Appointment' }] })
   // appointments: Appointment[];
+
+
+  @Prop()
+  resetToken: string;
+
+  @Prop()
+  resetTokenExpiration: Date;
 }
 
 export const VetSchema = SchemaFactory.createForClass(Vet);
