@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { Trainer } from './schemas/trainer.schema';
 import { CreateTrainerDto } from './dto/trainer.dto';
+import { TrainingPlanBooking } from 'src/training-plan-booking/schemas/training-plan-booking.schema';
 
 
 
@@ -13,6 +14,8 @@ export class TrainerService {
 constructor(
     @InjectModel(Trainer.name)
     private TrainerModel: mongoose.Model<Trainer>,
+    @InjectModel(TrainingPlanBooking.name)
+    private TrainingPlanBookingModel: mongoose.Model<TrainingPlanBooking>,
   ) {}
 
   async findTrainer(){
@@ -98,6 +101,21 @@ constructor(
     trainer.imageUrl = ''; 
     const updatedTrainer = await trainer.save(); 
     return updatedTrainer;
+  }
+
+   async confirm(bookingId: string){
+    const isValidBookingId = mongoose.Types.ObjectId.isValid(bookingId);
+      if (!isValidBookingId) {
+          throw new HttpException('Invalid Booking ID', 400);
+      }
+
+      const booking = await this.TrainingPlanBookingModel.findById(bookingId);
+      if (!booking) {
+          throw new NotFoundException("Booking not found");
+      }
+
+      booking.isCompleted = true;
+      return booking.save()
   }
 
 }

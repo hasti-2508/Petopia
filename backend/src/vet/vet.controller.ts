@@ -105,14 +105,14 @@ export class VetController {
       state,
       YearsOfExperience,
       services,
-      role: 'vet'
+      role: 'vet',
     };
 
     const existingVet = await this.vetService.findByWithEmail(email);
     if (existingVet) {
       throw new BadRequestException('Email already exists');
     }
-    const newVet= await this.vetService.register(vet);
+    const newVet = await this.vetService.register(vet);
     return newVet;
   }
 
@@ -193,5 +193,10 @@ export class VetController {
   @Delete('/:id/deleteImage')
   async deletePictureUrl(@Param('id') trainerId: string) {
     return await this.vetService.deleteUserPictureUrl(trainerId);
+  }
+
+  @Post('/:bookingId/confirm')
+  async confirm(@Param('bookingId') bookingId: string) {
+    return await this.vetService.confirm(bookingId);
   }
 }

@@ -196,4 +196,9 @@ export class TrainerController {
   async deletePictureUrl(@Param('id') trainerId: string) {
     return await this.trainerService.deleteUserPictureUrl(trainerId);
   }
+
+  @Post('/:bookingId/confirm')
+  async confirm(@Param('bookingId') bookingId: string) {
+    return await this.trainerService.confirm(bookingId);
+  }
 }
