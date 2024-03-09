@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber, IsEmail } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsEmail, IsPositive, Min, Max } from 'class-validator';
 
 export class CreateTrainingPlanBookingDto {
 
@@ -55,4 +55,12 @@ export class CreateTrainingPlanBookingDto {
 export class AssignTrainerDto{
   @IsNumber()
   TrainerId :number;
+}
+
+export class RateDto {
+  @IsNumber()
+  @IsPositive()
+  @Min(1)
+  @Max(5)
+  rating: number;
 }

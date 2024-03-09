@@ -60,7 +60,6 @@ export class ServicePlanBookingService {
 
   async assignVet(bookingId: string, assignVetDto: AssignVetDto) {
 
-
     const vet_Id = assignVetDto.vetId;
     const isValidBookingId = mongoose.Types.ObjectId.isValid(bookingId);
     if (!isValidBookingId) {
@@ -78,21 +77,31 @@ export class ServicePlanBookingService {
         throw new ConflictException("This booking is not confirmed yet");
     }
 
-    const vet = await this.VetModel.findOne({ vetId: vet_Id });
+    const vet = await this.VetModel.findOne({ vetId: vet_Id, isAvailable: true });
     if (!vet) {
         throw new NotFoundException("Vet not found");
     }
 
-    booking.vetId = vet_Id;
+    booking.vetId = vet_Id; 
     vet.bookings.push((await booking).id)
     const vetToMail = await this.VetModel.findById(booking.vetId);
       if (vetToMail) {
-        await this.sendEmail(vetToMail);
+        await this.sendBookingEmail(vetToMail);
       }
     return booking.save();
 }
 
-async sendEmail(vet: Vet): Promise<void> {
+// async cancelBooking(bookingId: string){
+//   const booking = await this.servicePlanBookingModel.findById(bookingId)
+//   booking.isCancelled = true;
+//   const vetToMail = await this.VetModel.findById(booking.vetId);
+//   if (vetToMail) {
+//     await this.sendBookingEmail(vetToMail);
+//   }
+// return booking.save();
+// }
+
+async sendBookingEmail(vet: Vet): Promise<void> {
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -110,6 +119,40 @@ async sendEmail(vet: Vet): Promise<void> {
   };
 
   await transporter.sendMail(mailOptions);
+}
+
+  
+async addRating(userId: string, bookingId: string, rating: number):  Promise<ServicePlanBooking> {
+
+  if (!userId) {
+    throw new NotFoundException('User Not Found');
+  }
+  const isValid = mongoose.Types.ObjectId.isValid(bookingId);
+  if (!isValid) {
+    throw new HttpException('Invalid ID', 400);
+  }
+  const booking =
+    await this.servicePlanBookingModel.findById(bookingId);
+
+  if (!booking) {
+    throw new NotFoundException('Booking not found');
+  }
+
+  const existingRating = booking.ratings.find(
+    (r) => r.userId === userId,
+  );
+  if (existingRating) {
+    throw new HttpException('You have already rated this Service booking.', 400);
+  }
+  booking.ratings.push({
+    rating,
+    userId,
+  });
+  const averageRating =
+  booking.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
+    booking.ratings.length;
+    booking.averageRating = averageRating;
+  return booking.save();
 }
 
 }

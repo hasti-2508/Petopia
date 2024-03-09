@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   Res,
   UploadedFile,
@@ -207,4 +208,6 @@ export class VetController {
     const vetId = decodedToken.userId;
     return await this.vetService.confirm(bookingId, vetId);
   }
+
+
 }

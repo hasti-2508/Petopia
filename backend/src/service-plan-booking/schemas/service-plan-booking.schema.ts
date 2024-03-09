@@ -65,6 +65,12 @@ export class ServicePlanBooking extends Document{
 
   @Prop() 
   vetId: number;
+
+  @Prop()
+  ratings: any[];
+  
+  @Prop()
+  averageRating: number; 
 }
 
 export const ServicePlanBookingSchema =

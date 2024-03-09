@@ -58,12 +58,15 @@ export class Vet extends Document {
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'ServicePlanBooking' }] })
   bookingHistory: ServicePlanBooking[];
 
+  @Prop({default: true})
+  isAvailable: boolean;
 
   @Prop()
   resetToken: string;
 
   @Prop()
   resetTokenExpiration: Date;
+
 }
 
 export const VetSchema = SchemaFactory.createForClass(Vet);

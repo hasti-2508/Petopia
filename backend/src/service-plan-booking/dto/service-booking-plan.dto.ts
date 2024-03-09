@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber, IsDate, IsEmail } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsDate, IsEmail, IsPositive, Min, Max } from 'class-validator';
 
 export class CreateServicePlanBookingDto {
 
@@ -55,4 +55,13 @@ export class CreateServicePlanBookingDto {
 export class AssignVetDto{
   @IsNumber()
   vetId :number;
+}
+
+
+export class RateDto {
+  @IsNumber()
+  @IsPositive()
+  @Min(1)
+  @Max(5)
+  rating: number;
 }

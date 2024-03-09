@@ -65,6 +65,12 @@ export class TrainingPlanBooking extends Document{
 
   @Prop() 
   trainerId: number;
+
+  @Prop()
+  ratings: any[];
+  
+  @Prop()
+  averageRating: number; 
 }
 
 export const TrainingPlanBookingSchema =

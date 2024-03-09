@@ -79,21 +79,24 @@ export class TrainingPlanBookingService {
       throw new ConflictException('This booking is not confirmed yet');
     }
 
-    const Trainer = await this.TrainerModel.findOne({ trainerId: Trainer_Id });
+    const Trainer = await this.TrainerModel.findOne({
+      trainerId: Trainer_Id,
+      isAvailable: true,
+    });
     if (!Trainer) {
       throw new NotFoundException('Trainer not found');
     }
 
     booking.trainerId = Trainer_Id;
-    Trainer.bookings.push((await booking).id)
+    Trainer.bookings.push((await booking).id);
     const trainerToMail = await this.TrainerModel.findById(booking.trainerId);
     if (trainerToMail) {
-      await this.sendEmail(trainerToMail);
+      await this.sendBookingEmail(trainerToMail);
     }
     return booking.save();
   }
 
-  async sendEmail(trainer: Trainer): Promise<void> {
+  async sendBookingEmail(trainer: Trainer): Promise<void> {
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
@@ -113,5 +116,40 @@ export class TrainingPlanBookingService {
     await transporter.sendMail(mailOptions);
   }
 
+  async addRating(
+    userId: string,
+    bookingId: string,
+    rating: number,
+  ): Promise<TrainingPlanBooking> {
+    if (!userId) {
+      throw new NotFoundException('User Not Found');
+    }
 
+    const isValid = mongoose.Types.ObjectId.isValid(bookingId);
+    if (!isValid) {
+      throw new HttpException('Invalid ID', 400);
+    }
+    const booking =
+      await this.TrainingPlanBookingModel.findById(bookingId);
+
+    if (!booking) {
+      throw new NotFoundException('Booking not found');
+    }
+
+    const existingRating = booking.ratings.find(
+      (r) => r.userId === userId,
+    );
+    if (existingRating) {
+      throw new HttpException('You have already rated this Training booking.', 400);
+    }
+    booking.ratings.push({
+      rating,
+      userId,
+    });
+    const averageRating =
+    booking.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
+      booking.ratings.length;
+      booking.averageRating = averageRating;
+    return booking.save();
+  }
 }

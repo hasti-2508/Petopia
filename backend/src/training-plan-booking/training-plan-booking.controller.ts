@@ -1,7 +1,7 @@
 import { Body, Controller, NotFoundException, Param, Post, Req } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TrainingPlanBookingService } from './training-plan-booking.service';
-import { AssignTrainerDto, CreateTrainingPlanBookingDto } from './dto/training-plan-booking.dto';
+import { AssignTrainerDto, CreateTrainingPlanBookingDto, RateDto } from './dto/training-plan-booking.dto';
 import { TrainingPlanBooking } from './schemas/training-plan-booking.schema';
 
 @Controller('trainingBooking')
@@ -38,6 +38,21 @@ export class TrainingPlanBookingController {
     ){
 
         return this.TrainingPlanBookingService.assignTrainer(bookingId,assignTrainerDto);
+    }
+
+    @Post(':TrainingPlanId/rate')
+    async rateVet(
+      @Req() req,
+      @Param('TrainingPlanId') TrainingPlanId: string,
+      @Body() rateDto: RateDto,
+    ): Promise<TrainingPlanBooking> {
+      const token = req.cookies?.jwt;
+      if (!token) {
+        throw new NotFoundException('User should be logged in!');
+      }
+      const decodedToken = this.jwtService.decode(token) as { userId: string };
+      const userId = decodedToken.userId;
+      return this.TrainingPlanBookingService.addRating(userId, TrainingPlanId, rateDto.rating);
     }
 
 }
