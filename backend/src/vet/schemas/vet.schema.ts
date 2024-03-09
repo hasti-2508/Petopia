@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, SchemaTypes } from 'mongoose';
+import { ServicePlanBooking } from 'src/service-plan-booking/schemas/service-plan-booking.schema';
 
 @Schema()
 export class Vet extends Document {
@@ -45,20 +46,17 @@ export class Vet extends Document {
   @Prop({ type: [String] })
   services: string[];
 
-  @Prop({ type: [Object] })
-  AppointmentsToHandle: Object[];
-
-  @Prop({ type: [Object] })
-  AppointmentHistory: Object[];
-
   @Prop()
   description: string;
 
   @Prop({ default: true })
   isActive: boolean;
 
-  // @Prop({ type: [{ type: Schema.Types.ObjectId, ref: 'Appointment' }] })
-  // appointments: Appointment[];
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'ServicePlanBooking' }] })
+  bookings: ServicePlanBooking[];
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'ServicePlanBooking' }] })
+  bookingHistory: ServicePlanBooking[];
 
 
   @Prop()

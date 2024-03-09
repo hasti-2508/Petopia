@@ -25,12 +25,14 @@ import { RolesGuard } from 'src/role/guard/role.guard';
 import { Roles } from 'src/role/role.decorator';
 import { Role } from 'src/role/role.enum';
 import { Trainer } from './schemas/trainer.schema';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('trainer')
 export class TrainerController {
   constructor(
     private trainerService: TrainerService,
     private cloudinaryService: CloudinaryService,
+    private jwtService: JwtService,
   ) {}
 
   @Post('/register')
@@ -198,7 +200,13 @@ export class TrainerController {
   }
 
   @Post('/:bookingId/confirm')
-  async confirm(@Param('bookingId') bookingId: string) {
-    return await this.trainerService.confirm(bookingId);
+  async confirm(@Param('bookingId') bookingId: string,@Req() req) {
+    const token = req.cookies.jwt;
+    if (!token) {
+      throw new NotFoundException('Vet Should be logged in');
+    }
+    const decodedToken = this.jwtService.decode(token);
+    const trainerId = decodedToken.userId;
+    return await this.trainerService.confirm(bookingId,trainerId);
   }
 }

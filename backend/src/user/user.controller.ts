@@ -26,13 +26,14 @@ import { Role } from 'src/role/role.enum';
 import { CreateUserDto } from './dto/user.dto';
 import { User } from './schemas/user.schema';
 import { UserService } from './user.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('user')
 export class UserController {
-  jwtService: any;
   constructor(
     private userService: UserService,
     private cloudinaryService: CloudinaryService,
+    private jwtService: JwtService
   ) {}
 
   @Post('/register')
@@ -181,10 +182,12 @@ export class UserController {
   async isAdopted(@Param('petId') petId: string,
   @Req() req) {
     const token = req.cookies.jwt;
+
         if(!token){
             throw new NotFoundException("User Should be logged in")
         }
-        const decodedToken = this.jwtService.decode(token) as {userId: string};
+        const decodedToken = this.jwtService.decode(token);
+        console.log(decodedToken)
         const userId = decodedToken.userId;
     return await this.userService.isAdopted(petId,userId)
   }

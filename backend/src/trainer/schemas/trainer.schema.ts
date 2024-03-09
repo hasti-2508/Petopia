@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, SchemaTypes } from 'mongoose';
+import { TrainingPlanBooking } from 'src/training-plan-booking/schemas/training-plan-booking.schema';
 
 @Schema()
 export class Trainer extends Document {
@@ -60,8 +61,13 @@ export class Trainer extends Document {
   @Prop()
   imageUrl: string;
 
-  // @Prop({ type: [{ type: Schema.Types.ObjectId, ref: 'Appointment' }] })
-  // appointments: Appointment[];
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'ServicePlanBooking' }] })
+  bookings: TrainingPlanBooking[];
+
+  @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'ServicePlanBooking' }] })
+  bookingHistory: TrainingPlanBooking[];
+
+
 }
 
 export const TrainerSchema = SchemaFactory.createForClass(Trainer);

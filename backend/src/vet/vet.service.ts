@@ -99,7 +99,7 @@ export class VetService {
     return updatedVet;
   }
 
-  async confirm(bookingId: string) {
+  async confirm(bookingId: string,vetId) {
     const isValidBookingId = mongoose.Types.ObjectId.isValid(bookingId);
     if (!isValidBookingId) {
       throw new HttpException('Invalid Booking ID', 400);
@@ -111,6 +111,13 @@ export class VetService {
     }
 
     booking.isCompleted = true;
+    const vet = await this.VetModel.findById(vetId);
+    if(!vet){
+      throw new NotFoundException("Vet not found.")
+    }
+    vet.bookingHistory.push(booking._id);
+    vet.bookings = vet.bookings.filter(booking => booking.toString() !== booking._id);
+    vet.save()
     return booking.save();
   }
 }

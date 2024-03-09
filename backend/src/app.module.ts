@@ -7,6 +7,14 @@ import { MongooseModule } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
 import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { TrainerModule } from './trainer/trainer.module';
+import { VetModule } from './vet/vet.module';
+import { ServicePlanModule } from './service-plan/service-plan.module';
+import { TrainingPlanModule } from './training-plan/training-plan.module';
+import { ServicePlanBookingModule } from './service-plan-booking/service-plan-booking.module';
+import { TrainingPlanBookingModule } from './training-plan-booking/training-plan-booking.module';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -16,7 +24,16 @@ import { AuthModule } from './auth/auth.module';
     }),
     MongooseModule.forRoot(process.env.MONOGO_URI),
     PetModule,
-    AuthModule],
+    AuthModule,
+    UserModule,
+    VetModule,
+    TrainerModule,
+    ServicePlanModule,
+    TrainingPlanModule,
+    ServicePlanBookingModule,
+    TrainingPlanBookingModule,
+    StripeModule
+  ],
   controllers: [AppController],
   providers: [AppService,CloudinaryService],
 })

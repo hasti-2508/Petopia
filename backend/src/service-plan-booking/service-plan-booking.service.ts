@@ -11,7 +11,7 @@ import { User } from 'src/user/schemas/user.schema';
 import { ServicePlan } from 'src/service-plan/schemas/service-plan.schema';
 import { Vet } from 'src/vet/schemas/vet.schema';
 import { AssignVetDto, CreateServicePlanBookingDto } from './dto/service-booking-plan.dto';
-import { retryWhen } from 'rxjs';
+import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class ServicePlanBookingService {
@@ -84,7 +84,32 @@ export class ServicePlanBookingService {
     }
 
     booking.vetId = vet_Id;
+    vet.bookings.push((await booking).id)
+    const vetToMail = await this.VetModel.findById(booking.vetId);
+      if (vetToMail) {
+        await this.sendEmail(vetToMail);
+      }
     return booking.save();
+}
+
+async sendEmail(vet: Vet): Promise<void> {
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.PASS_KEY,
+    },
+  });
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: vet.email,
+    subject: 'Assigned Booking',
+    text: `Hello Vet, 
+    You have assigned a service.
+    Please, find the details and complete it on the time.`,
+  };
+
+  await transporter.sendMail(mailOptions);
 }
 
 }

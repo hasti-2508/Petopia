@@ -25,12 +25,14 @@ import { Role } from 'src/role/role.enum';
 import { VetService } from './vet.service';
 import { Vet } from './schemas/vet.schema';
 import { CreateVetDto } from './dto/vet.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('vet')
 export class VetController {
   constructor(
     private vetService: VetService,
     private cloudinaryService: CloudinaryService,
+    private jwtService: JwtService,
   ) {}
 
   @Post('/register')
@@ -196,7 +198,13 @@ export class VetController {
   }
 
   @Post('/:bookingId/confirm')
-  async confirm(@Param('bookingId') bookingId: string) {
-    return await this.vetService.confirm(bookingId);
+  async confirm(@Param('bookingId') bookingId: string, @Req() req) {
+    const token = req.cookies.jwt;
+    if (!token) {
+      throw new NotFoundException('Vet Should be logged in');
+    }
+    const decodedToken = this.jwtService.decode(token);
+    const vetId = decodedToken.userId;
+    return await this.vetService.confirm(bookingId, vetId);
   }
 }

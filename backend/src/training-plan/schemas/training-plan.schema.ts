@@ -16,6 +16,13 @@ export class TrainingPlan extends Document{
 
   @Prop({ type: [String] })
   requirements: string[]
+
+
+  @Prop()
+  resetToken: string;
+
+  @Prop()
+  resetTokenExpiration: Date;
 }
 
 export const TrainingPlanSchema = SchemaFactory.createForClass(TrainingPlan);
