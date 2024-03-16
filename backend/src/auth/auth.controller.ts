@@ -65,7 +65,7 @@ export class AuthController {
       userId: user._id,
     };
     const jwt = await this.jwtService.signAsync(payload);
-    response.cookie('jwt', jwt, { httpOnly: true });                                                            
+    response.cookie('jwt', jwt, { httpOnly: true });
     return { token: jwt };
   }
 

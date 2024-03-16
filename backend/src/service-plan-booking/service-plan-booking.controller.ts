@@ -40,10 +40,10 @@ export class ServicePlanBookingController {
         return this.servicePlanBookingService.assignVet(bookingId,assignVetDto);
     }
 
-     @Post(':ServicePlanId/rate')
+     @Post(':BookingId/rate')
     async rateVet(
       @Req() req,
-      @Param('ServicePlanId') ServicePlanId: string,
+      @Param('BookingId') BookingId: string,
       @Body() rateDto: RateDto,
     ): Promise<ServicePlanBooking> {
       const token = req.cookies?.jwt;
@@ -52,7 +52,22 @@ export class ServicePlanBookingController {
       }
       const decodedToken = this.jwtService.decode(token) as { userId: string };
       const userId = decodedToken.userId;
-      return this.servicePlanBookingService.addRating(userId, ServicePlanId, rateDto.rating);
+      return this.servicePlanBookingService.addRating(userId, BookingId, rateDto.rating);
     }
+
+    // @Post(':BookingId/ratePlan')
+    // async ratePlan(
+    //   @Req() req,
+    //   @Param('ServicePlanId') ServicePlanId: string,
+    //   @Body() rateDto: RateDto,
+    // ): Promise<ServicePlanBooking> {
+    //   const token = req.cookies?.jwt;
+    //   if (!token) {
+    //     throw new NotFoundException('User should be logged in!');
+    //   }
+    //   const decodedToken = this.jwtService.decode(token) as { userId: string };
+    //   const userId = decodedToken.userId;
+    //   return this.servicePlanBookingService.addRating(userId, ServicePlanId, rateDto.rating);
+    // }
 }
 

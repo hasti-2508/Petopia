@@ -187,7 +187,6 @@ export class UserController {
             throw new NotFoundException("User Should be logged in")
         }
         const decodedToken = this.jwtService.decode(token);
-        console.log(decodedToken)
         const userId = decodedToken.userId;
     return await this.userService.isAdopted(petId,userId)
   }

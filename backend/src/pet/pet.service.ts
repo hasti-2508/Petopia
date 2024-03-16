@@ -18,7 +18,7 @@ export class PetService {
   async findPet(filterDto: PetFilterDto, sortDto: PetSortDto,qu: Query): Promise<Pet[]> {
     let query = this.petModel.find({ isActive: true });
 
-    const resPerPage = 20;
+    const resPerPage = 15;
     const currentPage = Number(qu.page) || 1;
     const skip = resPerPage * (currentPage - 1);
 

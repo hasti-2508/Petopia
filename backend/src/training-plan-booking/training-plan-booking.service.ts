@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   HttpException,
   Injectable,
@@ -32,6 +33,13 @@ export class TrainingPlanBookingService {
     TrainingPlanId: string,
     createTrainingPlanBookingDto: CreateTrainingPlanBookingDto,
   ): Promise<TrainingPlanBooking> {
+    const requiredFields = ['user_name', 'email', 'phoneNo', 'address', 'city', 'state'];
+    for (const field of requiredFields) {
+        if (!createTrainingPlanBookingDto[field]) {
+            throw new BadRequestException(`${field} is required`);
+        }
+    }
+
     const Trainer = await this.TrainerModel.findOne({
       city: createTrainingPlanBookingDto.city,
     });
@@ -59,7 +67,7 @@ export class TrainingPlanBookingService {
 
     const createdBooking = await this.TrainingPlanBookingModel.create(booking);
     return createdBooking.save();
-  }
+}
 
   async assignTrainer(bookingId: string, assignTrainerDto: AssignTrainerDto) {
     const Trainer_Id = assignTrainerDto.TrainerId;
@@ -142,14 +150,29 @@ export class TrainingPlanBookingService {
     if (existingRating) {
       throw new HttpException('You have already rated this Training booking.', 400);
     }
+
+    const trainingPlanID = booking.TrainingPlanId;
     booking.ratings.push({
       rating,
       userId,
+      trainingPlanID
     });
     const averageRating =
     booking.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
       booking.ratings.length;
       booking.averageRating = averageRating;
+
+      const isValidPlanId = mongoose.Types.ObjectId.isValid(trainingPlanID);
+    if (!isValidPlanId) {
+      throw new HttpException('Invalid ID', 400);
+    }
+
+    const plan = await this.TrainingPlanModel.findById(trainingPlanID).exec();
+    if (!plan) {
+      throw new NotFoundException('This training does not exist!');
+    }
+    plan.average_rating = booking.averageRating;
+    plan.save();
     return booking.save();
   }
 }

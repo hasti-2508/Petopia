@@ -4,6 +4,10 @@ export class CreateTrainingPlanBookingDto {
 
   @IsString()
   @IsNotEmpty()
+  pet_species: string;
+
+  @IsString()
+  @IsNotEmpty()
   pet_breed: string;
 
   @IsString()

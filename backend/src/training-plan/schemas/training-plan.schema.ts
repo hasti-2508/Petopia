@@ -23,6 +23,12 @@ export class TrainingPlan extends Document{
 
   @Prop()
   resetTokenExpiration: Date;
+
+  @Prop()
+  average_rating: number;
+
+  @Prop()
+  imageUrl: string
 }
 
 export const TrainingPlanSchema = SchemaFactory.createForClass(TrainingPlan);

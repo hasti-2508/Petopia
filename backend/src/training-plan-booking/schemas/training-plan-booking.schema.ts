@@ -13,6 +13,9 @@ export class TrainingPlanBooking extends Document{
   TrainingPlanId: mongoose.Types.ObjectId;
 
   @Prop({ required: true })
+  pet_species: string;
+
+  @Prop({ required: true })
   pet_breed: string;
 
   @Prop({ required: true })
@@ -49,7 +52,10 @@ export class TrainingPlanBooking extends Document{
   notes: string;
 
   @Prop({ required: true })
-  Booking_Date: Date;
+  booking_date: string;
+
+  @Prop({ required: true })
+  booking_time: string;
 
   @Prop()
   totalPrice: number;

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ServicePlanService } from './service-plan.service';
 import { ServicePlan } from './schemas/service-plan.schema';
 import { CreateServicePlanDto } from './dto/service-plan.dto';
@@ -15,5 +15,10 @@ export class ServicePlanController {
   @Roles(Role.ADMIN)
   async create(@Body() createServicePlanDto: CreateServicePlanDto): Promise<ServicePlan> {
     return this.servicePlanService.create(createServicePlanDto);
+  }
+
+  @Get()
+  async getPlans(){
+    return await this.servicePlanService.find();
   }
 }

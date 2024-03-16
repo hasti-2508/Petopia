@@ -18,9 +18,11 @@ export class TrainingPlanBookingController {
         @Param('TrainingPlanId') TrainingPlanId : string,
         @Body() createTrainingPlanBookingDto:CreateTrainingPlanBookingDto
     ):Promise<TrainingPlanBooking>{
-        const token = req.cookies.jwt;
+        const token = req.body.jwt;
+        console.log(token);
+        
         if(!token){
-            throw new NotFoundException("User Should be logged in")
+            throw new NotFoundException("User Should be logged in") 
         }
         const decodedToken = this.jwtService.decode(token) as {userId: string};
         const userId = decodedToken.userId;
@@ -40,10 +42,10 @@ export class TrainingPlanBookingController {
         return this.TrainingPlanBookingService.assignTrainer(bookingId,assignTrainerDto);
     }
 
-    @Post(':TrainingPlanId/rate')
+    @Post(':BookingId/rate')
     async rateVet(
       @Req() req,
-      @Param('TrainingPlanId') TrainingPlanId: string,
+      @Param('BookingId') BookingId: string,
       @Body() rateDto: RateDto,
     ): Promise<TrainingPlanBooking> {
       const token = req.cookies?.jwt;
@@ -52,7 +54,7 @@ export class TrainingPlanBookingController {
       }
       const decodedToken = this.jwtService.decode(token) as { userId: string };
       const userId = decodedToken.userId;
-      return this.TrainingPlanBookingService.addRating(userId, TrainingPlanId, rateDto.rating);
+      return this.TrainingPlanBookingService.addRating(userId, BookingId, rateDto.rating);
     }
 
 }
