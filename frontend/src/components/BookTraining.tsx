@@ -6,14 +6,16 @@ import PetDataForm from "./PetDataForm";
 import UserDataForm from "./UserDataForm";
 import DateAndTime from "./DateAndTime";
 import axios from "axios";
+import { Notifications } from "react-push-notification";
+import addNotification from "react-push-notification";
 
 const trainingBookingData: TrainingPlanBooking = {
-  pet_species: "",
+  pet_species: "cat",
   pet_breed: "",
-  pet_size: "",
-  pet_gender: "",
+  pet_size: "small",
+  pet_gender: "female",
   pet_age: "",
-  aggressiveness: "",
+  aggressiveness: "low",
   user_name: "",
   email: "",
   phoneNo: "",
@@ -30,6 +32,16 @@ function BookTraining() {
   const [trainingPlanId, setTrainingPlanId] = useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
+  function warningNotification() {
+    addNotification({
+      title: "Warning",
+      subtitle: "Sorry",
+      message: "We are not providing Training in your city.",
+      theme: "red",
+      closeButton: "X",
+    });
+  }
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
@@ -39,8 +51,6 @@ function BookTraining() {
   }, []);
 
   function updateFields(fields: Partial<TrainingPlanBooking>) {
-
-
     setData((prev) => {
       return { ...prev, ...fields };
     });
@@ -54,11 +64,12 @@ function BookTraining() {
   function onSubmit(e: FormEvent) {
     e.preventDefault();
     const jwt = localStorage.getItem("token");
+    // const jwt2 = Cookies.get("jwt");
     const requestData = {
       ...data,
       jwt: jwt,
     };
-
+    // console.log(requestData);
     if (!isLastStep) return next();
     async function postData() {
       try {
@@ -68,10 +79,25 @@ function BookTraining() {
         );
         setBookingSuccess(true);
         setTimeout(() => {
-          window.location.href = `/payment/${response.data.id}`;
+          window.location.href = `/payment?${response.data._id}`;
         }, 3000);
       } catch (error) {
-        console.error("Error posting booking data:", error);
+        if (
+          axios.isAxiosError(error) &&
+          error.response &&
+          error.response.status === 409
+        ) {
+          warningNotification();
+          window.location.href = "/Home";
+        } else if (
+          axios.isAxiosError(error) &&
+          error.response &&
+          error.response.status === 401
+        ) {
+          window.location.href = "/Login";
+        } else {
+          console.error("Error posting booking data:", error);
+        }
       }
     }
 
@@ -79,6 +105,7 @@ function BookTraining() {
   }
   return (
     <div>
+      <Notifications />
       <div
         style={{
           position: "relative",
@@ -106,18 +133,18 @@ function BookTraining() {
                 Back
               </button>
             )}
-            <button type="submit">{isLastStep ? "Finish" : "Next"}</button>
+            <button type="submit">{isLastStep ? "Pay" : "Next"}</button>
           </div>
         </form>
       </div>
 
       {bookingSuccess && (
-        <div>
+        <div className="flex justify-center items-center w-full h-full">
           <img
             src="http://localhost:3000/assets/bookingSuccess.gif"
             alt="Booking Confirmation"
           />
-          <p>Redirecting to payment integration page...</p>
+          <p>Redirecting to payment page...</p>
         </div>
       )}
     </div>

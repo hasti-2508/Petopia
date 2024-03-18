@@ -126,7 +126,7 @@ function Home() {
             </div>
           </div>
 
-          <form className="flex items-center max-w-sm mx-auto mt-5">
+          {/* <form className="flex items-center max-w-sm mx-auto mt-5">
             <label htmlFor="simple-search" className="sr-only">
               Search
             </label>
@@ -153,13 +153,12 @@ function Home() {
               Adopt pet
               <span className="sr-only">Search</span>
             </button>
-          </form>
+          </form> */}
           {/* <p className="text-center mt-2 text-red-700">
               Sorry, we are not providing service in this city
             </p> */}
         </div>
       </div>
-
       <section style={{ marginTop: "500px" }}>
         <div className="bg-white mb-10">
           <h1
@@ -171,10 +170,7 @@ function Home() {
           </h1>
         </div>
       </section>
-
-      {/* 
-how it works ---component -------DO NOT DELETE --------------
-      <section className="py-12 bg-gray-100" >
+      <section className="py-12 bg-gray-100">
         <div className=" mx-auto md:px-0 md:max-w-screen-md lg:max-w-screen-lg">
           <h2
             className="text-xl font-bold text-gray-600  text-center "
@@ -309,7 +305,7 @@ how it works ---component -------DO NOT DELETE --------------
             </div>
           </div>
         </div>
-      </section> */}
+      </section>
     </div>
   );
 }

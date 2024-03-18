@@ -6,12 +6,14 @@ import UserDataForm from "./UserDataForm";
 import DateAndTime from "./DateAndTime";
 import axios from "axios";
 import { ServicePlanBooking } from "@/interfaces/servicePlanBooking";
+import { Notifications } from "react-push-notification";
+import addNotification from "react-push-notification";
 
 const serviceBookingData: ServicePlanBooking = {
   pet_species: "cat",
   pet_breed: "",
   pet_size: "small",
-  pet_gender: "male",
+  pet_gender: "female",
   pet_age: "",
   aggressiveness: "low",
   user_name: "",
@@ -29,6 +31,17 @@ function BookService() {
   const [data, setData] = useState(serviceBookingData);
   const [servicePlanId, setServicePlanId] = useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
+
+
+  function warningNotification() {
+    addNotification({
+      title: "Warning",
+      subtitle: "Sorry",
+      message: "We are not providing Training in your city.",
+      theme: "red",
+      closeButton: "X",
+    });
+  }
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -69,14 +82,30 @@ function BookService() {
           window.location.href = `/payment/${response.data.id}`;
         }, 3000);
       } catch (error) {
-        console.error("Error posting booking data:", error);
+        if (
+          axios.isAxiosError(error) &&
+          error.response &&
+          error.response.status === 409
+        ) {
+          warningNotification();
+          window.location.href = "/Home"
+        } else if (
+          axios.isAxiosError(error) &&
+          error.response &&
+          error.response.status === 401
+        ) {
+          window.location.href = "/Login";
+        } else {
+          console.error("Error posting booking data:", error);
+        }
       }
     }
 
     postData();
   }
   return (
-    <div>
+    <div>  
+       <Notifications />
       <div
         style={{
           position: "relative",
@@ -110,7 +139,7 @@ function BookService() {
       </div>
 
       {bookingSuccess && (
-        <div>
+        <div >
           <img
             src="http://localhost:3000/assets/bookingSuccess.gif"
             alt="Booking Confirmation"

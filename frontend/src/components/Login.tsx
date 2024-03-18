@@ -13,15 +13,15 @@ function Login() {
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
-      setToken(storedToken);
-    } else {
-      const cookieToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("jwt="));
-      if (cookieToken) {
-        setToken(cookieToken.split("=")[1]);
-      }
-    }
+      setToken(storedToken);}
+    // } else {
+    //   const cookieToken = document.cookie
+    //     .split("; ")
+    //     .find((row) => row.startsWith("jwt="));
+    //   if (cookieToken) {
+    //     setToken(cookieToken.split("=")[1]);
+    //   }
+    // }
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,14 +32,11 @@ function Login() {
     e.preventDefault();
     let role = formData.role;
     try {
-      const response = await axios.post(
-        "http://localhost:8000/login",
-        formData
-      );
+      const response = await axios.post(`${process.env.HOST}/login`, formData);
       const data = response.data;
       setToken(data.token);
       localStorage.setItem("token", data.token);
-      document.cookie = `jwt=${data.token}; path=/`;
+      // document.cookie = `token=${data.token}; path=/`;
       switch (role) {
         case "admin":
           window.location.href = "/Home";
@@ -54,7 +51,7 @@ function Login() {
           window.location.href = "/Home";
       }
     } catch (error) {
-      alert("No Account Found! Please Sign Up!") 
+      alert("No Account Found! Please Sign Up!");
       window.location.href = "/SignUp";
     }
   };
@@ -153,7 +150,7 @@ function Login() {
             </div>
           </div>
         </div>
-      </section> 
+      </section>
     </form>
   );
 }

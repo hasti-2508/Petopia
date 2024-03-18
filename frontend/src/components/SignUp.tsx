@@ -3,13 +3,18 @@ import React, { ChangeEvent } from "react";
 
 function SignUp() {
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    e.preventDefault(); 
     const role = e.target.value;
+    {console.log(role)}
     switch (role) {
       case "vet":
-        window.location.href = "/Vet/register"
+        window.location.href = "/Vet/register";
+        break;
       case "trainer":
-      case "user":
-        window.location.href = "/Home";
+        window.location.href = "/Trainer/register";
+        break;
+      case "user":  
+        window.location.href = "/User/Register";
         break;
       default:
         break;
