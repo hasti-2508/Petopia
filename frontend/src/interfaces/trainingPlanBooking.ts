@@ -3,11 +3,11 @@ export interface TrainingPlanBooking {
     pet_breed: string;
     pet_size: string;
     pet_gender: string;
-    pet_age: number;
+    pet_age: string;
     aggressiveness: string;
     user_name: string;
     email: string;
-    phoneNo: number;
+    phoneNo: string;
     address: string;
     city: string;
     state: string;

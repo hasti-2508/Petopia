@@ -12,11 +12,11 @@ const trainingBookingData: TrainingPlanBooking = {
   pet_breed: "",
   pet_size: "",
   pet_gender: "",
-  pet_age: 1,
+  pet_age: "",
   aggressiveness: "",
   user_name: "",
   email: "",
-  phoneNo: 0,
+  phoneNo: "",
   address: "",
   city: "",
   state: "",
@@ -28,6 +28,7 @@ const trainingBookingData: TrainingPlanBooking = {
 function BookTraining() {
   const [data, setData] = useState(trainingBookingData);
   const [trainingPlanId, setTrainingPlanId] = useState<string | null>(null);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -38,6 +39,8 @@ function BookTraining() {
   }, []);
 
   function updateFields(fields: Partial<TrainingPlanBooking>) {
+
+
     setData((prev) => {
       return { ...prev, ...fields };
     });
@@ -63,8 +66,10 @@ function BookTraining() {
           `${process.env.HOST}/trainingBooking/${trainingPlanId}`,
           requestData
         );
-        console.log(response);
-        console.log("Booking data posted successfully:", response.data);
+        setBookingSuccess(true);
+        setTimeout(() => {
+          window.location.href = `/payment/${response.data.id}`;
+        }, 3000);
       } catch (error) {
         console.error("Error posting booking data:", error);
       }
@@ -105,22 +110,16 @@ function BookTraining() {
           </div>
         </form>
       </div>
-      {/* <form>
-  <div className="mb-3">
-    <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
-    <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" />
-    <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
-  </div>
-  <div className="mb-3">
-    <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
-    <input type="password" className="form-control" id="exampleInputPassword1" />
-  </div>
-  <div className="mb-3 form-check">
-    <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-    <label className="form-check-label" htmlFor="exampleCheck1">Check me out</label>
-  </div>
-  <button type="submit" className="btn btn-primary">Submit</button>
-</form> */}
+
+      {bookingSuccess && (
+        <div>
+          <img
+            src="http://localhost:3000/assets/bookingSuccess.gif"
+            alt="Booking Confirmation"
+          />
+          <p>Redirecting to payment integration page...</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -17,9 +17,7 @@ function useMultipleStep(steps: ReactElement[]) {
     });
   }
 
-  function goTo(index: number) {
-    setCurrentStepIndex(index);
-  }
+
 
   return {
     currentStepIndex,
@@ -27,7 +25,6 @@ function useMultipleStep(steps: ReactElement[]) {
     steps,
     isFirstStep: currentStepIndex === 0,
     isLastStep: currentStepIndex === steps.length - 1,
-    goTo,
     next,
     back,
   };

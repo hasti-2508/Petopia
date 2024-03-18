@@ -1,22 +1,14 @@
 "use client";
-import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Link from "next/link";
+import React, { useEffect, useState } from "react";
 
-export default function Login() {
-  const [isFlipped, setIsFlipped] = useState(false);
-
-  const toggleForm = () => {
-    setIsFlipped(!isFlipped);
-  };
-
+function Login() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     role: "",
   });
   const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
@@ -39,227 +31,131 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let role = formData.role;
-    console.log(role);
-    setIsLoading(true); 
     try {
       const response = await axios.post(
-        `${process.env.HOST}/login`,
+        "http://localhost:8000/login",
         formData
       );
       const data = response.data;
       setToken(data.token);
       localStorage.setItem("token", data.token);
       document.cookie = `jwt=${data.token}; path=/`;
-      console.log("User logged in successfully!");
-      setTimeout(() => {
-        setIsLoading(false);
-        console.log(role);
-        switch (role) {
-          case "admin":
-            window.location.href = "/Home";
-            break;
-          case "user":
-            window.location.href = "/Home";
-            break;
-          case "trainer":
-            window.location.href = "/Home";
-            break;
-          case "vet":
-            window.location.href = "/Home";
-        }
-      }, 1000);
+      switch (role) {
+        case "admin":
+          window.location.href = "/Home";
+          break;
+        case "user":
+          window.location.href = "/Home";
+          break;
+        case "trainer":
+          window.location.href = "/Home";
+          break;
+        case "vet":
+          window.location.href = "/Home";
+      }
     } catch (error) {
-      setIsLoading(false);
-      console.error("Login error:", error);
+      alert("No Account Found! Please Sign Up!") 
+      window.location.href = "/SignUp";
     }
   };
 
   return (
-    <div className="container">
-      <div className={`flip-container ${isFlipped ? "flipped" : ""}`}>
-        <div className="flipper">
-          <div className="front ">
-            <div>
-              {isLoading && (
-                <div className="loader">
-                  <img
-                    src="http://localhost:3000/assets/LoginSuccess.gif"
-                    alt="Loading..."
-                  />
-                </div>
-              )}
-              <form onSubmit={handleSubmit}>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-                <input
-                  type="text"
-                  name="role"
-                  placeholder="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                />
-                <button type="submit">Log in</button>
+    <form onSubmit={handleSubmit}>
+      <section className="form-02-main">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12">
+              <div className="_lk_de">
+                <div className="form-03-main">
+                  <div className="logo">
+                    <img
+                      className="rounded-full"
+                      src="http://localhost:3000/assets/user.png"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="form-control _ge_de_ol"
+                      placeholder="Enter Email"
+                      required
+                      aria-required="true"
+                    />
+                  </div>
 
-                <div>
-                  <p>Dont have an account?</p>
-                  <Link href="/SignUp">Sign up</Link>
+                  <div className="form-group">
+                    <input
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      className="form-control _ge_de_ol"
+                      placeholder="Enter Password"
+                      required
+                      aria-required="true"
+                    />
+                  </div>
+
+                  <div className="form-check">
+                    <input
+                      className="form-check-input mr-3 mt-2"
+                      type="radio"
+                      name="role"
+                      onChange={handleChange}
+                      value="user"
+                      required
+                    />
+                    <label className="form-check-label mt-2">User</label>
+                  </div>
+
+                  <div className="form-check">
+                    <input
+                      className="form-check-input mr-3 mt-2"
+                      type="radio"
+                      name="role"
+                      onChange={handleChange}
+                      value="vet"
+                    />
+                    <label className="form-check-label mt-2">Vet</label>
+                  </div>
+
+                  <div className="form-check">
+                    <input
+                      className="form-check-input mr-3 mt-2"
+                      type="radio"
+                      name="role"
+                      onChange={handleChange}
+                      value="trainer"
+                    />
+                    <label className="form-check-label mt-2">Trainer</label>
+                  </div>
+
+                  <div className="flex justify-end mb-0">
+                    <a href="/ForgetPassword">Forgot Password</a>
+                  </div>
+
+                  <div className="form-group">
+                    <button type="submit" className="_btn_04">
+                      <a href="/Adopt">Login</a>
+                    </button>
+                    <p className="mt-4 flex justify-center">
+                      Don't have an account?
+                    </p>
+                    <a href="/SignUp" className="flex justify-center">
+                      Signup
+                    </a>
+                  </div>
                 </div>
-                <div>
-                  <p>Forget password</p>
-                </div>
-              </form>
-              <button type="button" onClick={toggleForm}>
-                Switch to {isFlipped ? "Sign Up" : "Login"}
-              </button>
+              </div>
             </div>
           </div>
-          <div className="back">
-            <form className="form" action="">
-              <h2>{isFlipped ? "Sign Up" : "Login"}</h2>
-              {!isFlipped && <input type="text" placeholder="Email" />}
-              <input type="password" placeholder="Password" />
-              {!isFlipped && <input type="text" placeholder="Role" />}
-              <button type="button" onClick={toggleForm}>
-                Switch to {isFlipped ? "Login" : "Sign Up"}
-              </button>
-            </form>
-            <button type="button" onClick={toggleForm}>
-              Switch to {isFlipped ? "Sign Up" : "Login"}
-            </button>
-          </div>
         </div>
-      </div>
-    </div>
+      </section> 
+    </form>
   );
 }
 
-// "use client";
-// import React, { useState, useEffect } from "react";
-// import axios from "axios";
-// import Link from "next/link";
-
-// function Login() {
-//   const [formData, setFormData] = useState({
-//     email: "",
-//     password: "",
-//     role: "",
-//   });
-//   const [token, setToken] = useState<string | null>(null);
-//   const [isLoading, setIsLoading] = useState(false);
-
-//   useEffect(() => {
-//     const storedToken = localStorage.getItem("token");
-//     if (storedToken) {
-//       setToken(storedToken);
-//     } else {
-//       const cookieToken = document.cookie
-//         .split("; ")
-//         .find((row) => row.startsWith("jwt="));
-//       if (cookieToken) {
-//         setToken(cookieToken.split("=")[1]);
-//       }
-//     }
-//   }, []);
-
-//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-//     e.preventDefault();
-//     let role = formData.role;
-//     console.log(role);
-//     setIsLoading(true); // Set loading state to true
-//     try {
-//       const response = await axios.post(
-//         "http://localhost:8000/login",
-//         formData
-//       );
-//       const data = response.data;
-//       setToken(data.token);
-//       localStorage.setItem("token", data.token);
-//       document.cookie = `jwt=${data.token}; path=/`;
-//       console.log("User logged in successfully!");
-//       // Show animation for 2 seconds and then redirect
-//       setTimeout(() => {
-//         setIsLoading(false);
-//         console.log(role);
-//         switch (role) {
-//           case "admin":
-//             window.location.href = "/Home";
-//             break;
-//           case "user":
-//             window.location.href = "/Home";
-//             break;
-//           case "trainer":
-//             window.location.href = "/Home";
-//             break;
-//           case "vet":
-//             window.location.href = "/Home";
-//         }
-//       }, 1000);
-//     } catch (error) {
-//       setIsLoading(false); // Set loading state to false
-//       console.error("Login error:", error);
-//     }
-//   };
-
-//   return (
-//     <div>
-//       {isLoading && (
-//         <div className="loader">
-//           <img
-//             src="http://localhost:3000/assets/LoginSuccess.gif"
-//             alt="Loading..."
-//           />
-//         </div>
-//       )}
-//       <form onSubmit={handleSubmit}>
-//         <input
-//           type="email"
-//           name="email"
-//           placeholder="email"
-//           value={formData.email}
-//           onChange={handleChange}
-//         />
-//         <input
-//           type="password"
-//           name="password"
-//           placeholder="password"
-//           value={formData.password}
-//           onChange={handleChange}
-//         />
-//         <input
-//           type="text"
-//           name="role"
-//           placeholder="role"
-//           value={formData.role}
-//           onChange={handleChange}
-//         />
-//         <button type="submit">Log in</button>
-
-//         <div>
-//           <p>Dont have an account?</p>
-//           <Link href="/SignUp">Sign up</Link>
-//         </div>
-//         <div>
-//           <p>Forget password</p>
-//         </div>
-//       </form>
-//     </div>
-//   );
-// }
-
-// export default Login;
+export default Login;

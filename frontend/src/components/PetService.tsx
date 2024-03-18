@@ -6,6 +6,10 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
 function PetService() {
+  const handleBookService = (servicePlanId: string) => {
+    const bookingPageUrl = `/PetService/BookService?servicePlanId=${servicePlanId}`
+    window.location.href = bookingPageUrl;
+  };
   const [servicePlans, setServicePlans] = useState<ServicePlan[]>([]);
 
   useEffect(() => {
@@ -30,7 +34,7 @@ function PetService() {
             Services for Dogs
           </h1>
           <img
-            className="p-8 flwx justify-center"
+            className="p-8 flex justify-center"
             style={{ width: "350px", height: "260px" }}
             src={"http://localhost:3000/assets/petserviceGrooming.avif"} // Default image
             alt="product image"
@@ -93,12 +97,12 @@ function PetService() {
                       <span className="text-3xl font-bold text-gray-900 dark:text-red">
                         ${plan.price}
                       </span>
-                      <Link
-                        href="PetService/BookService"
+                      <a
+                        onClick={() => handleBookService(plan._id)}
                         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                       >
                         Book Service
-                      </Link>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -174,12 +178,12 @@ function PetService() {
                       <span className="text-3xl font-bold text-gray-900 dark:text-red">
                         ${plan.price}
                       </span>
-                      <Link
-                        href="/BookService"
+                      <a
+                        onClick={() => handleBookService(plan._id)}
                         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                       >
                         Book Service
-                      </Link>
+                      </a>
                     </div>
                   </div>
                 </div>

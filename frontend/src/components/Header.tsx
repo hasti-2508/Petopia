@@ -9,8 +9,15 @@ function Header() {
     setMenuOpen(!menuOpen);
   };
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogout = () => {
+    // Implement logout logic here
+    setIsLoggedIn(true);
+  };
+
   return (
-    <nav style={{ background: "#727aaa" }} className="border-gray-200 h-16">
+    <nav className="border-gray-200 bg-dark-blue h-16">
       <div className="max-w-screen-xl mx-auto h-full flex justify-between align-items-center px-4">
         <div className="flex items-center">
           <img
@@ -23,11 +30,11 @@ function Header() {
           </span>
         </div>
 
-        <ul className="flex flex-col font-medium md:p-0 m-0 md:space-x-8 rtl:space-x-reverse md:flex-row">
+        <ul className="flex flex-col font-medium md:p-0 m-0 md:space-x-8 rtl:space-x-reverse md:flex-row ">
           <li>
             <a
               href="#"
-              className="block py-2 px-3 text-dark text-decoration-none rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
+              className="block py-2 px-3 text-dark text-decoration-none text-white rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
               aria-current="page"
             >
               Home
@@ -36,7 +43,7 @@ function Header() {
           <li>
             <a
               href="#"
-              className="block py-2 px-3 text-dark text-decoration-none rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
+              className="block py-2 px-3 text-dark text-decoration-none text-white rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
             >
               About
             </a>
@@ -44,7 +51,7 @@ function Header() {
           <li>
             <a
               href="#"
-              className="block py-2 px-3 text-dark text-decoration-none rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
+              className="block py-2 px-3 text-dark text-decoration-none text-white rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
             >
               Services
             </a>
@@ -52,17 +59,17 @@ function Header() {
           <li>
             <a
               href="#"
-              className="block py-2 px-3 text-dark text-decoration-none rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
+              className="block py-2 px-3 text-dark text-decoration-none text-white rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
             >
-              Pricing
+              Triainings
             </a>
           </li>
           <li>
             <a
               href="#"
-              className="block py-2 px-3 text-dark text-decoration-none rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
+              className="block py-2 px-3 text-dark text-decoration-none text-white rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
             >
-              Contact
+              Contact Us
             </a>
           </li>
         </ul>
@@ -70,7 +77,7 @@ function Header() {
         <div className="flex items-center space-x-6">
           <ul className="flex flex-col font-medium md:p-0 m-0 md:space-x-8 rtl:space-x-reverse md:flex-row">
             <li>
-              <button className="text-white flex items-center bg-dark-blue py-2 px-3 rounded-pill fs-6">
+              <button className="text-white flex items-center bg-red-600 py-2 px-3 rounded-pill fs-6">
                 <img
                   src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1710150406/call-192-svgrepo-com_djygmx.svg"
                   className="w-6"
@@ -80,10 +87,31 @@ function Header() {
               </button>
             </li>
           </ul>
+          {isLoggedIn ? (
+            <li>
+              {/* <button onClick={handleLogout}>Logout</button> */}
+              {/* Display user profile icon */}
+              <img
+                style={{ width: "70px" }}
+                className="text-gray-700 rounded-full flex items-center py-2 px-3 rounded-pill fs-6"
+                src="http://localhost:3000/assets/user.png"
+                alt="User Profile"
+              />
+            </li>
+          ) : (
+            <li>
+              <a
+                className="text-gray-700   flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
+                href="/Login" onClick={handleLogout}
+              >
+                Login
+              </a>
+            </li>
+          )}
 
-          <Link href="/Login" className="bg-saddle-brown hover:text-white text-dark-blue font-bold py-2 px-4 rounded ">
+          {/* <Link href="/Login" className="bg-saddle-brown hover:text-white text-dark-blue font-bold py-2 px-4 rounded ">
             Log In
-          </Link>
+          </Link> */}
         </div>
 
         <div

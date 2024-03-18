@@ -4,7 +4,7 @@ import React from "react";
 type UserData = {
   user_name: string;
   email: string;
-  phoneNo: number;
+  phoneNo: string;
   address: string;
   city: string;
   state: string;
@@ -33,6 +33,7 @@ function UserDataForm({
         type="text"
         value={user_name}
         onChange={(e) => updateFields({ user_name: e.target.value })}
+        required
       />
 
       <label htmlFor="email">Your Email Address</label>
@@ -40,16 +41,18 @@ function UserDataForm({
         type="email"
         value={email}
         onChange={(e) => updateFields({ email: e.target.value })}
+        required
       />
 
       <label htmlFor="phoneNo">Your Phone Number</label>
       <input
-        type="number"
+        type="tel"
+        value={phoneNo}
         pattern="[0-9]{10}"
+        maxLength={10}
         title="Number should be of 10 digits"
-        onChange={(e) =>
-          updateFields({ phoneNo: parseInt(e.target.value, 10) })
-        }
+        onChange={(e) => updateFields({ phoneNo: e.target.value })}
+        required
       />
 
       <label htmlFor="address">Address</label>
@@ -57,23 +60,26 @@ function UserDataForm({
         type="text"
         value={address}
         onChange={(e) => updateFields({ address: e.target.value })}
+        required
       />
 
-      <label htmlFor="address">City</label>
+      <label htmlFor="city">City</label>
       <input
         type="text"
         value={city}
         onChange={(e) => updateFields({ city: e.target.value })}
+        required
       />
 
-      <label htmlFor="address">State</label>
+      <label htmlFor="state">State</label>
       <input
         type="text"
         value={state}
         onChange={(e) => updateFields({ state: e.target.value })}
+        required
       />
 
-      <label htmlFor="address">Additional notes for Groomer</label>
+      <label htmlFor="notes">Additional notes for Groomer</label>
       <input
         type="text"
         value={notes}
