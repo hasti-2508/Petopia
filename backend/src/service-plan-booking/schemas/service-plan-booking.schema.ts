@@ -22,7 +22,7 @@ export class ServicePlanBooking extends Document{
   pet_gender: string;
 
   @Prop({ required: true })
-  pet_age: number;
+  pet_age: string;
 
   @Prop({ required: true })
   aggressiveness: string;
@@ -34,7 +34,7 @@ export class ServicePlanBooking extends Document{
   email: string;
 
   @Prop({ required: true })
-  phoneNo: number;
+  phoneNo: string;
 
   @Prop({ required: true })
   address: string;
@@ -49,7 +49,10 @@ export class ServicePlanBooking extends Document{
   notes: string;
 
   @Prop({ required: true })
-  Booking_Date: Date;
+  booking_date: string;
+
+  @Prop({ required: true })
+  booking_time: string;
 
   @Prop()
   totalPrice: number;

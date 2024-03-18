@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { User } from 'src/user/schemas/user.schema';
 import { TrainingPlanBooking } from './schemas/training-plan-booking.schema';
 import { TrainingPlan } from 'src/training-plan/schemas/training-plan.schema';
 import { Trainer } from 'src/trainer/schemas/trainer.schema';
@@ -33,42 +32,53 @@ export class TrainingPlanBookingService {
     TrainingPlanId: string,
     createTrainingPlanBookingDto: CreateTrainingPlanBookingDto,
   ): Promise<TrainingPlanBooking> {
-    const requiredFields = ['user_name', 'email', 'phoneNo', 'address', 'city', 'state'];
-    for (const field of requiredFields) {
+    // try {
+      const requiredFields = [
+        'user_name',
+        'email',
+        'phoneNo',
+        'address',
+        'city',
+        'state',
+      ];
+      for (const field of requiredFields) {
         if (!createTrainingPlanBookingDto[field]) {
-            throw new BadRequestException(`${field} is required`);
+          throw new BadRequestException(`${field} is required`);
         }
-    }
+      }
+      const Trainer = await this.TrainerModel.findOne({
+        city: createTrainingPlanBookingDto.city,
+      });
+      if (!Trainer) {
+        throw new HttpException(
+          'We are not providing service in this city!',
+          409,
+        );
+      }
 
-    const Trainer = await this.TrainerModel.findOne({
-      city: createTrainingPlanBookingDto.city,
-    });
-    if (!Trainer) {
-      throw new ConflictException('We are not providing service in this city!');
-    }
-
-    const isValid = mongoose.Types.ObjectId.isValid(TrainingPlanId);
-    if (!isValid) {
-      throw new HttpException('Invalid ID', 400);
-    }
-
-    const plan = await this.TrainingPlanModel.findById(TrainingPlanId).exec();
-    if (!plan) {
-      throw new NotFoundException('This service does not exist!');
-    }
-
-    const totalPrice = plan.price;
-    const booking = {
-      ...createTrainingPlanBookingDto,
-      userId,
-      TrainingPlanId,
-      totalPrice: totalPrice,
-    };
-
-    const createdBooking = await this.TrainingPlanBookingModel.create(booking);
-    return createdBooking.save();
-}
-
+      const isValid = mongoose.Types.ObjectId.isValid(TrainingPlanId);
+      if (!isValid) {
+        throw new HttpException('Invalid ID', 400);
+      }
+      const plan = await this.TrainingPlanModel.findById(TrainingPlanId).exec();
+      if (!plan) {
+        throw new NotFoundException('This service does not exist!');
+      }
+      const totalPrice = plan.price;
+      const booking = {
+        ...createTrainingPlanBookingDto,
+        userId,
+        TrainingPlanId,
+        totalPrice: totalPrice,
+      };
+      const createdBooking =
+        await this.TrainingPlanBookingModel.create(booking);
+      return createdBooking.save();
+    // } catch (error) {
+    //   console.log('error', error);
+    //   throw new HttpException('Forbidden', 400);
+    // }
+  }
   async assignTrainer(bookingId: string, assignTrainerDto: AssignTrainerDto) {
     const Trainer_Id = assignTrainerDto.TrainerId;
     const isValidBookingId = mongoose.Types.ObjectId.isValid(bookingId);
@@ -137,32 +147,32 @@ export class TrainingPlanBookingService {
     if (!isValid) {
       throw new HttpException('Invalid ID', 400);
     }
-    const booking =
-      await this.TrainingPlanBookingModel.findById(bookingId);
+    const booking = await this.TrainingPlanBookingModel.findById(bookingId);
 
     if (!booking) {
       throw new NotFoundException('Booking not found');
     }
 
-    const existingRating = booking.ratings.find(
-      (r) => r.userId === userId,
-    );
+    const existingRating = booking.ratings.find((r) => r.userId === userId);
     if (existingRating) {
-      throw new HttpException('You have already rated this Training booking.', 400);
+      throw new HttpException(
+        'You have already rated this Training booking.',
+        400,
+      );
     }
 
     const trainingPlanID = booking.TrainingPlanId;
     booking.ratings.push({
       rating,
       userId,
-      trainingPlanID
+      trainingPlanID,
     });
     const averageRating =
-    booking.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
+      booking.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
       booking.ratings.length;
-      booking.averageRating = averageRating;
+    booking.averageRating = averageRating;
 
-      const isValidPlanId = mongoose.Types.ObjectId.isValid(trainingPlanID);
+    const isValidPlanId = mongoose.Types.ObjectId.isValid(trainingPlanID);
     if (!isValidPlanId) {
       throw new HttpException('Invalid ID', 400);
     }

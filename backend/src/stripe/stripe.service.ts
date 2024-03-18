@@ -6,8 +6,6 @@ import Stripe from 'stripe';
 import { TrainingPlanBooking } from 'src/training-plan-booking/schemas/training-plan-booking.schema';
 import { ServicePlanBooking } from 'src/service-plan-booking/schemas/service-plan-booking.schema';
 import { User } from 'src/user/schemas/user.schema';
-import { Trainer } from 'src/trainer/schemas/trainer.schema';
-import { Vet } from 'src/vet/schemas/vet.schema';
 import * as nodemailer from 'nodemailer';
 
 @Injectable()

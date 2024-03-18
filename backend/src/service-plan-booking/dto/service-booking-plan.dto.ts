@@ -14,9 +14,9 @@ export class CreateServicePlanBookingDto {
   @IsNotEmpty()
   pet_gender: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  pet_age: number;
+  pet_age: string;
 
   @IsString()
   @IsNotEmpty()
@@ -30,9 +30,9 @@ export class CreateServicePlanBookingDto {
   @IsNotEmpty()
   email: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  phoneNo: number;
+  phoneNo: string;
 
   @IsString()
   @IsNotEmpty()

@@ -18,7 +18,11 @@ export class VetService {
     return this.VetModel.find({ isActive: true }).exec();
   }
   async register(createVetDto: CreateVetDto): Promise<Vet> {
-    const newVet = await this.VetModel.create(createVetDto);
+    const timestamp = Date.now();
+  const randomNumber = Math.floor(Math.random() * 9000) + 1000;
+  const vetId = parseInt(`${timestamp}${randomNumber}`);
+    const newVet = await this.VetModel.create({vetId,...createVetDto});
+    console.log(newVet)
     return newVet;
   }
   async findByEmail(email: string): Promise<Vet> {

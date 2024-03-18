@@ -39,13 +39,11 @@ export class VetController {
   @Post('/register')
   async register(@Body() createVetDto: CreateVetDto): Promise<Vet> {
     const {
-      vetId,
       name,
       email,
       password,
       phoneNo,
       address,
-      area,
       city,
       state,
       YearsOfExperience,
@@ -86,7 +84,7 @@ export class VetController {
       throw new BadRequestException('Phone number must be exactly 10 digits');
     }
 
-    if (!address && !area && !city && !state) {
+    if (!address  && !city && !state) {
       throw new BadRequestException('please provide complete address details');
     }
     if (!YearsOfExperience) {
@@ -97,13 +95,11 @@ export class VetController {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const vet = {
-      vetId,
       name,
       email,
       password: hashedPassword,
       phoneNo,
       address,
-      area,
       city,
       state,
       YearsOfExperience,

@@ -25,7 +25,7 @@ export class TrainingPlanBooking extends Document{
   pet_gender: string;
 
   @Prop({ required: true })
-  pet_age: number;
+  pet_age: string;
 
   @Prop({ required: true })
   aggressiveness: string;
@@ -37,7 +37,7 @@ export class TrainingPlanBooking extends Document{
   email: string;
 
   @Prop({ required: true })
-  phoneNo: number;
+  phoneNo: string;
 
   @Prop({ required: true })
   address: string;

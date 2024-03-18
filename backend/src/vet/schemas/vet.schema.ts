@@ -4,7 +4,7 @@ import { ServicePlanBooking } from 'src/service-plan-booking/schemas/service-pla
 
 @Schema()
 export class Vet extends Document {
-  @Prop({ required: true })
+  @Prop()
   vetId: number;
 
   @Prop({ required: true })
@@ -17,13 +17,10 @@ export class Vet extends Document {
   password: string;
 
   @Prop({ required: true })
-  phoneNo: number;
+  phoneNo: string;
 
   @Prop({ required: true })
   address: string;
-
-  @Prop({ required: true })
-  area: string;
 
   @Prop({ required: true })
   city: string;
