@@ -1,47 +1,31 @@
 "use client";
-import { Vet } from "@/interfaces/vet";
+
+import { User } from "@/interfaces/user";
 import axios from "axios";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 
-const VetData: Vet = {
+const UserData: User = {
   name: "",
   email: "",
   password: "",
   phoneNo: "",
   address: "",
   city: "",
-  state: "",
-  YearsOfExperience: 0,
-  services: [],
+  state: ""
 };
 
-const servicesList = [
-  "Veterinary Care",
-  "Pet Grooming[Bathing, Spa, Hair, Nail, Ear]",
-  "Pet Sitting",
-];
 
-function VetRegister() {
-  const [data, setData] = useState(VetData);
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
+function UserRegister() {
+  const [data, setData] = useState(UserData);
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (selectedServices.length === 0) {
-      setError("Please select at least one Training");
-      return;
-    }
-    const reqData = {
-      ...data,
-      services: selectedServices,
-    };
     try {
       const response = await axios.post(
-        `${process.env.HOST}/vet/register`,
-        reqData
+        `${process.env.HOST}/user/register`,
+        data
       );
       window.location.href = "/Login";
     } catch (error) {
@@ -61,14 +45,6 @@ function VetRegister() {
     }
   };
 
-  const handleServiceChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setSelectedServices((prevSelectedServices) =>
-      prevSelectedServices.includes(value)
-        ? prevSelectedServices.filter((service) => service !== value)
-        : [...prevSelectedServices, value]
-    );
-  };
   const validatePassword = (password: string): string => {
     if (password.length < 6) {
       return "Password must be at least 6 characters long";
@@ -104,7 +80,7 @@ function VetRegister() {
 
   return (
     <div>
-      <h2>Vet Registration</h2>
+      <h2>User Registration</h2>
       <form onSubmit={handleSubmit}>
         <label htmlFor="name">Name:</label>
         <input
@@ -183,30 +159,6 @@ function VetRegister() {
           onChange={handleDataChange}
           value={data.state}
         />
-        <label htmlFor="YearsOfExperience">Years of Experience:</label>
-        <input
-          type="number"
-          id="YearsOfExperience"
-          name="YearsOfExperience"
-          onChange={handleDataChange}
-          value={data.YearsOfExperience}
-          required
-        />
-        <label htmlFor="services">Trainings:</label>
-        {servicesList.map((trainings) => (
-          <div key={trainings}>
-            <label>
-              <input
-                type="checkbox"
-                value={trainings}
-                checked={selectedServices.includes(trainings)}
-                onChange={handleServiceChange}
-              />
-              {trainings}
-            </label>
-          </div>
-        ))}
-        {error && <div style={{ color: "red" }}>{error}</div>}
 
         <button
           type="submit"
@@ -220,4 +172,4 @@ function VetRegister() {
   );
 }
 
-export default VetRegister;
+export default UserRegister;

@@ -14,7 +14,7 @@ function SignUp() {
         window.location.href = "/Trainer/register";
         break;
       case "user":  
-        window.location.href = "/User/Register";
+        window.location.href = "/User/register";
         break;
       default:
         break;

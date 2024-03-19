@@ -1,4 +1,4 @@
-export interface Vet {
+export interface Trainer {
     name: string;
     email: string;
     password: string;
@@ -7,6 +7,7 @@ export interface Vet {
     city: string;
     state: string;
     YearsOfExperience: number;
+    NumberOfPetTrained: number
     services: string[];
   }
   
