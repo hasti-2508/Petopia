@@ -5,12 +5,9 @@ import {
   IsNumber,
   IsArray,
   IsOptional,
-  IsBoolean,
 } from 'class-validator';
 
 export class CreateTrainerDto {
-@IsNumber()
-trainerId: number;
 
   @IsString()
   @IsNotEmpty()
@@ -24,17 +21,14 @@ trainerId: number;
   @IsNotEmpty()
   password: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  phoneNo: number;
+  phoneNo: string;
 
   @IsString()
   @IsNotEmpty()
   address: string;
 
-  @IsString()
-  @IsNotEmpty()
-  area: string;
 
   @IsString()
   @IsNotEmpty()
@@ -54,7 +48,7 @@ trainerId: number;
 
   @IsArray()
   @IsOptional()
-  services: string[];
+  trainings: string[];
 
   @IsOptional()
   @IsString()

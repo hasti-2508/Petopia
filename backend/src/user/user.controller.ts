@@ -10,7 +10,6 @@ import {
   Put,
   Req,
   Res,
-  UnauthorizedException,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -38,7 +37,7 @@ export class UserController {
 
   @Post('/register')
   async register(@Body() createUserDto: CreateUserDto): Promise<User> {
-    const { name, email, password, phoneNo, address, area, city, state } =
+    const { name, email, password, phoneNo, address, city, state } =
       createUserDto;
     if (password.length < 6) {
       throw new BadRequestException(
@@ -81,14 +80,13 @@ export class UserController {
       password: hashedPassword,
       phoneNo,
       address,
-      area,
       city,
       state,
       role: 'user',
       isActive: true,
     };
 
-    if (!address && !area && !city && !state) {
+    if (!address && !city && !state) {
       throw new BadRequestException('please provide complete address details');
     }
 
