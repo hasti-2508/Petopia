@@ -15,9 +15,12 @@ export class PetService {
     private UserModel: mongoose.Model<User>,
   ) {}
 
-  async findPet(filterDto: PetFilterDto, sortDto: PetSortDto,qu: Query): Promise<Pet[]> {
-    let query = this.petModel.find({ isActive: true });
-
+  async findPet(
+    filterDto: PetFilterDto,
+    sortDto: PetSortDto,
+    qu: Query,
+  ): Promise<Pet[]> {
+    let query = this.petModel.find({ isActive: true, isAdopted: false });
     const resPerPage = 15;
     const currentPage = Number(qu.page) || 1;
     const skip = resPerPage * (currentPage - 1);
@@ -51,12 +54,12 @@ export class PetService {
     return query.limit(resPerPage).skip(skip).exec();
   }
 
-  async createPet(petDto: PetDto, userId: string): Promise<User> {
-    const pet = this.petModel.create({ ...petDto, owner: userId });
+  async createPet(petDto: PetDto, userId: string): Promise<Pet> {
+    const pet = await this.petModel.create({ ...petDto, owner: userId });
     const user = await this.UserModel.findById(userId);
-    user.pets.push((await pet).id);
-    user.save();
-    return user;
+    user.pets.push( pet.id);
+    await user.save();
+    return pet; 
   }
 
   async findPetById(id: string) {
@@ -64,13 +67,10 @@ export class PetService {
     if (!isValid) {
       throw new HttpException('Invalid ID', 400);
     }
-
     const pet = await this.petModel.findOne({ _id: id, isActive: 'true' });
-
     if (!pet) {
       throw new NotFoundException('Pet not found');
     }
-
     return pet;
   }
 
@@ -82,7 +82,9 @@ export class PetService {
   }
 
   async uploadPetImageUrl(id: string, imageUrl: string): Promise<Pet> {
-    const pet = await this.petModel.findById(id).exec();
+    console.log('i am in service');
+    const pet = await this.petModel.findById(id);
+
     if (!pet) {
       throw new Error('Pet not found');
     }
@@ -91,7 +93,7 @@ export class PetService {
     }
 
     pet.imageUrl = imageUrl;
-    return pet.save();
+    return await pet.save();
   }
 
   async deletePet(id: string) {

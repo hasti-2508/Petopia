@@ -1,5 +1,5 @@
 import {
-    BadRequestException,
+  BadRequestException,
   Body,
   ConflictException,
   Controller,
@@ -27,30 +27,34 @@ export class TrainingPlanBookingController {
     private jwtService: JwtService,
   ) {}
 
-@Get('userId')
-async getTraining(
-  @Param('usedId') userId : string
-):Promise<TrainingPlanBooking[]>{
-  return this.TrainingPlanBookingService.findByUserId(userId)
-}
+  @Get('/:userId')
+  async getTraining(
+    @Param('userId') userId: string,
+  ): Promise<TrainingPlanBooking[]> {
+    const booking = this.TrainingPlanBookingService.findByUserId(userId);
+    if (!booking) {
+      throw new NotFoundException('No Booking Found for this user!');
+    }
+    return booking;
+  }
 
   @Post('/:TrainingPlanId')
   async create(
-      @Req() req,
-      @Param('TrainingPlanId') TrainingPlanId : string,
-      @Body() createTrainingPlanBookingDto:CreateTrainingPlanBookingDto
-  ):Promise<TrainingPlanBooking>{
-      const token = req.body.jwt;
-      if(!token){
-          throw new HttpException("User Should be logged in",401)
-      }
-      const decodedToken = this.jwtService.decode(token) as {userId: string};
-      const userId = decodedToken.userId;
+    @Req() req,
+    @Param('TrainingPlanId') TrainingPlanId: string,
+    @Body() createTrainingPlanBookingDto: CreateTrainingPlanBookingDto,
+  ): Promise<TrainingPlanBooking> {
+    const token = req.body.jwt;
+    if (!token) {
+      throw new HttpException('User Should be logged in', 401);
+    }
+    const decodedToken = this.jwtService.decode(token) as { userId: string };
+    const userId = decodedToken.userId;
     return this.TrainingPlanBookingService.bookService(
-          userId,
-          TrainingPlanId,
-          createTrainingPlanBookingDto
-      );
+      userId,
+      TrainingPlanId,
+      createTrainingPlanBookingDto,
+    );
   }
 
   @Post('/assign/:bookingId')

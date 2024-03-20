@@ -3,7 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
+  HttpException,
   Param,
   Post,
   Put,
@@ -46,9 +46,10 @@ export class PetController {
 
   @Post('/')
   async createPet(@Body() petDto: PetDto, @Req() req) {
-    const token = req.cookies.jwt;
+    // const token = req.cookies.jwt;
+    const token  = req.body.jwt;
     if (!token) {
-      throw new NotFoundException('User Should be logged in');
+      throw new HttpException('User Should be logged in',401);
     }
     const decodedToken = this.jwtService.decode(token) as { userId: string };
     const userId = decodedToken.userId;
@@ -77,10 +78,7 @@ export class PetController {
   ) {
     try {
       if (!file || !file.path) {
-        return res.json({
-          success: false,
-          message: 'No file uploaded or file path is missing.',
-        });
+        throw new HttpException("No file uploaded or file path is missing.",400)
       }
 
       const cloudinaryResponse =
@@ -88,10 +86,7 @@ export class PetController {
       const pet = await this.petService.findPetById(petId);
 
       if (!pet) {
-        return res.json({
-          success: false,
-          message: 'Pet not found',
-        });
+       throw new HttpException("Pet Not Found", 400)
       }
 
       await this.petService.uploadPetImageUrl(petId, cloudinaryResponse.url);

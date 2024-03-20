@@ -29,11 +29,8 @@ export class ServicePlanBookingService {
     private VetModel: mongoose.Model<Vet>,
   ) {}
 
-  async findByUserId(
-    userId: string
-  ):Promise<ServicePlanBooking[]>{
-    return await this.servicePlanBookingModel.find({userId: userId})
-
+  async findByUserId(userId: string): Promise<ServicePlanBooking[]> {
+    return await this.servicePlanBookingModel.find({ userId: userId });
   }
 
   async bookService(

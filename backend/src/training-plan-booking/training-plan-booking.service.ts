@@ -27,8 +27,8 @@ export class TrainingPlanBookingService {
     private TrainerModel: mongoose.Model<Trainer>,
   ) {}
 
-  async findByUserId(userId: string):Promise<TrainingPlanBooking[]>{
-    return await this.TrainingPlanBookingModel.find({userId: userId})
+  async findByUserId(userId: string): Promise<TrainingPlanBooking[]> {
+    return await this.TrainingPlanBookingModel.find({ userId: userId });
   }
 
   async bookService(
@@ -37,47 +37,46 @@ export class TrainingPlanBookingService {
     createTrainingPlanBookingDto: CreateTrainingPlanBookingDto,
   ): Promise<TrainingPlanBooking> {
     // try {
-      const requiredFields = [
-        'user_name',
-        'email',
-        'phoneNo',
-        'address',
-        'city',
-        'state',
-      ];
-      for (const field of requiredFields) {
-        if (!createTrainingPlanBookingDto[field]) {
-          throw new BadRequestException(`${field} is required`);
-        }
+    const requiredFields = [
+      'user_name',
+      'email',
+      'phoneNo',
+      'address',
+      'city',
+      'state',
+    ];
+    for (const field of requiredFields) {
+      if (!createTrainingPlanBookingDto[field]) {
+        throw new BadRequestException(`${field} is required`);
       }
-      const Trainer = await this.TrainerModel.findOne({
-        city: createTrainingPlanBookingDto.city,
-      });
-      if (!Trainer) {
-        throw new HttpException(
-          'We are not providing service in this city!',
-          409,
-        );
-      }
+    }
+    const Trainer = await this.TrainerModel.findOne({
+      city: createTrainingPlanBookingDto.city,
+    });
+    if (!Trainer) {
+      throw new HttpException(
+        'We are not providing service in this city!',
+        409,
+      );
+    }
 
-      const isValid = mongoose.Types.ObjectId.isValid(TrainingPlanId);
-      if (!isValid) {
-        throw new HttpException('Invalid ID', 400);
-      }
-      const plan = await this.TrainingPlanModel.findById(TrainingPlanId).exec();
-      if (!plan) {
-        throw new NotFoundException('This service does not exist!');
-      }
-      const totalPrice = plan.price;
-      const booking = {
-        ...createTrainingPlanBookingDto,
-        userId,
-        TrainingPlanId,
-        totalPrice: totalPrice,
-      };
-      const createdBooking =
-        await this.TrainingPlanBookingModel.create(booking);
-      return createdBooking.save();
+    const isValid = mongoose.Types.ObjectId.isValid(TrainingPlanId);
+    if (!isValid) {
+      throw new HttpException('Invalid ID', 400);
+    }
+    const plan = await this.TrainingPlanModel.findById(TrainingPlanId).exec();
+    if (!plan) {
+      throw new NotFoundException('This service does not exist!');
+    }
+    const totalPrice = plan.price;
+    const booking = {
+      ...createTrainingPlanBookingDto,
+      userId,
+      TrainingPlanId,
+      totalPrice: totalPrice,
+    };
+    const createdBooking = await this.TrainingPlanBookingModel.create(booking);
+    return createdBooking.save();
     // } catch (error) {
     //   console.log('error', error);
     //   throw new HttpException('Forbidden', 400);

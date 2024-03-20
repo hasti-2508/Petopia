@@ -9,13 +9,13 @@ import { User } from 'src/user/schemas/user.schema';
 export class Pet extends Document {
   _id: mongoose.Types.ObjectId;
   
-  @Prop({ required: true })
+  @Prop()
   pet_name: string;
 
-  @Prop({ required: true })
+  @Prop()
   species: string;
 
-  @Prop({ required: true })
+  @Prop()
   breed: string;
 
   @Prop()
