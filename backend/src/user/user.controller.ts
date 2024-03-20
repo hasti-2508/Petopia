@@ -26,13 +26,15 @@ import { CreateUserDto } from './dto/user.dto';
 import { User } from './schemas/user.schema';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
+import { PetService } from 'src/pet/pet.service';
 
 @Controller('user')
 export class UserController {
   constructor(
     private userService: UserService,
     private cloudinaryService: CloudinaryService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private petService: PetService,
   ) {}
 
   @Post('/register')
@@ -105,7 +107,20 @@ export class UserController {
 
   @Get('/:id')
   async getUserByID(@Param('id') userId: string) {
-    return this.userService.findUserById(userId);
+
+    try {
+      const user = await this.userService.findUserById(userId);
+      const getPetsPromises = user.pets.map((id:any) => this.petService.findPetById(id));
+      const pets = await Promise.all(getPetsPromises);
+
+      // Return user and pets
+      return { user, pets };
+    } catch (error) {
+      // Handle errors
+      console.error(error);
+      throw new Error('Failed to fetch user data');
+    }
+
   }
 
   @Post(':id/uploadImage')
@@ -130,24 +145,27 @@ export class UserController {
   ) {
     try {
       if (!file || !file.path) {
-        throw new NotFoundException("No file uploaded or file path is missing")
+        throw new NotFoundException('No file uploaded or file path is missing');
       }
 
       const cloudinaryResponse =
         await this.cloudinaryService.uploadOnCloudinary(file.path);
-      const pet = await this.userService.findUserById(userId);
+      const user = await this.userService.findUserById(userId);
 
-      if (!pet) {
-        throw new NotFoundException("Pet Not Found!")
+      if (!user) {
+        throw new NotFoundException('User Not Found!');
       }
 
-      await this.userService.uploadUserPictureUrl(
+    await this.userService.uploadUserPictureUrl(
         userId,
         cloudinaryResponse.url,
       );
 
-      return cloudinaryResponse;
-
+      return res.json({
+        success: true,
+        data: file.path,
+        cloudinaryResponse: cloudinaryResponse,
+      })
     } catch (error) {
       return res.json({
         success: false,
@@ -177,16 +195,14 @@ export class UserController {
   }
 
   @Post('/:petId/adopt')
-  async isAdopted(@Param('petId') petId: string,
-  @Req() req) {
+  async isAdopted(@Param('petId') petId: string, @Req() req) {
     const token = req.cookies.jwt;
 
-        if(!token){
-            throw new NotFoundException("User Should be logged in")
-        }
-        const decodedToken = this.jwtService.decode(token);
-        const userId = decodedToken.userId;
-    return await this.userService.isAdopted(petId,userId)
+    if (!token) {
+      throw new NotFoundException('User Should be logged in');
+    }
+    const decodedToken = this.jwtService.decode(token);
+    const userId = decodedToken.userId;
+    return await this.userService.isAdopted(petId, userId);
   }
-
 }

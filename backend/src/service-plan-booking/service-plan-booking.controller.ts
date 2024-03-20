@@ -1,4 +1,4 @@
-import { Body, Controller, HttpException, NotFoundException, Param, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, NotFoundException, Param, Post, Req, Res } from '@nestjs/common';
 import { ServicePlanBookingService } from './service-plan-booking.service';
 import { JwtService } from '@nestjs/jwt';
 import { ServicePlanBooking } from './schemas/service-plan-booking.schema';
@@ -10,7 +10,18 @@ export class ServicePlanBookingController {
         private readonly servicePlanBookingService: ServicePlanBookingService,
         private jwtService: JwtService
     ){}
-
+    
+    @Get('/:userId')
+    async getService(
+      @Param('userId') userId: string
+    ):Promise<ServicePlanBooking[]>{
+      const booking =  await this.servicePlanBookingService.findByUserId(userId);
+      if(!booking){
+        throw new NotFoundException("No Booking Found for this user!")
+      }
+      return booking;
+      
+        }
 
     @Post('/:servicePlanId')
     async create(
@@ -26,18 +37,21 @@ export class ServicePlanBookingController {
         }
         const decodedToken = this.jwtService.decode(token) as {userId: string};
         const userId = decodedToken.userId;
-        return this.servicePlanBookingService.bookService(
+        const booking = this.servicePlanBookingService.bookService(
             userId,
             servicePlanId,
             createServicePlanBookingDto
         );
+        return res.json({
+          booking,
+        })
       }
       catch(error){
-        if (error instanceof NotFoundException) {
+        if (error instanceof HttpException) {
             res.status(401).json({ error: error.message });
           } else {
-            console.error('Error:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
+            console.error('Error:', error.message);
+            // res.status(500).json({ error: 'Internal Server Error' });
           }
       }
     }

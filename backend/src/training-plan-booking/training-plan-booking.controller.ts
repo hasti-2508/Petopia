@@ -3,6 +3,7 @@ import {
   Body,
   ConflictException,
   Controller,
+  Get,
   HttpException,
   NotFoundException,
   Param,
@@ -25,6 +26,13 @@ export class TrainingPlanBookingController {
     private readonly TrainingPlanBookingService: TrainingPlanBookingService,
     private jwtService: JwtService,
   ) {}
+
+@Get('userId')
+async getTraining(
+  @Param('usedId') userId : string
+):Promise<TrainingPlanBooking[]>{
+  return this.TrainingPlanBookingService.findByUserId(userId)
+}
 
   @Post('/:TrainingPlanId')
   async create(

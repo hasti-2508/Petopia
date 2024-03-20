@@ -27,6 +27,10 @@ export class TrainingPlanBookingService {
     private TrainerModel: mongoose.Model<Trainer>,
   ) {}
 
+  async findByUserId(userId: string):Promise<TrainingPlanBooking[]>{
+    return await this.TrainingPlanBookingModel.find({userId: userId})
+  }
+
   async bookService(
     userId: string,
     TrainingPlanId: string,

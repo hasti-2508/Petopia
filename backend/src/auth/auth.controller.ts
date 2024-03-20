@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -22,15 +23,13 @@ import { AuthGuard } from './guards/auth.guard';
 import { LoginDto, ResetPasswordDto } from './dto/auth.dto';
 import { UserService } from 'src/user/user.service';
 
-
 @Controller()
 export class AuthController {
   constructor(
     private authService: AuthService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
   ) {}
 
-  
   @Post('/login')
   async login(
     @Body() loginDto: LoginDto,
@@ -38,19 +37,17 @@ export class AuthController {
   ): Promise<object> {
     const { email, password, role } = loginDto;
 
-    if(!role){
-      throw new BadRequestException("Please define your Role")
+    if (!role) {
+      throw new BadRequestException('Please define your Role');
     }
     let user;
-     if(role === 'user' || role === 'admin'){
-      user =   await this.authService.findByEmailInUser(email);
-     }
-     else if(role === 'trainer'){
+    if (role === 'user' || role === 'admin') {
+      user = await this.authService.findByEmailInUser(email);
+    } else if (role === 'trainer') {
       user = await this.authService.findByEmailInTrainer(email);
-     }
-     else if(role === 'vet'){
+    } else if (role === 'vet') {
       user = await this.authService.findByEmailInVet(email);
-     }
+    }
 
     if (!user) {
       throw new BadRequestException('No such user found');
@@ -69,29 +66,28 @@ export class AuthController {
     return { token: jwt };
   }
 
-  @UseGuards(AuthGuard)
-  @Get('/currentUser')
+  // @UseGuards(AuthGuard)
+  @Post('/currentUser')
   async currentUser(@Req() request: Request) {
     try {
-      const cookie = request.cookies['jwt'];
-      const data = await this.jwtService.verifyAsync(cookie);
-
+      // const cookie = request.cookie.jwt;
+      const { jwt } = request.body;
+      const data = await this.jwtService.verifyAsync(jwt);
       if (!data) {
         throw new UnauthorizedException('No Data found');
       }
-
       let user;
-
-      if (data.role === 'user') {
+      if (data.role === 'user' || data.role === 'admin') {
         user = await this.authService.findByEmailInUser(data.email);
       } else if (data.role === 'trainer') {
         user = await this.authService.findByEmailInTrainer(data.email);
+      } else if (data.role === 'vet') {
+        user = await this.authService.findByEmailInVet(data.email);
       } else {
         throw new UnauthorizedException('Invalid role');
       }
-
       if (!user) {
-        throw new UnauthorizedException('No user found');
+        throw new NotFoundException('No user found');
       }
 
       return user;
@@ -107,40 +103,34 @@ export class AuthController {
   }
 
   @Post('forgetPassword')
-  async sendPasswordResetEmail(@Body() resetPasswordDto: ResetPasswordDto)   {
-
+  async sendPasswordResetEmail(@Body() resetPasswordDto: ResetPasswordDto) {
     const { email, role } = resetPasswordDto;
     let user;
-     if(role === 'user' || role === 'admin'){
-      user =   await this.authService.findByEmailInUser(email);
+    if (role === 'user' || role === 'admin') {
+      user = await this.authService.findByEmailInUser(email);
 
       if (!user) {
         throw new BadRequestException('No such user found');
       }
-  
+
       await this.authService.sendPasswordResetEmail(user);
-     }
-     else if(role === 'trainer'){
+    } else if (role === 'trainer') {
       user = await this.authService.findByEmailInTrainer(email);
 
       if (!user) {
         throw new BadRequestException('No such user found');
       }
-  
+
       await this.authService.sendPasswordResetEmail(user);
-     }
-     else if(role === 'vet'){
+    } else if (role === 'vet') {
       user = await this.authService.findByEmailInVet(email);
 
       if (!user) {
         throw new BadRequestException('No such user found');
       }
       await this.authService.sendPasswordResetEmail(user);
-     }
-
-    
+    }
   }
-
 }
 
 // @Post('/SendOtp')

@@ -29,6 +29,13 @@ export class ServicePlanBookingService {
     private VetModel: mongoose.Model<Vet>,
   ) {}
 
+  async findByUserId(
+    userId: string
+  ):Promise<ServicePlanBooking[]>{
+    return await this.servicePlanBookingModel.find({userId: userId})
+
+  }
+
   async bookService(
     userId: string,
     servicePlanId: string,
@@ -58,7 +65,6 @@ export class ServicePlanBookingService {
       servicePlanId,
       totalPrice: totalPrice,
     };
-
     const createdBooking = await this.servicePlanBookingModel.create(booking);
     return createdBooking.save();
   }

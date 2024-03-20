@@ -46,6 +46,14 @@ export class CreateServicePlanBookingDto {
   @IsNotEmpty()
   state: string;
 
+  @IsString()
+  @IsNotEmpty()
+  booking_date: string
+  
+  @IsString()
+  @IsNotEmpty()
+  booking_time: string
+
   notes: string;
 
   totalPrice: number;
