@@ -27,7 +27,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
 
   return (
     <div className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom">
-      <Link href="/PetData">
+      <Link href="/Adopt/PetData">
         <img
           style={{ height: "250px" }}
           className="w-full img-responsive"

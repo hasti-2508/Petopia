@@ -36,7 +36,7 @@ function Login() {
       const data = response.data;
       setToken(data.token);
       localStorage.setItem("token", data.token);
-      // document.cookie = `token=${data.token}; path=/`;
+      document.cookie = `jwt=${data.token}; path=/`;
       switch (role) {
         case "admin":
           window.location.href = "/Home";

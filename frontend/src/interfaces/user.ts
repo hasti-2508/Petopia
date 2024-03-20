@@ -1,3 +1,5 @@
+import { Pet } from "./pet";
+
 export interface User {
     name: string;
     email: string;
@@ -6,6 +8,8 @@ export interface User {
     address: string;
     city: string;
     state: string;
+    imageUrl: string;
+    pets: Pet[];
   }
   
   export interface UserCardProps {

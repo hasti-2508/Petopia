@@ -1,5 +1,5 @@
 "use client";
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import classNames from "classnames";
@@ -8,14 +8,42 @@ import axios from "axios";
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [token, setToken] = useState<string | null>();
+  const [userRole, setUserRole] = useState<string | null>();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
+  // const getCookie = (name: string) => {
+  //   const cookies = document.cookie.split("; ");
+  //   for (let i = 0; i < cookies.length; i++) {
+  //     const cookie = cookies[i];
+  //     const [cookieName, cookieValue] = cookie.split("=");
+  //     if (cookieName === name) {
+  //       return cookieValue;
+  //     }
+  //   }
+  //   return null;
+  // };
   useEffect(() => {
-    const token= localStorage.getItem("token");
+    const token = localStorage.getItem("token");
+    // const token = getCookie("jwt");
     setToken(token);
+    if (token) {
+      getRole(token);
+    }
   }, []);
+
+  const getRole = async (token: string) => {
+    try {
+      const response = await axios.post(`${process.env.HOST}/currentUser`, {
+        jwt: token,
+      });
+      const role = response.data.role;
+      setUserRole(role);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleLogout = () => {
     try {
@@ -26,6 +54,21 @@ function Header() {
       console.error(error);
     }
   };
+
+  const redirectToProfile = useCallback(() => {
+    if (userRole === "admin") {
+      window.location.href = "Admin/Profile";
+    } else if (userRole === "user") {
+      window.location.href = "User/Profile";
+    } else if (userRole === "vet") {
+      window.location.href = "Vet/Profile";
+    } else if (userRole === "trainer") {
+      window.location.href = "Trainer/Profile";
+    } else {
+      console.log("Unknown role or no role assigned");
+    }
+  }, [userRole]);
+
   return (
     <nav className="border-gray-200 bg-dark-blue h-16">
       <div className="max-w-screen-xl mx-auto h-full flex justify-between align-items-center px-4">
@@ -124,6 +167,7 @@ function Header() {
                     {({ active }) => (
                       <a
                         href="#"
+                        onClick={redirectToProfile}
                         className={classNames(
                           active ? "bg-gray-100" : "",
                           "block px-4 py-2 text-sm text-gray-700"

@@ -112,6 +112,7 @@ function PetDataForm({
           type="number"
           min={0.1}
           step={0.1}
+          maxLength={2}
           required
           placeholder="6 month = 0.6"
           value={pet_age}

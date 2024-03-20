@@ -32,7 +32,6 @@ function BookService() {
   const [servicePlanId, setServicePlanId] = useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
-
   function warningNotification() {
     addNotification({
       title: "Warning",
@@ -80,7 +79,7 @@ function BookService() {
         setBookingSuccess(true);
         setTimeout(() => {
           window.location.href = `/payment/${response.data.id}`;
-        }, 3000);
+        }, 5000);
       } catch (error) {
         if (
           axios.isAxiosError(error) &&
@@ -88,7 +87,7 @@ function BookService() {
           error.response.status === 409
         ) {
           warningNotification();
-          window.location.href = "/Home"
+          window.location.href = "/Home";
         } else if (
           axios.isAxiosError(error) &&
           error.response &&
@@ -104,8 +103,8 @@ function BookService() {
     postData();
   }
   return (
-    <div>  
-       <Notifications />
+    <div>
+      <Notifications />
       <div
         style={{
           position: "relative",
@@ -139,7 +138,7 @@ function BookService() {
       </div>
 
       {bookingSuccess && (
-        <div >
+        <div>
           <img
             src="http://localhost:3000/assets/bookingSuccess.gif"
             alt="Booking Confirmation"
