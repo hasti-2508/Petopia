@@ -15,6 +15,7 @@ import {
   CreateTrainingPlanBookingDto,
 } from './dto/training-plan-booking.dto';
 import * as nodemailer from 'nodemailer';
+import { Query } from 'express-serve-static-core';
 
 @Injectable()
 export class TrainingPlanBookingService {
@@ -26,6 +27,17 @@ export class TrainingPlanBookingService {
     @InjectModel(Trainer.name)
     private TrainerModel: mongoose.Model<Trainer>,
   ) {}
+
+  async findTrainings(qu: Query): Promise<TrainingPlanBooking[]> {
+    const resPerPage = 10;
+    const currentPage = Number(qu.page) || 1;
+    const skip = resPerPage * (currentPage - 1);
+
+    return this.TrainingPlanBookingModel.find()
+      .limit(resPerPage)
+      .skip(skip)
+      .exec();
+  }
 
   async findByUserId(userId: string): Promise<TrainingPlanBooking[]> {
     return await this.TrainingPlanBookingModel.find({ userId: userId });
@@ -83,7 +95,7 @@ export class TrainingPlanBookingService {
     // }
   }
   async assignTrainer(bookingId: string, assignTrainerDto: AssignTrainerDto) {
-    const Trainer_Id = assignTrainerDto.TrainerId;
+    const trainerId = new mongoose.Types.ObjectId(assignTrainerDto.trainerId);
     const isValidBookingId = mongoose.Types.ObjectId.isValid(bookingId);
     if (!isValidBookingId) {
       throw new HttpException('Invalid Booking ID', 400);
@@ -93,23 +105,19 @@ export class TrainingPlanBookingService {
     if (!booking) {
       throw new NotFoundException('Booking not found');
     }
-    if (booking.isCancelled === true) {
-      throw new ConflictException('This booking is cancelled');
-    }
-    if (booking.isConfirmed === false) {
-      throw new ConflictException('This booking is not confirmed yet');
-    }
-
-    const Trainer = await this.TrainerModel.findOne({
-      trainerId: Trainer_Id,
-      isAvailable: true,
-    });
+    const Trainer = await this.TrainerModel.findOne({_id: trainerId, isAvailable: true});
     if (!Trainer) {
       throw new NotFoundException('Trainer not found');
     }
+    if (booking.isCancelled === true) {
+      throw new HttpException('This booking is cancelled', 409);
+    }
+    if (booking.isConfirmed === false) {
+      throw new HttpException('This booking is not confirmed yet', 409);
+    }
 
-    booking.trainerId = Trainer_Id;
-    Trainer.bookings.push((await booking).id);
+    booking.trainerId = Trainer._id;
+    Trainer.bookings.push(booking._id);
     const trainerToMail = await this.TrainerModel.findById(booking.trainerId);
     if (trainerToMail) {
       await this.sendBookingEmail(trainerToMail);

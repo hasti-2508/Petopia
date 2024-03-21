@@ -35,6 +35,11 @@ export class VetController {
     private jwtService: JwtService,
   ) {}
 
+  @Get('')
+  async getVet(): Promise<Vet[]> {
+    return await this.vetService.findVet();
+  }
+
   @Post('/register')
   async register(@Body() createVetDto: CreateVetDto): Promise<Vet> {
     const {

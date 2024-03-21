@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
 
 @Schema({
   timestamps: true,
@@ -69,8 +69,9 @@ export class TrainingPlanBooking extends Document{
   @Prop({ default: false })
   isCancelled: boolean;
 
-  @Prop() 
-  trainerId: number;
+ 
+  @Prop({ type: Types.ObjectId, ref: 'Trainer' })
+  trainerId: Types.ObjectId;
 
   @Prop()
   ratings: any[];

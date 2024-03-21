@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, SchemaTypes } from 'mongoose';
+import { Document, SchemaTypes, Types } from 'mongoose';
 import { ServicePlanBooking } from 'src/service-plan-booking/schemas/service-plan-booking.schema';
 
 @Schema()
 export class Vet extends Document {
-  @Prop()
-  vetId: number;
+  @Prop({ type: Types.ObjectId, ref: 'Vet' }) 
+  vetId: Types.ObjectId;
 
   @Prop({ required: true })
   name: string;

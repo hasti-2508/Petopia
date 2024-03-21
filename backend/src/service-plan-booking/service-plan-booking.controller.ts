@@ -6,6 +6,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Query,
   Req,
   Res,
 } from '@nestjs/common';
@@ -17,6 +18,7 @@ import {
   CreateServicePlanBookingDto,
   RateDto,
 } from './dto/service-booking-plan.dto';
+import { Query as ExpressQuery } from 'express-serve-static-core';
 
 @Controller('serviceBooking')
 export class ServicePlanBookingController {
@@ -24,6 +26,13 @@ export class ServicePlanBookingController {
     private readonly servicePlanBookingService: ServicePlanBookingService,
     private jwtService: JwtService,
   ) {}
+
+  @Get('')
+  async getBooking(
+    @Query() query: ExpressQuery,
+  ): Promise<ServicePlanBooking[]> {
+    return await this.servicePlanBookingService.findBookings(query);
+  }
 
   @Get('/:userId')
   async getService(

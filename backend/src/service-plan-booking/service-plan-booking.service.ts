@@ -7,6 +7,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { ServicePlanBooking } from './schemas/service-plan-booking.schema';
 import mongoose from 'mongoose';
+import { Query } from 'express-serve-static-core';
 import { User } from 'src/user/schemas/user.schema';
 import { ServicePlan } from 'src/service-plan/schemas/service-plan.schema';
 import { Vet } from 'src/vet/schemas/vet.schema';
@@ -28,6 +29,18 @@ export class ServicePlanBookingService {
     @InjectModel(Vet.name)
     private VetModel: mongoose.Model<Vet>,
   ) {}
+
+  async findBookings(qu: Query): Promise<ServicePlanBooking[]> {
+    const resPerPage = 10;
+    const currentPage = Number(qu.page) || 1;
+    const skip = resPerPage * (currentPage - 1);
+
+    return this.servicePlanBookingModel
+      .find()
+      .limit(resPerPage)
+      .skip(skip)
+      .exec();
+  }
 
   async findByUserId(userId: string): Promise<ServicePlanBooking[]> {
     return await this.servicePlanBookingModel.find({ userId: userId });
@@ -65,9 +78,8 @@ export class ServicePlanBookingService {
     const createdBooking = await this.servicePlanBookingModel.create(booking);
     return createdBooking.save();
   }
-
   async assignVet(bookingId: string, assignVetDto: AssignVetDto) {
-    const vet_Id = assignVetDto.vetId;
+    const vetId = new mongoose.Types.ObjectId(assignVetDto.vetId);
     const isValidBookingId = mongoose.Types.ObjectId.isValid(bookingId);
     if (!isValidBookingId) {
       throw new HttpException('Invalid Booking ID', 400);
@@ -77,23 +89,20 @@ export class ServicePlanBookingService {
     if (!booking) {
       throw new NotFoundException('Booking not found');
     }
-    if (booking.isCancelled === true) {
-      throw new ConflictException('This booking is cancelled');
-    }
-    if (booking.isConfirmed === false) {
-      throw new ConflictException('This booking is not confirmed yet');
-    }
 
-    const vet = await this.VetModel.findOne({
-      vetId: vet_Id,
-      isAvailable: true,
-    });
+    const vet = await this.VetModel.findById({ _id: vetId, isAvailable: true });
     if (!vet) {
       throw new NotFoundException('Vet not found');
     }
+    if (booking.isCancelled === true) {
+      throw new HttpException('This booking is cancelled', 409);
+    }
+    if (booking.isConfirmed === false) {
+      throw new HttpException('This booking is not confirmed yet', 409);
+    }
 
-    booking.vetId = vet_Id;
-    vet.bookings.push((await booking).id);
+    booking.vetId = vet._id; 
+    vet.bookings.push(booking._id); 
     const vetToMail = await this.VetModel.findById(booking.vetId);
     if (vetToMail) {
       await this.sendBookingEmail(vetToMail);

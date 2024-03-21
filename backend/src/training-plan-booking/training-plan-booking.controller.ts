@@ -8,6 +8,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Query,
   Req,
   Res,
 } from '@nestjs/common';
@@ -19,6 +20,7 @@ import {
   RateDto,
 } from './dto/training-plan-booking.dto';
 import { TrainingPlanBooking } from './schemas/training-plan-booking.schema';
+import { Query as ExpressQuery } from 'express-serve-static-core';
 
 @Controller('trainingBooking')
 export class TrainingPlanBookingController {
@@ -26,6 +28,13 @@ export class TrainingPlanBookingController {
     private readonly TrainingPlanBookingService: TrainingPlanBookingService,
     private jwtService: JwtService,
   ) {}
+
+  @Get('')
+  async getTrainings(
+    @Query() query: ExpressQuery,
+  ): Promise<TrainingPlanBooking[]> {
+    return await this.TrainingPlanBookingService.findTrainings(query);
+  }
 
   @Get('/:userId')
   async getTraining(

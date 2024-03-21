@@ -18,10 +18,7 @@ export class TrainerService {
     return this.TrainerModel.find({ isActive: true }).exec();
   }
   async register(createTrainerDto: CreateTrainerDto): Promise<Trainer> {
-    const timestamp = Date.now();
-    const randomNumber = Math.floor(Math.random() * 9000) + 1000;
-    const trainerId = parseInt(`${timestamp}${randomNumber}`);
-    const newTrainer = await this.TrainerModel.create({trainerId, ...createTrainerDto});
+    const newTrainer = await this.TrainerModel.create({...createTrainerDto});
     return newTrainer;
   }
   async findByEmail(email: string): Promise<Trainer> {

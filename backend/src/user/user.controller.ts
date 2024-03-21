@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   NotFoundException,
   Param,
   Post,
@@ -112,13 +113,13 @@ export class UserController {
       const user = await this.userService.findUserById(userId);
       const getPetsPromises = user.pets.map((id:any) => this.petService.findPetById(id));
       const pets = await Promise.all(getPetsPromises);
-
-      // Return user and pets
+      if(!user){
+        throw new HttpException('User Not Found',404);
+      }
       return { user, pets };
     } catch (error) {
-      // Handle errors
       console.error(error);
-      throw new Error('Failed to fetch user data');
+      
     }
 
   }
