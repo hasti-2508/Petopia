@@ -200,7 +200,6 @@ function PetAdd() {
             onChange={handleFileChange}
             required
           />
-          {/* <button onClick={handlePetImage}>Upload</button> */}
         </label>
 
         <label>Do you want to put your pet for adoption?</label>

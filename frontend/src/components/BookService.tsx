@@ -8,6 +8,7 @@ import axios from "axios";
 import { ServicePlanBooking } from "@/interfaces/servicePlanBooking";
 import { Notifications } from "react-push-notification";
 import addNotification from "react-push-notification";
+import {useRouter} from "next/navigation";
 
 const serviceBookingData: ServicePlanBooking = {
   pet_species: "cat",
@@ -31,6 +32,7 @@ function BookService() {
   const [data, setData] = useState(serviceBookingData);
   const [servicePlanId, setServicePlanId] = useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const router = useRouter();
 
   function warningNotification() {
     addNotification({
@@ -77,8 +79,9 @@ function BookService() {
           requestData
         );
         setBookingSuccess(true);
+        console.log(response.data.id)
         setTimeout(() => {
-          window.location.href = `/payment/${response.data.id}`;
+          router.push(`/payment/${response.data.id}`)
         }, 5000);
       } catch (error) {
         if (
@@ -87,13 +90,13 @@ function BookService() {
           error.response.status === 409
         ) {
           warningNotification();
-          window.location.href = "/Home";
+          router.push("/Home")
         } else if (
           axios.isAxiosError(error) &&
           error.response &&
           error.response.status === 401
         ) {
-          window.location.href = "/Login";
+          router.push("/Login")
         } else {
           console.error("Error posting booking data:", error);
         }

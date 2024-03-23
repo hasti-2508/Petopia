@@ -1,8 +1,10 @@
 "use client";
 import axios from "axios";
 import React, { useState } from "react";
+import {useRouter} from "next/navigation";
 
 function ForgetPassword() {
+  const router = useRouter();
   const [Data, setData] = useState({
     email: "",
     role: "",
@@ -23,11 +25,11 @@ function ForgetPassword() {
         console.log(Data);
       }
       alert("Mail sent to you email id!");
-      window.location.href = "/Login";
+      router.push("/Login");
     } catch (error) {
       console.error(error);
       alert("No Account Found! Please Sign Up!");
-      window.location.href = "/SignUp";
+      router.push("/SignUp")
     }
   };
 

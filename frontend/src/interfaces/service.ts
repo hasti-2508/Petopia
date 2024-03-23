@@ -3,6 +3,7 @@
     _id: string;
     userId: string;
     servicePlanId: string;
+    pet_species: string;
     pet_breed: string;
     pet_size: string;
     pet_gender: string;

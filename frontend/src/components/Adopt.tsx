@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import PetCard from "@/components/PetCard";
 import Pagination from "@/components/Pagination";
 import { Pet } from "../interfaces/pet";
+import Link from "next/link";
 
 function Adopt() {
   const [petData, setPetData] = useState<Pet[]>([]);
@@ -237,6 +238,17 @@ function Adopt() {
                   key={pet._id}
                 >
                   <PetCard key={pet._id} pet={pet} />
+                  <Link
+                    href="/PetData"
+                    className="no-underline flex justify-center items-center"
+                  >
+                    <button
+                      type="button"
+                      className="text-white bg-primary py-1.5 px-6 my-2 rounded-xl fs-6"
+                    >
+                      Adopt
+                    </button>
+                  </Link>
                 </div>
               ))}
             </div>

@@ -8,6 +8,7 @@ import DateAndTime from "./DateAndTime";
 import axios from "axios";
 import { Notifications } from "react-push-notification";
 import addNotification from "react-push-notification";
+import {useRouter} from "next/navigation";
 
 const trainingBookingData: TrainingPlanBooking = {
   pet_species: "cat",
@@ -31,6 +32,7 @@ function BookTraining() {
   const [data, setData] = useState(trainingBookingData);
   const [trainingPlanId, setTrainingPlanId] = useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
+  const router = useRouter();
 
   function warningNotification() {
     addNotification({
@@ -69,7 +71,6 @@ function BookTraining() {
       ...data,
       jwt: jwt,
     };
-    // console.log(requestData);
     if (!isLastStep) return next();
     async function postData() {
       try {
@@ -79,7 +80,7 @@ function BookTraining() {
         );
         setBookingSuccess(true);
         setTimeout(() => {
-          window.location.href = `/payment?${response.data._id}`;
+          router.push(`/payment?${response.data._id}`)
         }, 3000);
       } catch (error) {
         if (
@@ -88,13 +89,13 @@ function BookTraining() {
           error.response.status === 409
         ) {
           warningNotification();
-          window.location.href = "/Home";
+          router.push("/Home")
         } else if (
           axios.isAxiosError(error) &&
           error.response &&
           error.response.status === 401
         ) {
-          window.location.href = "/Login";
+          router.push("/Login")
         } else {
           console.error("Error posting booking data:", error);
         }

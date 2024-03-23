@@ -4,11 +4,13 @@ import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import classNames from "classnames";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [token, setToken] = useState<string | null>();
   const [userRole, setUserRole] = useState<string | null>();
+  const router = useRouter();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -49,7 +51,7 @@ function Header() {
     try {
       const response = axios.post(`${process.env.HOST}/logout`);
       localStorage.removeItem("token");
-      window.location.href = "/Home";
+      router.push("/Home")
     } catch (error) {
       console.error(error);
     }
@@ -57,20 +59,20 @@ function Header() {
 
   const redirectToProfile = useCallback(() => {
     if (userRole === "admin") {
-      window.location.href = "Admin/Profile";
+      router.push("/Admin/Profile ");
     } else if (userRole === "user") {
-      window.location.href = "User/Profile";
+      router.push("/User/Profile");
     } else if (userRole === "vet") {
-      window.location.href = "Vet/Profile";
+      router.push("/Vet/Profile")
     } else if (userRole === "trainer") {
-      window.location.href = "Trainer/Profile";
+      router.push("/Trainer/Profile")
     } else {
       console.log("Unknown role or no role assigned");
     }
   }, [userRole]);
 
   return (
-    <nav className="border-gray-200 bg-dark-blue h-16">
+    <nav className="border-gray-200 bg-dark-blue h-16 sticky top-0 z-10">
       <div className="max-w-screen-xl mx-auto h-full flex justify-between align-items-center px-4">
         <div className="flex items-center">
           <img

@@ -13,12 +13,27 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   useEffect(() => {
     async function fetchOwnerName() {
       try {
-        const response = await axios.get<User[]>(
-          `${process.env.HOST}/user/${pet.owner}`
+        const response = await axios.get(
+          `${process.env.HOST}/user/${pet.owner[0]}`
         );
-        setOwner(response.data);
+        const { user } = response.data;
+        setOwner(user);
       } catch (error) {
-        console.error("Error fetching owner name:", error);
+        if (
+          axios.isAxiosError(error) &&
+          error.response &&
+          error.response.status === 401
+        ) {
+          window.location.href = "/Login";
+        } else if (
+          axios.isAxiosError(error) &&
+          error.response &&
+          error.response.status === 404
+        ) {
+          console.error("User Not Found!");
+        } else {
+          console.error(error);
+        }
       }
     }
 
@@ -89,7 +104,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
         </li>
       </ul>
       <div className="border-1 border-gray-200"></div>
-      <Link
+      {/* <Link
         href="/PetData"
         className="no-underline flex justify-center items-center"
       >
@@ -99,7 +114,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
         >
           Adopt
         </button>
-      </Link>
+      </Link> */}
 
       {/* <div className="px-6 pt-4 pb-2">
         <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">

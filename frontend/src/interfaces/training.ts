@@ -3,6 +3,7 @@ export interface Training {
     _id: string;
     userId: string;
     TrainingPlanID: string;
+    pet_species: string;
     pet_breed: string;
     pet_size: string;
     pet_gender: string;
@@ -20,7 +21,7 @@ export interface Training {
     isConfirmed: boolean;
     isCompleted: boolean;
     isCancelled: boolean;
-    vetId: number;
+    trainerId: number;
     averageRating: number;
     ratings: Rating[];
   }

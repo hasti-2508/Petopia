@@ -1,24 +1,26 @@
 "use client";
 
-import { User } from "@/interfaces/user";
+import { UserData } from "@/interfaces/user";
 import axios from "axios";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 
-const UserData: User = {
+const UserData: UserData = {
   name: "",
   email: "",
   password: "",
   phoneNo: "",
   address: "",
   city: "",
-  state: ""
+  state: "",
+  imageUrl: "",
+  pets: [],
 };
-
 
 function UserRegister() {
   const [data, setData] = useState(UserData);
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -27,9 +29,21 @@ function UserRegister() {
         `${process.env.HOST}/user/register`,
         data
       );
-      window.location.href = "/Login";
-    } catch (error) {
-      console.error("Error:", error);
+
+      const useId = response.data._id;
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+        console.log(formData)
+        const res = await axios.post(
+          `${process.env.HOST}/pet/${useId}/uploadImage`,
+          formData
+        );
+        console.log(res);
+      }
+      // window.location.href = "/Login";
+    } catch (error:any) {
+      console.error("Error:", error.response.data.message);
     }
   };
 
@@ -42,6 +56,12 @@ function UserRegister() {
 
     if (name === "password") {
       setPasswordError(validatePassword(value));
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setImageFile(event.target.files[0]);
     }
   };
 
@@ -72,7 +92,6 @@ function UserRegister() {
 
     return "";
   };
-
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -159,6 +178,16 @@ function UserRegister() {
           onChange={handleDataChange}
           value={data.state}
         />
+
+        <label>
+          Pet Image:
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            required
+          />
+        </label>
 
         <button
           type="submit"

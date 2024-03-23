@@ -1,8 +1,10 @@
 "use client";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 function Login() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -13,7 +15,8 @@ function Login() {
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
-      setToken(storedToken);}
+      setToken(storedToken);
+    }
     // } else {
     //   const cookieToken = document.cookie
     //     .split("; ")
@@ -39,20 +42,20 @@ function Login() {
       document.cookie = `jwt=${data.token}; path=/`;
       switch (role) {
         case "admin":
-          window.location.href = "/Home";
+          router.push("/Home");
           break;
         case "user":
-          window.location.href = "/Home";
+          router.push("/Home");
           break;
         case "trainer":
-          window.location.href = "/Home";
+          router.push("/Home");
           break;
         case "vet":
-          window.location.href = "/Home";
+          router.push("/Home");
       }
     } catch (error) {
       alert("No Account Found! Please Sign Up!");
-      window.location.href = "/SignUp";
+      router.push("/SignUp")
     }
   };
 
