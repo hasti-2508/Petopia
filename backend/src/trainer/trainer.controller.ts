@@ -46,7 +46,7 @@ export class TrainerController {
       city,
       state,
       YearsOfExperience,
-      numberOfPetsTrained,
+      NumberOfPetsTrained,
       trainings,
     } = createTrainerDto;
     if (password.length < 6) {
@@ -103,7 +103,7 @@ export class TrainerController {
       city,
       state,
       YearsOfExperience,
-      numberOfPetsTrained,
+      NumberOfPetsTrained,
       role: 'trainer',
       trainings,
     };
@@ -116,8 +116,8 @@ export class TrainerController {
     return newTrainer;
   }
 
-  @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.ADMIN)
   @Get('/')
   async getTrainers() {
     return this.trainerService.findTrainer();
@@ -183,8 +183,8 @@ export class TrainerController {
     return this.trainerService.updateTrainer(trainerId, updateUserDto);
   }
 
-  @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.ADMIN)
   @Delete('/:id')
   async deleteTrainer(@Param('id') trainerId: string) {
     return this.trainerService.deleteTrainer(trainerId);

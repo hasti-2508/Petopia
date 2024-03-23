@@ -12,6 +12,9 @@ export class ServicePlanBooking extends Document{
   @Prop({ required: true })
   servicePlanId: mongoose.Types.ObjectId;
 
+  @Prop()
+  pet_species: string;
+
   @Prop({ required: true })
   pet_breed: string;
 

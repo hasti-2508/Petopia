@@ -20,7 +20,7 @@ export class PetService {
     sortDto: PetSortDto,
     qu: Query,
   ): Promise<Pet[]> {
-    let query = this.petModel.find({ isActive: true, isAdopted: false });
+    let query = this.petModel.find({ isActive: "true", isAdopted: false });
     const resPerPage = 15;
     const currentPage = Number(qu.page) || 1;
     const skip = resPerPage * (currentPage - 1);

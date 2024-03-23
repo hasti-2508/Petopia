@@ -41,6 +41,9 @@ export class ServicePlanBookingService {
       .skip(skip)
       .exec();
   }
+  async findBookingById(bookingId: string): Promise<ServicePlanBooking> {
+    return await this.servicePlanBookingModel.findById(bookingId);
+  }
 
   async findByUserId(userId: string): Promise<ServicePlanBooking[]> {
     return await this.servicePlanBookingModel.find({ userId: userId });
@@ -57,7 +60,6 @@ export class ServicePlanBookingService {
     if (!vet) {
       throw new ConflictException('We are not providing service in this city!');
     }
-
     const isValid = mongoose.Types.ObjectId.isValid(servicePlanId);
     if (!isValid) {
       throw new HttpException('Invalid ID', 400);
@@ -76,7 +78,7 @@ export class ServicePlanBookingService {
       totalPrice: totalPrice,
     };
     const createdBooking = await this.servicePlanBookingModel.create(booking);
-    return createdBooking.save();
+    return createdBooking;
   }
   async assignVet(bookingId: string, assignVetDto: AssignVetDto) {
     const vetId = new mongoose.Types.ObjectId(assignVetDto.vetId);
@@ -101,8 +103,9 @@ export class ServicePlanBookingService {
       throw new HttpException('This booking is not confirmed yet', 409);
     }
 
-    booking.vetId = vet._id; 
-    vet.bookings.push(booking._id); 
+    booking.vetId = vet._id;
+    vet.bookings.push(booking._id);
+    vet.save();
     const vetToMail = await this.VetModel.findById(booking.vetId);
     if (vetToMail) {
       await this.sendBookingEmail(vetToMail);
@@ -189,5 +192,18 @@ export class ServicePlanBookingService {
     plan.average_rating = booking.averageRating;
     plan.save();
     return booking.save();
+  }
+
+  async markBookingAsComplete(id: string): Promise<ServicePlanBooking> {
+    const booking = await this.servicePlanBookingModel.findById(id);
+    if (!booking) {
+      throw new NotFoundException('Booking not found');
+    }
+    if (booking) {
+      booking.isCompleted = true;
+      return booking.save();
+    } else {
+      throw new Error('Booking not found');
+    }
   }
 }

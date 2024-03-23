@@ -16,6 +16,7 @@ import {
 } from './dto/training-plan-booking.dto';
 import * as nodemailer from 'nodemailer';
 import { Query } from 'express-serve-static-core';
+import { transcode } from 'buffer';
 
 @Injectable()
 export class TrainingPlanBookingService {
@@ -33,10 +34,15 @@ export class TrainingPlanBookingService {
     const currentPage = Number(qu.page) || 1;
     const skip = resPerPage * (currentPage - 1);
 
-    return this.TrainingPlanBookingModel.find()
+    return await this.TrainingPlanBookingModel.find()
       .limit(resPerPage)
       .skip(skip)
       .exec();
+  }
+
+  async findBookingById(bookingId: string): Promise<TrainingPlanBooking> {
+    const booking =  await this.TrainingPlanBookingModel.findById(bookingId);
+    return booking;
   }
 
   async findByUserId(userId: string): Promise<TrainingPlanBooking[]> {
@@ -72,7 +78,7 @@ export class TrainingPlanBookingService {
       );
     }
 
-    const isValid = mongoose.Types.ObjectId.isValid(TrainingPlanId);
+    const isValid = await mongoose.Types.ObjectId.isValid(TrainingPlanId);
     if (!isValid) {
       throw new HttpException('Invalid ID', 400);
     }
@@ -95,8 +101,8 @@ export class TrainingPlanBookingService {
     // }
   }
   async assignTrainer(bookingId: string, assignTrainerDto: AssignTrainerDto) {
-    const trainerId = new mongoose.Types.ObjectId(assignTrainerDto.trainerId);
-    const isValidBookingId = mongoose.Types.ObjectId.isValid(bookingId);
+    const trainerId = await new mongoose.Types.ObjectId(assignTrainerDto.trainerId);
+    const isValidBookingId = await mongoose.Types.ObjectId.isValid(bookingId);
     if (!isValidBookingId) {
       throw new HttpException('Invalid Booking ID', 400);
     }
@@ -105,7 +111,10 @@ export class TrainingPlanBookingService {
     if (!booking) {
       throw new NotFoundException('Booking not found');
     }
-    const Trainer = await this.TrainerModel.findOne({_id: trainerId, isAvailable: true});
+    const Trainer = await this.TrainerModel.findOne({
+      _id: trainerId,
+      isAvailable: true,
+    });
     if (!Trainer) {
       throw new NotFoundException('Trainer not found');
     }
@@ -118,6 +127,7 @@ export class TrainingPlanBookingService {
 
     booking.trainerId = Trainer._id;
     Trainer.bookings.push(booking._id);
+    Trainer.save();
     const trainerToMail = await this.TrainerModel.findById(booking.trainerId);
     if (trainerToMail) {
       await this.sendBookingEmail(trainerToMail);
@@ -195,5 +205,19 @@ export class TrainingPlanBookingService {
     plan.average_rating = booking.averageRating;
     plan.save();
     return booking.save();
+  }
+
+  async markTrainingAsComplete(id: string):Promise<TrainingPlanBooking>{
+    const training = await this.TrainingPlanBookingModel.findById(id);
+    if(!training){
+      throw new NotFoundException("Booking Not Found");
+    }
+    if(training){
+      training.isCompleted = true;
+      return training.save();
+    }
+    else{
+      throw new Error('Booking Not Found')
+    }
   }
 }

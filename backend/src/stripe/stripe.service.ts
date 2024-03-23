@@ -48,6 +48,8 @@ export class StripeService {
       amount: total * 100,
       currency: 'inr',
       payment_method_types: ['card'],
+      //  success_url: redirectURL + '?status=success',
+      // cancel_url: redirectURL + '?status=cancel'
     });
 
     if (paymentIntent.status === 'succeeded') {
@@ -61,6 +63,7 @@ export class StripeService {
         await this.sendEmail(user);
       }
     }
+    return paymentIntent;
   }
 
   async checkoutForTrainingBooking(TrainingPlanId: string) {

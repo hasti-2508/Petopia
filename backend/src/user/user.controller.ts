@@ -110,6 +110,7 @@ export class UserController {
   async getUserByID(@Param('id') userId: string) {
 
     try {
+      
       const user = await this.userService.findUserById(userId);
       const getPetsPromises = user.pets.map((id:any) => this.petService.findPetById(id));
       const pets = await Promise.all(getPetsPromises);
@@ -183,8 +184,8 @@ export class UserController {
     return this.userService.updateUser(userid, updateUserDto);
   }
 
-  @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.ADMIN)
   @Delete(':id')
   async deleteUser(@Param('id') userId: string) {
     return this.userService.deleteUser(userId);

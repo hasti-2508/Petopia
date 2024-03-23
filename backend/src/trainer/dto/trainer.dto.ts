@@ -60,5 +60,5 @@ export class CreateTrainerDto {
 
   YearsOfExperience: number;
 
-  numberOfPetsTrained: number;
+  NumberOfPetsTrained: number;
 }

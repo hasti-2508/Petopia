@@ -5,6 +5,7 @@ import {
   HttpException,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -34,6 +35,13 @@ export class ServicePlanBookingController {
     return await this.servicePlanBookingService.findBookings(query);
   }
 
+  @Get('/:bookingId')
+  async findBookingById(
+    @Param('bookingId') bookingId: string
+  ): Promise<ServicePlanBooking> {
+    return await this.servicePlanBookingService.findBookingById(bookingId);
+  }
+
   @Get('/:userId')
   async getService(
     @Param('userId') userId: string,
@@ -59,7 +67,7 @@ export class ServicePlanBookingController {
       }
       const decodedToken = this.jwtService.decode(token) as { userId: string };
       const userId = decodedToken.userId;
-      const booking = this.servicePlanBookingService.bookService(
+      const booking =  await this.servicePlanBookingService.bookService(
         userId,
         servicePlanId,
         createServicePlanBookingDto,
@@ -86,7 +94,7 @@ export class ServicePlanBookingController {
   }
 
   @Post(':BookingId/rate')
-  async rateVet(
+  async rateVet(  
     @Req() req,
     @Param('BookingId') BookingId: string,
     @Body() rateDto: RateDto,
@@ -104,6 +112,10 @@ export class ServicePlanBookingController {
     );
   }
 
+  @Patch(':id/complete')
+  async markBookingAsComplete(@Param('id') id: string) {
+    return this.servicePlanBookingService.markBookingAsComplete(id);
+  }
   // @Post(':BookingId/ratePlan')
   // async ratePlan(
   //   @Req() req,

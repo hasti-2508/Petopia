@@ -119,8 +119,8 @@ export class VetController {
     return newVet;
   }
 
-  @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.ADMIN)
   @Get('/')
   async getTrainers() {
     return this.vetService.findVet();
@@ -186,8 +186,8 @@ export class VetController {
     return this.vetService.updateTrainer(trainerId, updateUserDto);
   }
 
-  @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.ADMIN)
   @Delete('/:id')
   async deleteTrainer(@Param('id') trainerId: string) {
     return this.vetService.deleteTrainer(trainerId);

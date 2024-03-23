@@ -1,16 +1,14 @@
 import {
-  BadRequestException,
   Body,
-  ConflictException,
   Controller,
   Get,
   HttpException,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Query,
   Req,
-  Res,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TrainingPlanBookingService } from './training-plan-booking.service';
@@ -36,11 +34,20 @@ export class TrainingPlanBookingController {
     return await this.TrainingPlanBookingService.findTrainings(query);
   }
 
+  @Get('/:bookingId')
+  async findBookingById(
+    @Param('bookingId') bookingId: string,
+  ):Promise<TrainingPlanBooking>{
+const booking = await this.TrainingPlanBookingService.findBookingById(bookingId)
+return booking;
+
+  }
+
   @Get('/:userId')
   async getTraining(
     @Param('userId') userId: string,
   ): Promise<TrainingPlanBooking[]> {
-    const booking = this.TrainingPlanBookingService.findByUserId(userId);
+    const booking =await this.TrainingPlanBookingService.findByUserId(userId);
     if (!booking) {
       throw new NotFoundException('No Booking Found for this user!');
     }
@@ -57,7 +64,7 @@ export class TrainingPlanBookingController {
     if (!token) {
       throw new HttpException('User Should be logged in', 401);
     }
-    const decodedToken = this.jwtService.decode(token) as { userId: string };
+    const decodedToken = await this.jwtService.decode(token) as { userId: string };
     const userId = decodedToken.userId;
     return this.TrainingPlanBookingService.bookService(
       userId,
@@ -71,7 +78,7 @@ export class TrainingPlanBookingController {
     @Param('bookingId') bookingId: string,
     @Body() assignTrainerDto: AssignTrainerDto,
   ) {
-    return this.TrainingPlanBookingService.assignTrainer(
+    return await this.TrainingPlanBookingService.assignTrainer(
       bookingId,
       assignTrainerDto,
     );
@@ -87,12 +94,17 @@ export class TrainingPlanBookingController {
     if (!token) {
       throw new NotFoundException('User should be logged in!');
     }
-    const decodedToken = this.jwtService.decode(token) as { userId: string };
+    const decodedToken = await this.jwtService.decode(token) as { userId: string };
     const userId = decodedToken.userId;
     return this.TrainingPlanBookingService.addRating(
       userId,
       BookingId,
       rateDto.rating,
     );
+  }
+
+  @Patch('/:id/complete')
+  async markTrainingAsComplete(@Param('id') id: string){
+    return this.TrainingPlanBookingService.markTrainingAsComplete(id);
   }
 }
