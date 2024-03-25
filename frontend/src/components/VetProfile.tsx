@@ -33,7 +33,7 @@ function VetProfile() {
     }
   };
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedToken = localStorage.getItem("jwt_token");
     if (storedToken) {
       getUser(storedToken);
     }
@@ -162,7 +162,7 @@ function VetProfile() {
                     ) : (
                       <button
                         className="bg-blue-600 text-white px-3 py-1 rounded-md mr-2 no-underline"
-                        onClick={() => handleComplete(booking._id)} 
+                        onClick={() => handleComplete(booking._id)}
                       >
                         Complete
                       </button>

@@ -8,7 +8,7 @@ import axios from "axios";
 import { ServicePlanBooking } from "@/interfaces/servicePlanBooking";
 import { Notifications } from "react-push-notification";
 import addNotification from "react-push-notification";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const serviceBookingData: ServicePlanBooking = {
   pet_species: "cat",
@@ -65,7 +65,7 @@ function BookService() {
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
-    const jwt = localStorage.getItem("token");
+    const jwt = localStorage.getItem("jwt_token");
     const requestData = {
       ...data,
       jwt: jwt,
@@ -79,9 +79,9 @@ function BookService() {
           requestData
         );
         setBookingSuccess(true);
-        console.log(response.data.id)
+        console.log(response.data.id);
         setTimeout(() => {
-          router.push(`/payment/${response.data.id}`)
+          router.push(`/payment/${response.data.id}`);
         }, 5000);
       } catch (error) {
         if (
@@ -90,13 +90,13 @@ function BookService() {
           error.response.status === 409
         ) {
           warningNotification();
-          router.push("/Home")
+          router.push("/Home");
         } else if (
           axios.isAxiosError(error) &&
           error.response &&
           error.response.status === 401
         ) {
-          router.push("/Login")
+          router.push("/Login");
         } else {
           console.error("Error posting booking data:", error);
         }
@@ -213,7 +213,7 @@ export default BookService;
 //   function onSubmit(e: FormEvent) {
 //     e.preventDefault();
 
-//     const jwt = localStorage.getItem("token");
+//     const jwt = localStorage.getItem("jwt_token");
 //     const requestData = {
 //       ...data,
 //       jwt: jwt,

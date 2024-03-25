@@ -46,7 +46,7 @@ function PetAdd() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const jwt = localStorage.getItem("token");
+    const jwt = localStorage.getItem("jwt_token");
     const requestData = {
       ...formData,
       jwt: jwt,

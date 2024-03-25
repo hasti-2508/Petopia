@@ -9,7 +9,7 @@ function TrainerProfile() {
   const [trainer, setTrainer] = useState<Trainer>();
   const [bookings, setBookings] = useState<Training[]>([]);
 
-  const [activeTab, setActiveTab] = useState("Profile");
+  const [activeTab, setActiveTab] = useState("profile");
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
@@ -34,7 +34,7 @@ function TrainerProfile() {
     }
   };
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedToken = localStorage.getItem("jwt_token");
     if (storedToken) {
       getUser(storedToken);
     }
@@ -62,14 +62,14 @@ function TrainerProfile() {
       case "profile":
         return (
           <div>
-            <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div className="bg-white shadow-2xl rounded px-8 pt-6 pb-8 mb-4 border-gray-200">
               <div className="mb-4">
-                <label
+                {/* <label
                   className="block text-gray-700 text-sm font-bold mb-2"
                   htmlFor="profileImage"
                 >
                   Profile Image
-                </label>
+                </label> */}
                 <img
                   className="w-40 h-40 rounded-full object-cover"
                   src={
@@ -80,60 +80,71 @@ function TrainerProfile() {
                   alt="Profile Image"
                 />
               </div>
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="username"
-                >
-                  Username
-                </label>
-                <p className="text-gray-700">{trainer?.name}</p>
+              <div className="flex gap-56">
+                <div>
+                  <div className="mb-4">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="username"
+                    >
+                      Username :
+                    </label>
+                    <p className="text-gray-700">{trainer?.name}</p>
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="email"
+                    >
+                      Email
+                    </label>
+                    <p className="text-gray-700">{trainer?.email}</p>
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="role"
+                    >
+                      Phone No:
+                    </label>
+                    <p className="text-gray-700">{trainer?.phoneNo}</p>
+                  </div>
+                </div>
+                <div>
+                  <div className="mb-4">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="role"
+                    >
+                      Years Of Experience
+                    </label>
+                    <p className="text-gray-700">
+                      {trainer?.YearsOfExperience}
+                    </p>
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="role"
+                    >
+                      Number of Pets Trained
+                    </label>
+                    <p className="text-gray-700">
+                      {trainer?.NumberOfPetTrained}
+                    </p>
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2"
+                      htmlFor="role"
+                    >
+                      City
+                    </label>
+                    <p className="text-gray-700">{trainer?.city}</p>
+                  </div>
+                </div>
               </div>
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="email"
-                >
-                  Email
-                </label>
-                <p className="text-gray-700">{trainer?.email}</p>
-              </div>
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="role"
-                >
-                  Phone No:
-                </label>
-                <p className="text-gray-700">{trainer?.phoneNo}</p>
-              </div>
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="role"
-                >
-                  Years Of Experience
-                </label>
-                <p className="text-gray-700">{trainer?.YearsOfExperience}</p>
-              </div>
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="role"
-                >
-                  Number of Pets Trained
-                </label>
-                <p className="text-gray-700">{trainer?.NumberOfPetTrained}</p>
-              </div>
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="role"
-                >
-                  City
-                </label>
-                <p className="text-gray-700">{trainer?.city}</p>
-              </div>
+
               <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
@@ -142,9 +153,15 @@ function TrainerProfile() {
                   Trainings
                 </label>
                 {trainer?.trainings.map((training, index) => (
-                  <p key={index} className="text-gray-700">
-                    {training}
-                  </p>
+                  <div className="flex gap-1">
+                    <img
+                      src="http://localhost:3000/assets/bullet.webp"
+                      className="w-5 h-5"
+                    />
+                    <p key={index} className="text-gray-700">
+                      {training}
+                    </p>
+                  </div>
                 ))}
               </div>
             </div>
@@ -187,6 +204,7 @@ function TrainerProfile() {
       case "bookingHistory":
         return (
           <div>
+            {bookings.length.toString()}
             {bookings.length > 0 ? (
               bookings
                 .filter((booking) => booking.isCompleted)
@@ -225,7 +243,7 @@ function TrainerProfile() {
                 className={`inline-block p-4 border-b-2 rounded-t-lg ${
                   activeTab === "profile"
                     ? "border-blue-600 text-blue-600 dark:border-blue-500 dark:text-blue-500"
-                    : "border-transparent text-gray-600 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    : "border-transparent text-gray-600 hover:text-black hover:border-black "
                 }`}
               >
                 Profile
@@ -236,9 +254,9 @@ function TrainerProfile() {
               <button
                 onClick={() => handleTabClick("ongoingBookings")}
                 className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                  activeTab === "settings"
+                  activeTab === "ongoingBookings"
                     ? "border-blue-600 text-blue-600 dark:border-blue-500 dark:text-blue-500"
-                    : "border-transparent text-gray-600 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                    : "border-transparent text-gray-600 hover:text-black hover:border-black "
                 }`}
               >
                 Ongoing Trainings
@@ -248,9 +266,9 @@ function TrainerProfile() {
               <button
                 onClick={() => handleTabClick("bookingHistory")}
                 className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                  activeTab === "contacts"
-                    ? "border-blue-600 text-blue-600 dark:border-blue-500 dark:text-blue-500"
-                    : "border-transparent text-gray-600 hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                  activeTab === "bookingHistory"
+                    ? "border-blue-600 text-blue-500 "
+                    : "border-transparent text-gray-600 hover:text-black hover:border-black "
                 }`}
               >
                 Training History

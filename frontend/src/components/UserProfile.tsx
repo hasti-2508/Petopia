@@ -44,13 +44,11 @@ function UserProfile() {
     }
   };
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedToken = localStorage.getItem("jwt_token");
     if (storedToken) {
       getUser(storedToken);
     }
   }, []);
-
-  
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -146,8 +144,14 @@ function UserProfile() {
                   <p>Species: {pet?.species}</p>
                   <p>Breed: {pet?.breed}</p>
                   {/* Render other pet details */}
-                  <img src={pet?.imageUrl  ? pet.imageUrl
-                      : "http://localhost:3000/assets/home.jpeg"} alt={pet?.pet_name} />
+                  <img
+                    src={
+                      pet?.imageUrl
+                        ? pet.imageUrl
+                        : "http://localhost:3000/assets/home.jpeg"
+                    }
+                    alt={pet?.pet_name}
+                  />
                 </div>
               ))
             ) : (

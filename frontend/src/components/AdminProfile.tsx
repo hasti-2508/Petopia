@@ -9,7 +9,7 @@ import UserCard from "./UserCard";
 import { Vet } from "@/interfaces/vet";
 import { Trainer } from "@/interfaces/trainer";
 import { Pet } from "@/interfaces/pet";
-import PetCard from "./PetCard";
+import {PetCard} from "./PetCard";
 
 function AdminProfile() {
   const [activeTab, setActiveTab] = useState("Profile");
@@ -100,7 +100,7 @@ function AdminProfile() {
   };
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedToken = localStorage.getItem("jwt_token");
     if (storedToken) {
       getUser(storedToken);
     }

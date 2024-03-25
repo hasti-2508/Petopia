@@ -15,16 +15,16 @@ function Payment() {
       `${process.env.HOST}/stripe/65fa7c4a262e2b3606ff5785`
     );
 
-    const result = await stripe.redirectToCheckout({
-      sessionId: checkoutSession.data.id,
-    });
-    console.log(result);
+      const result = await stripe.redirectToCheckout({
+        sessionId: checkoutSession.data.id,
+      });
+      console.log(result);
 
-    if (result.error) {
-      alert(result.error.message);
-    } else {
-      console.log("payment intent created");
-    }
+      if (result.error) {
+        alert(result.error.message);
+      } else {
+        console.log("payment intent created");
+      }
     setLoading(false);
   };
   return (

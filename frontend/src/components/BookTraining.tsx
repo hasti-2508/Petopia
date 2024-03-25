@@ -6,9 +6,10 @@ import PetDataForm from "./PetDataForm";
 import UserDataForm from "./UserDataForm";
 import DateAndTime from "./DateAndTime";
 import axios from "axios";
-import { Notifications } from "react-push-notification";
-import addNotification from "react-push-notification";
-import {useRouter} from "next/navigation";
+// import { Notifications } from "react-push-notification";
+// import addNotification from "react-push-notification";
+import { useRouter } from "next/navigation";
+import { loadStripe } from "@stripe/stripe-js";
 
 const trainingBookingData: TrainingPlanBooking = {
   pet_species: "cat",
@@ -34,15 +35,18 @@ function BookTraining() {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const router = useRouter();
 
-  function warningNotification() {
-    addNotification({
-      title: "Warning",
-      subtitle: "Sorry",
-      message: "We are not providing Training in your city.",
-      theme: "red",
-      closeButton: "X",
-    });
-  }
+  const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  const stripePromise = loadStripe(publishableKey);
+
+  // function warningNotification() {
+  //   addNotification({
+  //     title: "Warning",
+  //     subtitle: "Sorry",
+  //     message: "We are not providing Training in your city.",
+  //     theme: "red",
+  //     closeButton: "X",
+  //   });
+  // }
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -65,7 +69,7 @@ function BookTraining() {
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
-    const jwt = localStorage.getItem("token");
+    const jwt = localStorage.getItem("jwt_token");
     // const jwt2 = Cookies.get("jwt");
     const requestData = {
       ...data,
@@ -79,8 +83,40 @@ function BookTraining() {
           requestData
         );
         setBookingSuccess(true);
-        setTimeout(() => {
-          router.push(`/payment?${response.data._id}`)
+        setTimeout(async () => {
+          // router.push(`/payment?${response.data._id}`);
+          const stripe = await stripePromise;
+          const checkoutSession = await axios.get(
+            `${process.env.HOST}/stripe/${response.data._id}`
+          );
+          const result = await stripe.redirectToCheckout({
+            sessionId: checkoutSession.data.id,
+          });
+          console.log(result);
+          if (result.error) {
+            alert(result.error.message);
+          } else {
+            console.log("payment intent created");
+
+            const interval = setInterval(async () => {
+              const paymentStatusResponse = await axios.get(
+                `${process.env.HOST}/stripe/payment-status/${checkoutSession.data.id}`
+              );
+              const paymentStatus = paymentStatusResponse.data.status;
+
+              if (paymentStatus === "paid") {
+                // Payment successful
+                console.log("Payment successful");
+                clearInterval(interval); // Stop polling
+                // Redirect or do any other action here after successful payment
+              } else if (paymentStatus === "failed") {
+                // Payment failed
+                console.log("Payment failed");
+                clearInterval(interval); // Stop polling
+                // Handle failed payment
+              }
+            }, 3000);
+          }
         }, 3000);
       } catch (error) {
         if (
@@ -88,16 +124,27 @@ function BookTraining() {
           error.response &&
           error.response.status === 409
         ) {
-          warningNotification();
-          router.push("/Home")
+          // warningNotification();
+          alert("Sorry, we are not providing training in this city");
+          // router.push("/Home");
         } else if (
           axios.isAxiosError(error) &&
           error.response &&
           error.response.status === 401
         ) {
-          router.push("/Login")
+          alert("Please login to continue your booking!");
+          router.push("/Login");
+        } else if (
+          axios.isAxiosError(error) &&
+          error.response &&
+          error.response.status === 400
+        ) {
+          alert("Please select Booking date and time!");
         } else {
-          console.error("Error posting booking data:", error);
+          console.error(
+            "Error posting booking data:",
+            error.response.data.message
+          );
         }
       }
     }
@@ -106,7 +153,7 @@ function BookTraining() {
   }
   return (
     <div>
-      <Notifications />
+      {/* <Notifications /> */}
       <div
         style={{
           position: "relative",
@@ -145,7 +192,6 @@ function BookTraining() {
             src="http://localhost:3000/assets/bookingSuccess.gif"
             alt="Booking Confirmation"
           />
-          <p>Redirecting to payment page...</p>
         </div>
       )}
     </div>

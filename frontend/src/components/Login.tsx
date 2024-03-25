@@ -13,7 +13,7 @@ function Login() {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedToken = localStorage.getItem("jwt_token");
     if (storedToken) {
       setToken(storedToken);
     }
@@ -38,24 +38,28 @@ function Login() {
       const response = await axios.post(`${process.env.HOST}/login`, formData);
       const data = response.data;
       setToken(data.token);
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("jwt_token", data.token);
       document.cookie = `jwt=${data.token}; path=/`;
       switch (role) {
         case "admin":
-          router.push("/Home");
+          // router.push("/Home");
+          window.location.href = "/Home";
           break;
         case "user":
-          router.push("/Home");
+          // router.push("/Home");
+          window.location.href = "/Home";
           break;
         case "trainer":
-          router.push("/Home");
+          // router.push("/Home");
+          window.location.href = "/Home";
           break;
         case "vet":
-          router.push("/Home");
+          // router.push("/Home");
+          window.location.href = "/Home";
       }
     } catch (error) {
       alert("No Account Found! Please Sign Up!");
-      router.push("/SignUp")
+      router.push("/SignUp");
     }
   };
 
