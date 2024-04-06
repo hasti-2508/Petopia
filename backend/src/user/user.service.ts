@@ -20,7 +20,7 @@ export class UserService {
   ) {}
 
   async findUser() {
-    return this.UserModel.find().exec();
+    return this.UserModel.find({isActive: true, role: "user"}).exec();
   }
   async register(createUserDto: CreateUserDto): Promise<User> {
     const newUser = await this.UserModel.create(createUserDto);
@@ -40,11 +40,12 @@ export class UserService {
 
   async findUserById(id: string) {
     const isValid = mongoose.Types.ObjectId.isValid(id);
+    
     if (!isValid) {
       throw new HttpException('Invalid ID', 400);
     }
 
-    const user = await this.UserModel.findOne({ _id: id, isActive: true });
+    const user = await this.UserModel.findOne({ _id: id, isActive: true});
     if (!user) {
       throw new NotFoundException('User not found');
     }

@@ -15,16 +15,12 @@ export class CreateUserDto {
 
   
   @IsNotEmpty()
-  @IsNumber()
-  phoneNo: number;
+  @IsString()
+  phoneNo: string;
   
   @IsNotEmpty()
   @IsString()
   address: string;
-  
-  @IsNotEmpty()
-  @IsString()
-  area: string;
   
   @IsNotEmpty()
   @IsString()

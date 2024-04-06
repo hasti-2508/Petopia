@@ -18,7 +18,7 @@ export class VetService {
     return this.VetModel.find({ isActive: true }).exec();
   }
   async register(createVetDto: CreateVetDto): Promise<Vet> {
-    const newVet = await this.VetModel.create(createVetDto);
+    const newVet = await this.VetModel.create({ ...createVetDto });
     return newVet;
   }
   async findByEmail(email: string): Promise<Vet> {
@@ -99,7 +99,7 @@ export class VetService {
     return updatedVet;
   }
 
-  async confirm(bookingId: string,vetId) {
+  async confirm(bookingId: string, vetId) {
     const isValidBookingId = mongoose.Types.ObjectId.isValid(bookingId);
     if (!isValidBookingId) {
       throw new HttpException('Invalid Booking ID', 400);
@@ -112,13 +112,14 @@ export class VetService {
 
     booking.isCompleted = true;
     const vet = await this.VetModel.findById(vetId);
-    if(!vet){
-      throw new NotFoundException("Vet not found.")
+    if (!vet) {
+      throw new NotFoundException('Vet not found.');
     }
     vet.bookingHistory.push(booking._id);
-    vet.bookings = vet.bookings.filter(booking => booking.toString() !== booking._id);
-    vet.save()
+    vet.bookings = vet.bookings.filter(
+      (booking) => booking.toString() !== booking._id,
+    );
+    vet.save();
     return booking.save();
   }
-
 }

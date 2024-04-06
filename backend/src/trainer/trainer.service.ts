@@ -18,7 +18,7 @@ export class TrainerService {
     return this.TrainerModel.find({ isActive: true }).exec();
   }
   async register(createTrainerDto: CreateTrainerDto): Promise<Trainer> {
-    const newTrainer = await this.TrainerModel.create(createTrainerDto);
+    const newTrainer = await this.TrainerModel.create({...createTrainerDto});
     return newTrainer;
   }
   async findByEmail(email: string): Promise<Trainer> {

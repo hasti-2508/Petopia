@@ -38,18 +38,16 @@ export class TrainerController {
   @Post('/register')
   async register(@Body() createTrainerDto: CreateTrainerDto): Promise<Trainer> {
     const {
-      trainerId,
       name,
       email,
       password,
       phoneNo,
       address,
-      area,
       city,
       state,
       YearsOfExperience,
-      numberOfPetsTrained,
-      services,
+      NumberOfPetsTrained,
+      trainings,
     } = createTrainerDto;
     if (password.length < 6) {
       throw new BadRequestException(
@@ -86,30 +84,28 @@ export class TrainerController {
       throw new BadRequestException('Phone number must be exactly 10 digits');
     }
 
-    if (!address && !area && !city && !state) {
+    if (!address && !city && !state) {
       throw new BadRequestException('please provide complete address details');
     }
     if (!YearsOfExperience) {
       throw new BadRequestException('Please add your years of Experience');
     }
-    if (!services) {
-      throw new BadRequestException('Please add  the services you offer');
+    if (!trainings) {
+      throw new BadRequestException('Please add  the trainings you offer');
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const trainer: CreateTrainerDto = {
-      trainerId,
       name,
       email,
       password: hashedPassword,
       phoneNo,
       address,
-      area,
       city,
       state,
       YearsOfExperience,
-      numberOfPetsTrained,
+      NumberOfPetsTrained,
       role: 'trainer',
-      services,
+      trainings,
     };
 
     const existingTrainer = await this.trainerService.findByWithEmail(email);
@@ -120,8 +116,8 @@ export class TrainerController {
     return newTrainer;
   }
 
-  @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.ADMIN)
   @Get('/')
   async getTrainers() {
     return this.trainerService.findTrainer();
@@ -187,8 +183,8 @@ export class TrainerController {
     return this.trainerService.updateTrainer(trainerId, updateUserDto);
   }
 
-  @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.ADMIN)
   @Delete('/:id')
   async deleteTrainer(@Param('id') trainerId: string) {
     return this.trainerService.deleteTrainer(trainerId);

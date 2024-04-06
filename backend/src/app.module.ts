@@ -32,7 +32,7 @@ import { StripeModule } from './stripe/stripe.module';
     TrainingPlanModule,
     ServicePlanBookingModule,
     TrainingPlanBookingModule,
-    StripeModule
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [AppService,CloudinaryService],

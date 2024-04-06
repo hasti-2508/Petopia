@@ -1,6 +1,12 @@
+import { Prop } from '@nestjs/mongoose';
 import { IsString, IsNotEmpty, IsNumber, IsEmail, IsPositive, Min, Max } from 'class-validator';
+import { Types } from 'mongoose';
 
 export class CreateTrainingPlanBookingDto {
+
+  @IsString()
+  @IsNotEmpty()
+  pet_species: string;
 
   @IsString()
   @IsNotEmpty()
@@ -14,9 +20,9 @@ export class CreateTrainingPlanBookingDto {
   @IsNotEmpty()
   pet_gender: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  pet_age: number;
+  pet_age: string;
 
   @IsString()
   @IsNotEmpty()
@@ -30,9 +36,9 @@ export class CreateTrainingPlanBookingDto {
   @IsNotEmpty()
   email: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  phoneNo: number;
+  phoneNo: string;
 
   @IsString()
   @IsNotEmpty()
@@ -46,6 +52,14 @@ export class CreateTrainingPlanBookingDto {
   @IsNotEmpty()
   state: string;
 
+  @IsString()
+  @IsNotEmpty()
+  booking_date: string;
+
+  @IsString()
+  @IsNotEmpty()
+  booking_time: string;
+
   notes: string;
 
   totalPrice: number;
@@ -53,8 +67,8 @@ export class CreateTrainingPlanBookingDto {
 
 
 export class AssignTrainerDto{
-  @IsNumber()
-  TrainerId :number;
+  @Prop({ type: Types.ObjectId, ref: 'Vet' })
+  trainerId: Types.ObjectId; 
 }
 
 export class RateDto {

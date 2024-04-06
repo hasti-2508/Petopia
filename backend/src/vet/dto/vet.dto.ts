@@ -1,8 +1,7 @@
 import { IsEmail, IsString, IsNotEmpty, IsNumber, IsArray, IsOptional } from 'class-validator';
 
 export class CreateVetDto {
-  @IsNumber()
-  vetId: number;
+
 
   @IsString()
   @IsNotEmpty()
@@ -16,17 +15,13 @@ export class CreateVetDto {
   @IsNotEmpty()
   password: string;
 
-  @IsNumber()
+  @IsString()
   @IsNotEmpty()
-  phoneNo: number;
+  phoneNo: string;
 
   @IsString()
   @IsNotEmpty()
   address: string;
-
-  @IsString()
-  @IsNotEmpty()
-  area: string;
 
   @IsString()
   @IsNotEmpty()

@@ -37,6 +37,8 @@ export class PetDto {
   additional_notes: string;
 
   isActive:string;
+  
+  isAdopted: boolean; 
 
   @IsOptional()
   imageUrl: string;

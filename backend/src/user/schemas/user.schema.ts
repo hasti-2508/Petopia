@@ -16,13 +16,10 @@ export class User extends Document {
   password: string;
   
   @Prop({required: true})
-  phoneNo: number
+  phoneNo: string
 
   @Prop({required: true})
   address: string
-
-  @Prop({required: true})
-  area: string
 
   @Prop({required: true})
   city: string
@@ -48,9 +45,6 @@ export class User extends Document {
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Pet' }] }) 
   petHistory: string[];
-
-  // @Prop({ type: [{ type: Schema.Types.ObjectId, ref: 'Appointment' }] })
-  // appointments: Appointment[];
 
   @Prop()
   resetToken: string;

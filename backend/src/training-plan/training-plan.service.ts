@@ -12,6 +12,10 @@ export class TrainingPlanService {
         private TrainingPlanModel: Model<TrainingPlan>,
       ) {}
     
+      async find() {
+        return await this.TrainingPlanModel.find();
+      }
+
       async create(
         createTrainingPlanDto: CreateTrainingPlanDto,
       ): Promise<TrainingPlan> {

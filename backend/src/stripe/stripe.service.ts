@@ -6,8 +6,6 @@ import Stripe from 'stripe';
 import { TrainingPlanBooking } from 'src/training-plan-booking/schemas/training-plan-booking.schema';
 import { ServicePlanBooking } from 'src/service-plan-booking/schemas/service-plan-booking.schema';
 import { User } from 'src/user/schemas/user.schema';
-import { Trainer } from 'src/trainer/schemas/trainer.schema';
-import { Vet } from 'src/vet/schemas/vet.schema';
 import * as nodemailer from 'nodemailer';
 
 @Injectable()
@@ -50,6 +48,8 @@ export class StripeService {
       amount: total * 100,
       currency: 'inr',
       payment_method_types: ['card'],
+      //  success_url: redirectURL + '?status=success',
+      // cancel_url: redirectURL + '?status=cancel'
     });
 
     if (paymentIntent.status === 'succeeded') {
@@ -63,6 +63,7 @@ export class StripeService {
         await this.sendEmail(user);
       }
     }
+    return paymentIntent;
   }
 
   async checkoutForTrainingBooking(TrainingPlanId: string) {

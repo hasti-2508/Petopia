@@ -11,6 +11,9 @@ export class ServicePlanService {
     private servicePlanModel: Model<ServicePlan>,
   ) {}
 
+  async find() {
+    return await this.servicePlanModel.find();
+  }
   async create(
     createServicePlanDto: CreateServicePlanDto,
   ): Promise<ServicePlan> {

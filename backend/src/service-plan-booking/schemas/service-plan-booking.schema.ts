@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, Types } from 'mongoose';
 
 @Schema({
   timestamps: true,
@@ -12,6 +12,9 @@ export class ServicePlanBooking extends Document{
   @Prop({ required: true })
   servicePlanId: mongoose.Types.ObjectId;
 
+  @Prop()
+  pet_species: string;
+
   @Prop({ required: true })
   pet_breed: string;
 
@@ -22,7 +25,7 @@ export class ServicePlanBooking extends Document{
   pet_gender: string;
 
   @Prop({ required: true })
-  pet_age: number;
+  pet_age: string;
 
   @Prop({ required: true })
   aggressiveness: string;
@@ -34,7 +37,7 @@ export class ServicePlanBooking extends Document{
   email: string;
 
   @Prop({ required: true })
-  phoneNo: number;
+  phoneNo: string;
 
   @Prop({ required: true })
   address: string;
@@ -49,7 +52,10 @@ export class ServicePlanBooking extends Document{
   notes: string;
 
   @Prop({ required: true })
-  Booking_Date: Date;
+  booking_date: string;
+
+  @Prop({ required: true })
+  booking_time: string;
 
   @Prop()
   totalPrice: number;
@@ -63,8 +69,8 @@ export class ServicePlanBooking extends Document{
   @Prop({ default: false })
   isCancelled: boolean;
 
-  @Prop() 
-  vetId: number;
+  @Prop({ type: Types.ObjectId, ref: 'Vet' }) 
+  vetId: Types.ObjectId; 
 
   @Prop()
   ratings: any[];
