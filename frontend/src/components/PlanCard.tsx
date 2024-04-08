@@ -64,7 +64,7 @@ const PlanCard = ({ plan, handleBookService }) => {
           </span>
           <a
             onClick={() => handleBookService(plan._id)}
-            className="text-gray-700 no-underline flex justify-center bg-saddle-brown py-2 px-3 mt-4 font-semibold rounded-lg fs-6"
+            className="text-gray-700 no-underline flex justify-center bg-saddle-brown py-2 px-3 mt-4 font-semibold rounded-lg fs-6 cursor-pointer"
           >
             Book Service
           </a>

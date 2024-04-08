@@ -10,6 +10,7 @@ import axios from "axios";
 // import addNotification from "react-push-notification";
 import { useRouter } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
+import axiosInstance from "@/utils/axios";
 
 const trainingBookingData: TrainingPlanBooking = {
   pet_species: "cat",
@@ -69,7 +70,7 @@ function BookTraining() {
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
-    const jwt = localStorage.getItem("jwt_token");
+    const jwt = localStorage.getItem("jwt");
     // const jwt2 = Cookies.get("jwt");
     const requestData = {
       ...data,
@@ -84,40 +85,15 @@ function BookTraining() {
         );
         setBookingSuccess(true);
         setTimeout(async () => {
-          // router.push(`/payment?${response.data._id}`);
           const stripe = await stripePromise;
-          const checkoutSession = await axios.get(
-            `${process.env.HOST}/stripe/${response.data._id}`
+          const checkoutSession = await axiosInstance.get(
+            `/stripe/${response.data._id}`
           );
+
           const result = await stripe.redirectToCheckout({
             sessionId: checkoutSession.data.id,
           });
-          console.log(result);
-          if (result.error) {
-            alert(result.error.message);
-          } else {
-            console.log("payment intent created");
-
-            const interval = setInterval(async () => {
-              const paymentStatusResponse = await axios.get(
-                `${process.env.HOST}/stripe/payment-status/${checkoutSession.data.id}`
-              );
-              const paymentStatus = paymentStatusResponse.data.status;
-
-              if (paymentStatus === "paid") {
-                // Payment successful
-                console.log("Payment successful");
-                clearInterval(interval); // Stop polling
-                // Redirect or do any other action here after successful payment
-              } else if (paymentStatus === "failed") {
-                // Payment failed
-                console.log("Payment failed");
-                clearInterval(interval); // Stop polling
-                // Handle failed payment
-              }
-            }, 3000);
-          }
-        }, 3000);
+        }, 2000);
       } catch (error) {
         if (
           axios.isAxiosError(error) &&
@@ -133,7 +109,7 @@ function BookTraining() {
           error.response.status === 401
         ) {
           alert("Please login to continue your booking!");
-          router.push("/Login");
+          router.push("/login");
         } else if (
           axios.isAxiosError(error) &&
           error.response &&
@@ -168,7 +144,7 @@ function BookTraining() {
         <form onSubmit={onSubmit}>
           {step}
           <div
-            className="bg-black text-white"
+            className=" text-white"
             style={{
               marginTop: "1rem",
               display: "flex",
@@ -177,11 +153,29 @@ function BookTraining() {
             }}
           >
             {!isFirstStep && (
-              <button type="button" onClick={back}>
+              <button
+                type="button"
+                className="text-gray-700 font-bold flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
+                onClick={back}
+              >
                 Back
               </button>
             )}
-            <button type="submit">{isLastStep ? "Pay" : "Next"}</button>
+            {isLastStep ? (
+              <button
+                type="submit"
+                className="text-white flex items-center bg-dark-blue py-2 px-3 rounded-pill fs-6 no-underline"
+              >
+                Pay
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="text-gray-700   flex items-center font-bold bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
+              >
+                Next
+              </button>
+            )}
           </div>
         </form>
       </div>

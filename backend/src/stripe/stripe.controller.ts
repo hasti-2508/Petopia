@@ -1,25 +1,30 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Patch } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 
 @Controller('stripe')
 export class StripeController {
   constructor(private stripeService: StripeService) {}
 
-  @Get('/:servicePlanId')
-  checkoutForServiceBooking(@Param('servicePlanId') servicePlanId: string) {
+  // @Get('service/:servicePlanId')
+  // checkoutForServiceBooking(@Param('servicePlanId') servicePlanId: string) {
+  //   try {
+  //     return this.stripeService.checkoutForServiceBooking(servicePlanId);
+  //   } catch (err) {
+  //     return err;
+  //   }
+  // }
+
+  @Get('/:id')
+  async checkoutForTrainingBooking(@Param('id') id: string) {
     try {
-      return this.stripeService.checkoutForServiceBooking(servicePlanId);
+      return await this.stripeService.checkoutForBooking(id);
     } catch (err) {
       return err;
     }
   }
 
-  @Get('/:TrainingPlanId')
-  checkoutForTrainingBooking(@Param('TrainingPlanId') TrainingPlanId: string) {
-    try {
-      return this.stripeService.checkoutForTrainingBooking(TrainingPlanId);
-    } catch (err) {
-      return err;
-    }
+  @Patch('/:id/confirmation')
+  async confirmationOfPayment (@Param('id') id:string){
+    return await this.stripeService.confirmationOfPayment(id);
   }
 }

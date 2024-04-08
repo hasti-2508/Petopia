@@ -5,10 +5,10 @@ import CallIcon from "@mui/icons-material/Call";
 import PersonIcon from "@mui/icons-material/Person";
 import Link from "next/link";
 import { PetCardProps } from "../interfaces/pet";
-import { User } from "../interfaces/user";
+import { User, UserData } from "../interfaces/user";
 
 const PetCard: React.FC<PetCardProps> = ({ pet }) => {
-  const [owner, setOwner] = useState<User[]>([]);
+  const [owner, setOwner] = useState<User>();
 
   useEffect(() => {
     async function fetchOwnerName() {
@@ -288,7 +288,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
 };
 
 const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
-  const [owner, setOwner] = useState<User[]>([]);
+  const [owner, setOwner] = useState<UserData>();
 
   useEffect(() => {
     async function fetchOwnerName() {
@@ -348,7 +348,7 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
             </div>
           </div>
           <div className="mt-2.5">
-            city: <span className="fw-medium">have to add city here</span>
+            city: <span className="fw-medium">{owner?.city}</span>
           </div>
         </div>
       </div>
@@ -371,11 +371,14 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
               <div>
                 <div className="d-flex flex-column gap-1">
                   <span className="d-flex gap-2">
-                    <PersonIcon color="primary" /> Hasti Kapadiya
+                    <PersonIcon color="primary" />
+                    {owner?.name}
                   </span>
                   <span className="d-flex gap-2">
                     <CallIcon color="success" />
-                    <a className="text-gray-700 no-underline">Contact Now</a>
+                    <a className="text-gray-700 no-underline">
+                      {owner?.phoneNo}
+                    </a>
                   </span>
                 </div>
               </div>

@@ -1,7 +1,8 @@
 "use client";
-import { Service } from "@/interfaces/service";
+// import { Service } from "@/interfaces/service";
 import { Trainer } from "@/interfaces/trainer";
 import { Training } from "@/interfaces/training";
+import axiosInstance from "@/utils/axios";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
@@ -13,31 +14,27 @@ function TrainerProfile() {
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
-  const getUser = async (token: string) => {
-    try {
-      const response = await axios.post(`${process.env.HOST}/currentUser`, {
-        jwt: token,
-      });
-      setTrainer(response.data);
-      const bookingDetailsPromises = response.data.bookings.map(
-        async (bookingId: string) => {
-          const bookingResponse = await axios.get(
-            `${process.env.HOST}/trainingBooking/${bookingId}`
-          );
-          return bookingResponse.data;
-        }
-      );
-      const bookingDetails = await Promise.all(bookingDetailsPromises);
-      setBookings(bookingDetails);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+
   useEffect(() => {
-    const storedToken = localStorage.getItem("jwt_token");
-    if (storedToken) {
-      getUser(storedToken);
-    }
+    const getUser = async () => {
+      try {
+        const response = await axiosInstance.get("/currentUser");
+        setTrainer(response.data);
+        const bookingDetailsPromises = response.data.bookings.map(
+          async (bookingId: string) => {
+            const bookingResponse = await axios.get(
+              `${process.env.HOST}/trainingBooking/${bookingId}`
+            );
+            return bookingResponse.data;
+          }
+        );
+        const bookingDetails = await Promise.all(bookingDetailsPromises);
+        setBookings(bookingDetails);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getUser();
   }, []);
 
   const handleComplete = async (bookingId) => {
@@ -130,7 +127,9 @@ function TrainerProfile() {
                       Number of Pets Trained
                     </label>
                     <p className="text-gray-700">
-                      {trainer?.NumberOfPetTrained}
+                      {trainer?.NumberOfPetTrained
+                        ? trainer?.NumberOfPetTrained.toString()
+                        : "None"}
                     </p>
                   </div>
                   <div className="mb-4">
@@ -169,8 +168,40 @@ function TrainerProfile() {
         );
       case "ongoingBookings":
         return (
+          // <div>
+          //   {bookings.length > 0 ? (
+          //     bookings
+          //       .filter((booking) => !booking.isCompleted)
+          //       .map((booking, index) => (
+          //         <div
+          //           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+          //           key={index}
+          //         >
+          //           <p>{`User Name: ${booking.user_name}`}</p>
+          //           <p>{`Address: ${booking.address}`}</p>
+          //           <p>{`City: ${booking.city}`}</p>
+          //           <p>{`Booking Date: ${booking.booking_date}`}</p>
+          //           <p>{`Booking Time: ${booking.booking_time}`}</p>
+          //           <p>{`Total Price: ${booking.totalPrice}`}</p>
+          //           {booking.isCompleted ? (
+          //             <span>Completed</span>
+          //           ) : (
+          //             <button
+          //               className="bg-blue-600 text-white px-3 py-1 rounded-md mr-2 no-underline"
+          //               onClick={() => handleComplete(booking._id)}
+          //             >
+          //               Complete
+          //             </button>
+          //           )}
+          //         </div>
+          //       ))
+          //   ) : (
+          //     <p>You have no Trainings Assigned!</p>
+          //     // <img src="http://localhost:3000/assets/puppy.png" alt="" />
+          //   )}
+          // </div>
           <div>
-            {bookings.length > 0 ? (
+            {bookings?.length > 0 ? (
               bookings
                 .filter((booking) => !booking.isCompleted)
                 .map((booking, index) => (
@@ -197,15 +228,23 @@ function TrainerProfile() {
                   </div>
                 ))
             ) : (
-              <p>You have no Trainings Assigned!</p>
+              <div>
+                <img
+                  src="http://localhost:3000/assets/NoTraining.jpg"
+                  className="w-1/3 items-center"
+                  alt=""
+                />
+                <p style={{ fontFamily: "open-sans", fontSize: "20px" }}>
+                  You have no Trainings Assigned!
+                </p>
+              </div>
             )}
           </div>
         );
       case "bookingHistory":
         return (
           <div>
-            {bookings.length.toString()}
-            {bookings.length > 0 ? (
+            {bookings?.length > 0 ? (
               bookings
                 .filter((booking) => booking.isCompleted)
                 .map((booking, index) => (
@@ -222,7 +261,16 @@ function TrainerProfile() {
                   </div>
                 ))
             ) : (
-              <p>You have no completed trainings!</p>
+              <div>
+                <img
+                  src="http://localhost:3000/assets/NoTraining.jpg"
+                  className="w-1/3 items-center"
+                  alt=""
+                />
+                <p style={{ fontFamily: "open-sans", fontSize: "20px" }}>
+                  You have no Completed Assigned!
+                </p>
+              </div>
             )}
           </div>
         );
@@ -234,7 +282,6 @@ function TrainerProfile() {
   return (
     <div>
       <div className=" p-9 bg-white border border-gray-200 rounded-lg shadow m-8 border-1">
-        {" "}
         <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
           <ul className="flex flex-wrap -mb-px">
             <li className="me-2">

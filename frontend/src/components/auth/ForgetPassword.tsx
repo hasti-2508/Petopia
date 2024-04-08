@@ -25,7 +25,7 @@ function ForgetPassword() {
         console.log(Data);
       }
       alert("Mail sent to you email id!");
-      router.push("/Login");
+      router.push("/login");
     } catch (error) {
       console.error(error);
       alert("No Account Found! Please Sign Up!");

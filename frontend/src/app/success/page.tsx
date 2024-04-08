@@ -1,10 +1,10 @@
-import Payment from '@/components/Payment'
+import Success from '@/components/success/Success'
 import React from 'react'
 
 function page() {
   return (
     <div>
-      <Payment />
+      <Success />
     </div>
   )
 }

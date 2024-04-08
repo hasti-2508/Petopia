@@ -238,7 +238,7 @@ function PetDataForm({
             type="text"
             value={pet_breed}
             onChange={(e) => updateFields({ pet_breed: e.target.value })}
-            className="w-full px-4 py-2 rounded-lg border border-dark-blue  "
+            className="w-full px-4 py-2 rounded-lg border border-dark-blue"
             placeholder="e.g. Labrador"
           />
         </div>
@@ -289,7 +289,7 @@ function PetDataForm({
             🌀 How old is your pet?
           </label>
           <input
-            type="number"
+            type="text"
             value={pet_age}
             onChange={(e) => updateFields({ pet_age: e.target.value })}
             className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"

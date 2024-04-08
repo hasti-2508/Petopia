@@ -9,10 +9,10 @@ function PetAdd() {
     pet_name: "",
     species: "",
     breed: "",
-    age: 0.2,
+    age: "",
     gender: "",
     color: "",
-    weight: 0,
+    weight: "",
     health_conditions: "",
     allergies: "",
     additional_notes: "",
@@ -22,11 +22,9 @@ function PetAdd() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const parsedValue =
-      name === "age" || name === "weight" ? parseFloat(value) : value;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: parsedValue,
+      [name]: value,
     }));
   };
 
@@ -46,7 +44,7 @@ function PetAdd() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const jwt = localStorage.getItem("jwt_token");
+    const jwt = localStorage.getItem("jwt");
     const requestData = {
       ...formData,
       jwt: jwt,
@@ -80,131 +78,191 @@ function PetAdd() {
     }
   };
   return (
-    <div>
-      <h2>Create Pet</h2>
+    <div className=" w-2/5 ms-5">
+      <h2
+        className="text-center text-3xl font-bold my-8"
+        style={{ fontFamily: "open-sans", fontSize: "40px" }}
+      >
+        Create Pet
+      </h2>
+      <div className="border-2 border-gray-180 mb-3"></div>
       <form onSubmit={handleSubmit}>
-        <label>
+        <label
+          className="block mb-2"
+          style={{ fontFamily: "open-sans", fontSize: "18px" }}
+        >
           Pet Name:
-          <input
-            type="text"
-            name="pet_name"
-            value={formData.pet_name}
-            onChange={handleChange}
-            required
-          />
         </label>
-        {formData.pet_name}
-        <label>
+        <input
+          type="text"
+          name="pet_name"
+          value={formData.pet_name}
+          onChange={handleChange}
+          placeholder="eg. maggie"
+          className="w-full px-4 py-2 rounded-lg border border-dark-blue"
+          required
+        />
+        <label
+          className="block mb-2 mt-1"
+          style={{ fontFamily: "open-sans", fontSize: "18px" }}
+        >
           Species:
-          <input
-            type="text"
-            name="species"
-            placeholder="dog"
-            value={formData.species}
-            onChange={handleChange}
-            required
-          />
         </label>
-        <label>
+        <input
+          type="text"
+          name="species"
+          placeholder="eg. dog"
+          value={formData.species}
+          onChange={handleChange}
+          className="w-full px-4 py-2 rounded-lg border border-dark-blue"
+          required
+        />
+        <label
+          className="block mb-2 mt-1"
+          style={{ fontFamily: "open-sans", fontSize: "18px" }}
+        >
           Breed:
-          <input
-            type="text"
-            name="breed"
-            placeholder="labrador"
-            value={formData.breed}
-            onChange={handleChange}
-            required
-          />
         </label>
-        <label>
+        <input
+          type="text"
+          name="breed"
+          placeholder=" eg. labrador"
+          value={formData.breed}
+          onChange={handleChange}
+          className="w-full px-4 py-2 rounded-lg border border-dark-blue"
+          required
+        />
+        <label
+          className="block mb-2 mt-1"
+          style={{ fontFamily: "open-sans", fontSize: "18px" }}
+        >
           Age:
-          <input
-            type="number"
-            name="age"
-            step={0.1}
-            min={0.1}
-            maxLength={2}
-            value={formData.age}
-            onChange={handleChange}
-            required
-          />
         </label>
-        <label>
+        <input
+          type="text"
+          name="age"
+          step={0.1}
+          min={0.1}
+          maxLength={2}
+          value={formData.age}
+          onChange={handleChange}
+          className="w-full px-4 py-2 rounded-lg border border-dark-blue"
+          required
+        />
+
+        <label
+          className="block mb-2 mt-1"
+          style={{ fontFamily: "open-sans", fontSize: "18px" }}
+        >
           Gender:
-          <input
-            type="text"
-            name="gender"
-            placeholder="male"
-            value={formData.gender}
-            onChange={handleChange}
-            required
-          />
         </label>
-        <label>
+        <input
+          type="text"
+          name="gender"
+          placeholder="eg. male"
+          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+          value={formData.gender}
+          onChange={handleChange}
+          required
+        />
+        <label
+          className="block mb-2 mt-1"
+          style={{ fontFamily: "open-sans", fontSize: "18px" }}
+        >
           Color:
-          <input
-            type="text"
-            name="color"
-            placeholder="golden"
-            value={formData.color}
-            onChange={handleChange}
-            required
-          />
         </label>
-        <label>
+        <input
+          type="text"
+          name="color"
+          placeholder="eg. golden"
+          value={formData.color}
+          onChange={handleChange}
+          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+          required
+        />
+        <label
+          className="block mb-2 mt-1"
+          style={{ fontFamily: "open-sans", fontSize: "18px" }}
+        >
           Weight:
-          <input
-            type="number"
-            name="weight"
-            value={formData.weight}
-            onChange={handleChange}
-            required
-          />
         </label>
-        <label>
+        <input
+          type="text"
+          name="weight"
+          maxLength={3}
+          value={formData.weight}
+          onChange={handleChange}
+          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+          required
+        />
+        <label
+          className="block mb-2 mt-1"
+          style={{ fontFamily: "open-sans", fontSize: "18px" }}
+        >
           Health Conditions:
-          <input
-            type="text"
-            name="health_conditions"
-            value={formData.health_conditions}
-            onChange={handleChange}
-            placeholder="Good"
-            required
-          />
         </label>
-        <label>
+        <input
+          type="text"
+          name="health_conditions"
+          value={formData.health_conditions}
+          onChange={handleChange}
+          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+          placeholder="eg. Good"
+          required
+        />
+        <label
+          className="block mb-2 mt-1"
+          style={{ fontFamily: "open-sans", fontSize: "18px" }}
+        >
           Allergies:
-          <input
-            type="text"
-            name="allergies"
-            value={formData.allergies}
-            onChange={handleChange}
-            placeholder="dust"
-          />
         </label>
-        <label>
+        <input
+          type="text"
+          name="allergies"
+          value={formData.allergies}
+          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+          onChange={handleChange}
+          placeholder="eg. dust"
+        />
+        <label
+          className="block mb-2 mt-1"
+          style={{ fontFamily: "open-sans", fontSize: "18px" }}
+        >
           Notes:
-          <input
-            type="text"
-            name="additional_notes"
-            value={formData.additional_notes}
-            onChange={handleChange}
-          />
         </label>
+        <input
+          type="text"
+          name="additional_notes"
+          value={formData.additional_notes}
+          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+          onChange={handleChange}
+        />
 
-        <label>
+        <label
+          className="block mb-2 mt-1"
+          style={{ fontFamily: "open-sans", fontSize: "18px" }}
+        >
           Pet Image:
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            required
-          />
         </label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
+          required
+        />
 
-        <label>Do you want to put your pet for adoption?</label>
+        <label
+          className="block mb-2 mt-1"
+          style={{ fontFamily: "open-sans", fontSize: "18px" }}
+        >
+          Do you want to put your pet for adoption?
+        </label>
         <div>
-          <label>
+          <label
+            className="block mb-2 mt-1"
+            style={{ fontFamily: "open-sans", fontSize: "16px" }}
+          >
             <input
               type="radio"
               name="isAdopted"
@@ -214,7 +272,10 @@ function PetAdd() {
             />
             Yes
           </label>
-          <label>
+          <label
+            className="block mb-2 mt-1"
+            style={{ fontFamily: "open-sans", fontSize: "16px" }}
+          >
             <input
               type="radio"
               name="isAdopted"
@@ -226,7 +287,12 @@ function PetAdd() {
           </label>
         </div>
 
-        <button type="submit">Create Pet</button>
+        <button
+          type="submit"
+          className="text-gray-700   flex items-center bg-saddle-brown py-2 px-3 mx-16 my-8 rounded-pill fs-6 no-underline"
+        >
+          Create Pet
+        </button>
       </form>
     </div>
   );

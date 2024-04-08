@@ -7,6 +7,8 @@ import { TrainingPlanBooking } from 'src/training-plan-booking/schemas/training-
 import { ServicePlanBooking } from 'src/service-plan-booking/schemas/service-plan-booking.schema';
 import { User } from 'src/user/schemas/user.schema';
 import * as nodemailer from 'nodemailer';
+import { tracingChannel } from 'diagnostics_channel';
+import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 @Injectable()
 export class StripeService {
@@ -19,86 +21,73 @@ export class StripeService {
     @InjectModel(User.name)
     private UserModel: mongoose.Model<User>,
   ) {
-    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2023-10-16',
-    });
+    this.stripe = new Stripe(
+      'sk_test_51OxvE9JmAuF6GgDWkPQEWhZYdCPJPmSzYr6qQUcyteMWbt0Fk8UEPYYkRkL118BvUVLvOaWitFTSGRDbslddISoJ00GD2mjcdN',
+      {
+        apiVersion: '2023-10-16',
+      },
+    );
   }
 
-  async checkoutForServiceBooking(servicePlanId: string) {
-    const isValid = mongoose.Types.ObjectId.isValid(servicePlanId);
+
+  async checkoutForBooking(id: string) {
+    const isValid = await mongoose.Types.ObjectId.isValid(id);
+
     if (!isValid) {
       throw new HttpException('Invalid ID', 400);
     }
+    let booking;
+const service = await this.servicePlanBookingModel.findOne({ _id: id });
+const training = await this.TrainingPlanBookingModel.findOne({ _id: id });
 
-    const bookings = await this.servicePlanBookingModel.find();
-    if (!bookings) {
-      throw new NotFoundException('booking not found');
-    }
+if(service){
+   booking = service;
+}else if(training){
+  booking = training;
+}
+else{
+  throw new NotFoundException('Booking Not found')
+}
+      const total = booking.totalPrice;
+      const session = await this.stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        success_url: `http://localhost:3000/success?id=${booking.id}`,
+        cancel_url: `http://localhost:3000/PetService`,
+        customer_email: booking.email,
+        client_reference_id: booking.userId,
+        mode: 'payment',
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: 'booking on petopia',
+              },
+              unit_amount: total * 100,
+            },
+            quantity: 1,
+          },
+        ],
+      });
+      return session;
+  }
 
-    const idToMatch = servicePlanId;
-
-    const matchedData = bookings.filter((data) =>
-      data._id.equals(new ObjectId(idToMatch)),
-    );
-
-    const booking = matchedData[0];
-    const total = booking.totalPrice;
-
-    const paymentIntent = await this.stripe.paymentIntents.create({
-      amount: total * 100,
-      currency: 'inr',
-      payment_method_types: ['card'],
-      //  success_url: redirectURL + '?status=success',
-      // cancel_url: redirectURL + '?status=cancel'
-    });
-
-    if (paymentIntent.status === 'succeeded') {
-      await this.servicePlanBookingModel.updateOne(
-        { _id: servicePlanId },
-        { isConfirmed: true },
-      );
-
-      const user = await this.UserModel.findById(booking.userId);
+  async confirmationOfPayment(id: string) {
+    const service = await this.servicePlanBookingModel.findById(id);
+    const training = await this.TrainingPlanBookingModel.findById(id);
+    if (service) {
+      service.isConfirmed = !service.isConfirmed;
+      service.save();
+      const user = await this.UserModel.findById(service.userId);
       if (user) {
         await this.sendEmail(user);
       }
     }
-    return paymentIntent;
-  }
 
-  async checkoutForTrainingBooking(TrainingPlanId: string) {
-    const isValid = mongoose.Types.ObjectId.isValid(TrainingPlanId);
-
-    if (!isValid) {
-      throw new HttpException('Invalid ID', 400);
-    }
-
-    const bookings = await this.servicePlanBookingModel.find();
-    if (!bookings) {
-      throw new NotFoundException('booking not found');
-    }
-
-    const idToMatch = TrainingPlanId;
-
-    const matchedData = bookings.filter((data) =>
-      data._id.equals(new ObjectId(idToMatch)),
-    );
-
-    const booking = matchedData[0];
-    const total = booking.totalPrice;
-
-    const paymentIntent = await this.stripe.paymentIntents.create({
-      amount: total * 100,
-      currency: 'inr',
-      payment_method_types: ['card'],
-    });
-
-    if (paymentIntent.status === 'succeeded') {
-      await this.TrainingPlanBookingModel.updateOne(
-        { _id: TrainingPlanId },
-        { isConfirmed: true },
-      );
-      const user = await this.UserModel.findById(booking.userId);
+    if (training) {
+      training.isConfirmed = !training.isConfirmed;
+      training.save();
+      const user = await this.UserModel.findById(training.userId);
       if (user) {
         await this.sendEmail(user);
       }
@@ -115,7 +104,7 @@ export class StripeService {
     });
     const mailOptions = {
       from: process.env.EMAIL,
-      to: user.email,
+      to: process.env.EMAIL,
       subject: 'Booking Confirmation',
       text: `Hello User, 
       You requested a Booking for our service.

@@ -11,12 +11,17 @@ function Login() {
     role: "",
   });
   const [token, setToken] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("jwt_token");
+    const storedToken = localStorage.getItem("jwt");
     if (storedToken) {
       setToken(storedToken);
     }
+    // const encryptedToken = localStorage.getItem("token");
+    // const storedToken = decryptToken(encryptedToken);
     // } else {
     //   const cookieToken = document.cookie
     //     .split("; ")
@@ -27,39 +32,106 @@ function Login() {
     // }
   }, []);
 
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (e.target.name === "email" || e.target.name === "password") {
+      setEmailError("");
+      setPasswordError("");
+    }
   };
+  function validateEmail(email: string) {
+    const parts = email.split("@");
+    if (parts.length !== 2) {
+      return false; // If email doesn't contain exactly one '@', it's invalid
+    }
+
+    const localPart = parts[0];
+    const domainPart = parts[1];
+
+    if (!localPart || !domainPart) {
+      return false; // If local part or domain part is empty, it's invalid
+    }
+
+    if (localPart.length > 64 || domainPart.length > 255) {
+      return false; // If local part or domain part is too long, it's invalid
+    }
+
+    const domainParts = domainPart.split(".");
+    if (domainParts.length < 2) {
+      return false; // If domain part doesn't contain at least one '.', it's invalid
+    }
+
+    for (const part of domainParts) {
+      if (part.length > 63) {
+        return false; // If any part of domain is too long, it's invalid
+      }
+    }
+
+    return true;
+  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!validateEmail(formData.email)) {
+      setEmailError("Invalid email format");
+      return;
+    }
     let role = formData.role;
     try {
       const response = await axios.post(`${process.env.HOST}/login`, formData);
       const data = response.data;
       setToken(data.token);
-      localStorage.setItem("jwt_token", data.token);
+      // const encryptedToken = encryptToken(data.token);
+      // localStorage.setItem("jwt", encryptedToken);
+      localStorage.setItem("jwt", data.token);
       document.cookie = `jwt=${data.token}; path=/`;
+
       switch (role) {
         case "admin":
-          // router.push("/Home");
           window.location.href = "/Home";
           break;
         case "user":
-          // router.push("/Home");
           window.location.href = "/Home";
           break;
         case "trainer":
-          // router.push("/Home");
           window.location.href = "/Home";
           break;
         case "vet":
-          // router.push("/Home");
           window.location.href = "/Home";
       }
     } catch (error) {
-      alert("No Account Found! Please Sign Up!");
-      router.push("/SignUp");
+      if (
+        axios.isAxiosError(error) &&
+        error.response &&
+        error.response.status === 401
+      ) {
+        alert("No Account Found! Please Sign Up!");
+        router.push("/SignUp");
+      } else if (
+        axios.isAxiosError(error) &&
+        error.response &&
+        error.response.status === 403
+      ) {
+        setPasswordError("Incorrect Password");
+        // alert("Password Incorrect!");
+        setFormData((prevState) => ({
+          ...prevState,
+          password: "",
+        }));
+      } else if (
+        axios.isAxiosError(error) &&
+        error.response &&
+        error.response.status === 404
+      ) {
+        alert("No Account Found! Please Sign Up!");
+        router.push("/SignUp");
+      } else {
+        console.error("Error posting user data:", error.response.data.message);
+      }
     }
   };
 
@@ -88,11 +160,12 @@ function Login() {
                       required
                       aria-required="true"
                     />
+                    {emailError && <p className="text-red-500">{emailError}</p>}
                   </div>
 
                   <div className="form-group">
                     <input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
@@ -101,6 +174,22 @@ function Login() {
                       required
                       aria-required="true"
                     />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 px-5 py-2 text-black rounded-xl flex items-center cursor-pointer"
+                      onClick={togglePasswordVisibility}
+                      style={{
+                        top: 0,
+                        bottom: 0,
+                        width: "92px",
+                        marginLeft: "19px",
+                      }}
+                    >
+                      {showPassword ? "Hide" : "Show"}
+                    </button>
+                    {passwordError && (
+                      <p className="text-red-500">{passwordError}</p>
+                    )}
                   </div>
 
                   <div className="form-check">

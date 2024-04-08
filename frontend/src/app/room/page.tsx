@@ -1,11 +1,10 @@
-
-import ForgetPassword from '@/components/auth/ForgetPassword'
+import Room from '@/components/Room'
 import React from 'react'
 
 function page() {
   return (
     <div>
-      <ForgetPassword />
+      <Room />
     </div>
   )
 }
