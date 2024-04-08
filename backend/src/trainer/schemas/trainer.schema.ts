@@ -32,7 +32,7 @@ export class Trainer extends Document {
   YearsOfExperience: number;
 
   @Prop()
-  NumberOfPetTrained: number;
+  NumberOfPetsTrained: number;
 
   @Prop({ default: 'trainer' })
   role: string;

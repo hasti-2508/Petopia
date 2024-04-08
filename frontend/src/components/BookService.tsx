@@ -5,10 +5,13 @@ import PetDataForm from "./PetDataForm";
 import UserDataForm from "./UserDataForm";
 import DateAndTime from "./DateAndTime";
 import axios from "axios";
+import { loadStripe } from "@stripe/stripe-js";
 import { ServicePlanBooking } from "@/interfaces/servicePlanBooking";
 import { Notifications } from "react-push-notification";
 import addNotification from "react-push-notification";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
+import axiosInstance from "@/utils/axios";
+import { buttonBaseClasses } from "@mui/material";
 
 const serviceBookingData: ServicePlanBooking = {
   pet_species: "cat",
@@ -33,6 +36,9 @@ function BookService() {
   const [servicePlanId, setServicePlanId] = useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const router = useRouter();
+
+  const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  const stripePromise = loadStripe(publishableKey);
 
   function warningNotification() {
     addNotification({
@@ -65,24 +71,33 @@ function BookService() {
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
-    const jwt = localStorage.getItem("token");
-    const requestData = {
-      ...data,
-      jwt: jwt,
-    };
 
     if (!isLastStep) return next();
     async function postData() {
       try {
-        const response = await axios.post(
-          `${process.env.HOST}/serviceBooking/${servicePlanId}`,
-          requestData
+        // const response = await axios.post(
+        //   `${process.env.HOST}/serviceBooking/${servicePlanId}`,
+        //   requestData
+        // );
+        const response = await axiosInstance.post(
+          `/serviceBooking/${servicePlanId}`,
+          data
         );
+        // console.log(response.data.booking._id);
         setBookingSuccess(true);
-        console.log(response.data.id)
-        setTimeout(() => {
-          router.push(`/payment/${response.data.id}`)
-        }, 5000);
+        // setTimeout(() => {
+        //   router.push(`/payment?bookingId=${response.data.booking._id}`);
+        // }, 5000);
+        setTimeout(async () => {
+          const stripe = await stripePromise;
+          const checkoutSession = await axiosInstance.get(
+            `/stripe/${response.data.booking._id}`
+          );
+
+          const result = await stripe.redirectToCheckout({
+            sessionId: checkoutSession.data.id,
+          });
+        }, 2000);
       } catch (error) {
         if (
           axios.isAxiosError(error) &&
@@ -90,13 +105,13 @@ function BookService() {
           error.response.status === 409
         ) {
           warningNotification();
-          router.push("/Home")
+          router.push("/Home");
         } else if (
           axios.isAxiosError(error) &&
           error.response &&
           error.response.status === 401
         ) {
-          router.push("/Login")
+          router.push("/Login");
         } else {
           console.error("Error posting booking data:", error);
         }
@@ -122,7 +137,7 @@ function BookService() {
         <form onSubmit={onSubmit}>
           {step}
           <div
-            className="bg-black text-white"
+            className=" text-white"
             style={{
               marginTop: "1rem",
               display: "flex",
@@ -131,22 +146,41 @@ function BookService() {
             }}
           >
             {!isFirstStep && (
-              <button type="button" onClick={back}>
+              <button
+                type="button"
+                className="text-gray-700 font-bold flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
+                onClick={back}
+              >
                 Back
               </button>
             )}
-            <button type="submit">{isLastStep ? "Finish" : "Next"}</button>
+            {/* <button type="submit">{isLastStep ? "Pay" : "Next"}</button> */}
+
+            {isLastStep ? (
+              <button
+                type="submit"
+                className="text-white flex items-center bg-dark-blue py-2 px-3 rounded-pill fs-6 no-underline"
+              >
+                Pay
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="text-gray-700   flex items-center font-bold bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
+              >
+                Next
+              </button>
+            )}
           </div>
         </form>
       </div>
 
       {bookingSuccess && (
-        <div>
+        <div className="flex justify-center items-center w-full h-full">
           <img
             src="http://localhost:3000/assets/bookingSuccess.gif"
             alt="Booking Confirmation"
           />
-          <p>Redirecting to payment integration page...</p>
         </div>
       )}
     </div>
@@ -154,119 +188,3 @@ function BookService() {
 }
 
 export default BookService;
-
-// import React, { FormEvent, useEffect, useState } from "react";
-// import useMultipleStep from "@/Hooks/useMultipleStep";
-// import PetDataForm from "./PetDataForm";
-// import UserDataForm from "./UserDataForm";
-// import DateAndTime from "./DateAndTime";
-// import axios from "axios";
-// import { ServicePlanBooking } from "@/interfaces/servicePlanBooking";
-
-// const serviceBookingData: ServicePlanBooking = {
-//   pet_species: "",
-//   pet_breed: "",
-//   pet_size: "",
-//   pet_gender: "",
-//   pet_age: 0,
-//   aggressiveness: "",
-//   user_name: "",
-//   email: "",
-//   phoneNo: 0,
-//   address: "",
-//   city: "",
-//   state: "",
-//   notes: "",
-//   booking_date: "",
-//   booking_time: "",
-// };
-
-// function BookService() {
-//   const [data, setData] = useState<ServicePlanBooking>(serviceBookingData);
-//   const [servicePlanId, setServicePlanId] = useState<string | null>(null);
-//   const [bookingSuccess, setBookingSuccess] = useState(false);
-//   const [error, setError] = useState<string>("");
-//   const [isValid, setIsValid] = useState<boolean>(false);
-
-//   useEffect(() => {
-//     if (typeof window !== "undefined") {
-//       const urlParams = new URLSearchParams(window.location.search);
-//       const id = urlParams.get("servicePlanId");
-//       setServicePlanId(id);
-//     }
-//   }, []);
-
-//   const { step, isFirstStep, isLastStep, back, next } = useMultipleStep([
-//     <PetDataForm data={data} setData={setData} />,
-//     <UserDataForm data={data} setData={setData} />,
-//     <DateAndTime data={data} setData={setData} />,
-//   ]);
-
-//   function validateForm() {
-//     setIsValid(Object.values(data).every(value => !!value));
-//   }
-
-//   useEffect(() => {
-//     validateForm();
-//   }, [data]);
-
-//   function onSubmit(e: FormEvent) {
-//     e.preventDefault();
-
-//     const jwt = localStorage.getItem("token");
-//     const requestData = {
-//       ...data,
-//       jwt: jwt,
-//     };
-
-//     if (!isLastStep) return next();
-
-//     async function postData() {
-//       try {
-//         const response = await axios.post(
-//           `${process.env.HOST}/serviceBooking/${servicePlanId}`,
-//           requestData
-//         );
-//         setBookingSuccess(true);
-//         setTimeout(() => {
-//           window.location.href = `/payment/${response.data.id}`;
-//         }, 3000);
-//       } catch (error) {
-//         console.error("Error posting booking data:", error);
-//       }
-//     }
-
-//     postData();
-//   }
-
-//   return (
-//     <div>
-//       <div>
-//         <form onSubmit={onSubmit}>
-//           {step}
-//           {error && <p style={{ color: "red" }}>{error}</p>}
-//           <div>
-//             {!isFirstStep && (
-//               <button type="button" onClick={back}>
-//                 Back
-//               </button>
-//             )}
-//             <button type="submit" disabled={!isValid}>{isLastStep ? "Finish" : "Next"}</button>
-//           </div>
-//         </form>
-//       </div>
-
-//       {bookingSuccess && (
-//         <div>
-//           <img
-//             src="http://localhost:3000/assets/bookingSuccess.gif"
-//             alt="Booking Confirmation"
-//           />
-//           <p>Redirecting to payment integration page...</p>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
-
-// export default BookService;

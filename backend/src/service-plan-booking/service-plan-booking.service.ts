@@ -46,7 +46,8 @@ export class ServicePlanBookingService {
   }
 
   async findByUserId(userId: string): Promise<ServicePlanBooking[]> {
-    return await this.servicePlanBookingModel.find({ userId: userId });
+    const booking = await this.servicePlanBookingModel.find({ userId: userId });
+    return booking;
   }
 
   async bookService(
@@ -161,13 +162,13 @@ export class ServicePlanBookingService {
       throw new NotFoundException('Booking not found');
     }
 
-    const existingRating = booking.ratings.find((r) => r.userId === userId);
-    if (existingRating) {
-      throw new HttpException(
-        'You have already rated this Service booking.',
-        400,
-      );
-    }
+    // const existingRating = booking.ratings.find((r) => r.userId === userId);
+    // if (existingRating) {
+    //   throw new HttpException(
+    //     'You have already rated this Service booking.',
+    //     409,
+    //   );
+    // }
     const servicePlanID = booking.servicePlanId;
 
     booking.ratings.push({
@@ -178,8 +179,7 @@ export class ServicePlanBookingService {
     const averageRating =
       booking.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
       booking.ratings.length;
-    booking.averageRating = averageRating;
-
+    booking.averageRating =Number( averageRating.toFixed(1));
     const isValidPlanId = mongoose.Types.ObjectId.isValid(servicePlanID);
     if (!isValidPlanId) {
       throw new HttpException('Invalid ID', 400);
@@ -189,7 +189,7 @@ export class ServicePlanBookingService {
     if (!plan) {
       throw new NotFoundException('This service does not exist!');
     }
-    plan.average_rating = booking.averageRating;
+    plan.average_rating = Number(booking.averageRating.toFixed(1));
     plan.save();
     return booking.save();
   }

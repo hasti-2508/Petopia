@@ -3,16 +3,16 @@ export interface Pet {
     pet_name: string;
     species: string;
     breed: string;
-    age: number;
+    age: string;
     gender: string;
     color: string;
-    weight: number;
+    weight: string;
     health_conditions: string;
     allergies: string;
     additional_notes: string;
     imageUrl: string;
     isAdopted: boolean;
-    owner: any[];
+    owner: string[];
   }
   
 
@@ -20,10 +20,10 @@ export interface Pet {
     pet_name: string;
     species: string;
     breed: string;
-    age: number;
+    age: string;
     gender: string;
     color: string;
-    weight: number;
+    weight: string;
     health_conditions: string;
     allergies: string;
     additional_notes: string;

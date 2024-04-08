@@ -35,14 +35,14 @@ export class ServicePlanBookingController {
     return await this.servicePlanBookingService.findBookings(query);
   }
 
-  @Get('/:bookingId')
+  @Get('booking/:bookingId')
   async findBookingById(
     @Param('bookingId') bookingId: string
   ): Promise<ServicePlanBooking> {
     return await this.servicePlanBookingService.findBookingById(bookingId);
   }
 
-  @Get('/:userId')
+  @Get('user/:userId')
   async getService(
     @Param('userId') userId: string,
   ): Promise<ServicePlanBooking[]> {
@@ -60,16 +60,20 @@ export class ServicePlanBookingController {
     @Param('servicePlanId') servicePlanId: string,
     @Body() createServicePlanBookingDto: CreateServicePlanBookingDto,
   ): Promise<ServicePlanBooking> {
-    const token = req.body.jwt;
     try {
+      const authorizationHeader = req.headers['authorization'];
+      if (!authorizationHeader) {
+        throw new HttpException('Authorization header is missing', 401);
+      }
+      const token = authorizationHeader.split(' ')[1]; 
       if (!token) {
-        throw new HttpException('User Should be logged in', 401);
+        throw new HttpException('Token is missing', 401);
       }
       const decodedToken = this.jwtService.decode(token) as { userId: string };
       const userId = decodedToken.userId;
       const booking =  await this.servicePlanBookingService.bookService(
         userId,
-        servicePlanId,
+        servicePlanId,  
         createServicePlanBookingDto,
       );
       return res.json({
@@ -99,22 +103,32 @@ export class ServicePlanBookingController {
     @Param('BookingId') BookingId: string,
     @Body() rateDto: RateDto,
   ): Promise<ServicePlanBooking> {
-    const token = req.cookies?.jwt;
-    if (!token) {
-      throw new NotFoundException('User should be logged in!');
-    }
-    const decodedToken = this.jwtService.decode(token) as { userId: string };
+    // const token = req.cookies?.jwt;    
+    // const token = req.body.jwt;
+    // console.log(token)
+    // if (!token) {
+    //   throw new HttpException('User should be logged in!',401);
+    // }
+    const authorizationHeader = req.headers['authorization'];
+      if (!authorizationHeader) {
+        throw new HttpException('Authorization header is missing', 401);
+      }
+      const token = authorizationHeader.split(' ')[1]; 
+      if (!token) {
+        throw new HttpException('Token is missing', 401);
+      }
+    const decodedToken = await this.jwtService.decode(token) as { userId: string };
     const userId = decodedToken.userId;
     return this.servicePlanBookingService.addRating(
       userId,
       BookingId,
       rateDto.rating,
     );
-  }
+  }//ahiya save krvu pade?
 
   @Patch(':id/complete')
   async markBookingAsComplete(@Param('id') id: string) {
-    return this.servicePlanBookingService.markBookingAsComplete(id);
+    return await this.servicePlanBookingService.markBookingAsComplete(id);
   }
   // @Post(':BookingId/ratePlan')
   // async ratePlan(

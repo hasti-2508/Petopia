@@ -9,7 +9,8 @@ import UserCard from "./UserCard";
 import { Vet } from "@/interfaces/vet";
 import { Trainer } from "@/interfaces/trainer";
 import { Pet } from "@/interfaces/pet";
-import PetCard from "./PetCard";
+import { PetCard } from "./PetCard";
+import axiosInstance from "@/utils/axios";
 
 function AdminProfile() {
   const [activeTab, setActiveTab] = useState("Profile");
@@ -24,38 +25,6 @@ function AdminProfile() {
   const [pets, setPets] = useState<Pet[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [trainings, setTrainings] = useState<Training[]>([]);
-
-  const getUser = async (token: string) => {
-    try {
-      const response = await axios.post(`${process.env.HOST}/currentUser`, {
-        jwt: token,
-      });
-      setAdmin(response.data);
-      const serviceResponse = await axios.get(
-        `${process.env.HOST}/serviceBooking`
-      );
-      setServices(serviceResponse.data);
-
-      const trainingResponse = await axios.get(
-        `${process.env.HOST}/trainingBooking`
-      );
-      setTrainings(trainingResponse.data);
-
-      const userResponse = await axios.get(`${process.env.HOST}/user`);
-      setUsers(userResponse.data);
-
-      const vetResponse = await axios.get(`${process.env.HOST}/vet`);
-      setVets(vetResponse.data);
-
-      const trainerResponse = await axios.get(`${process.env.HOST}/trainer`);
-      setTrainers(trainerResponse.data);
-
-      const petResponse = await axios.get(`${process.env.HOST}/pet`);
-      setPets(petResponse.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const handleUserDelete = async (userId: string) => {
     try {
@@ -100,10 +69,40 @@ function AdminProfile() {
   };
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      getUser(storedToken);
-    }
+    const getUser = async () => {
+      try {
+        // const response = await axios.post(`${process.env.HOST}/currentUser`, {
+        //   jwt: token,
+        // });
+        const response = await axiosInstance.get("/currentUser");
+        setAdmin(response.data);
+        const serviceResponse = await axios.get(
+          `${process.env.HOST}/serviceBooking`
+        );
+        setServices(serviceResponse.data);
+
+        const trainingResponse = await axios.get(
+          `${process.env.HOST}/trainingBooking`
+        );
+        setTrainings(trainingResponse.data);
+
+        const userResponse = await axios.get(`${process.env.HOST}/user`);
+        setUsers(userResponse.data);
+
+        const vetResponse = await axios.get(`${process.env.HOST}/vet`);
+        setVets(vetResponse.data);
+
+        const trainerResponse = await axios.get(`${process.env.HOST}/trainer`);
+        setTrainers(trainerResponse.data);
+
+        const petResponse = await axios.get(`${process.env.HOST}/pet`);
+        setPets(petResponse.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getUser();
   }, []);
 
   const renderTabContent = () => {

@@ -6,9 +6,11 @@ import PetDataForm from "./PetDataForm";
 import UserDataForm from "./UserDataForm";
 import DateAndTime from "./DateAndTime";
 import axios from "axios";
-import { Notifications } from "react-push-notification";
-import addNotification from "react-push-notification";
-import {useRouter} from "next/navigation";
+// import { Notifications } from "react-push-notification";
+// import addNotification from "react-push-notification";
+import { useRouter } from "next/navigation";
+import { loadStripe } from "@stripe/stripe-js";
+import axiosInstance from "@/utils/axios";
 
 const trainingBookingData: TrainingPlanBooking = {
   pet_species: "cat",
@@ -34,15 +36,18 @@ function BookTraining() {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const router = useRouter();
 
-  function warningNotification() {
-    addNotification({
-      title: "Warning",
-      subtitle: "Sorry",
-      message: "We are not providing Training in your city.",
-      theme: "red",
-      closeButton: "X",
-    });
-  }
+  const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+  const stripePromise = loadStripe(publishableKey);
+
+  // function warningNotification() {
+  //   addNotification({
+  //     title: "Warning",
+  //     subtitle: "Sorry",
+  //     message: "We are not providing Training in your city.",
+  //     theme: "red",
+  //     closeButton: "X",
+  //   });
+  // }
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -65,7 +70,7 @@ function BookTraining() {
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
-    const jwt = localStorage.getItem("token");
+    const jwt = localStorage.getItem("jwt");
     // const jwt2 = Cookies.get("jwt");
     const requestData = {
       ...data,
@@ -79,25 +84,43 @@ function BookTraining() {
           requestData
         );
         setBookingSuccess(true);
-        setTimeout(() => {
-          router.push(`/payment?${response.data._id}`)
-        }, 3000);
+        setTimeout(async () => {
+          const stripe = await stripePromise;
+          const checkoutSession = await axiosInstance.get(
+            `/stripe/${response.data._id}`
+          );
+
+          const result = await stripe.redirectToCheckout({
+            sessionId: checkoutSession.data.id,
+          });
+        }, 2000);
       } catch (error) {
         if (
           axios.isAxiosError(error) &&
           error.response &&
           error.response.status === 409
         ) {
-          warningNotification();
-          router.push("/Home")
+          // warningNotification();
+          alert("Sorry, we are not providing training in this city");
+          // router.push("/Home");
         } else if (
           axios.isAxiosError(error) &&
           error.response &&
           error.response.status === 401
         ) {
-          router.push("/Login")
+          alert("Please login to continue your booking!");
+          router.push("/login");
+        } else if (
+          axios.isAxiosError(error) &&
+          error.response &&
+          error.response.status === 400
+        ) {
+          alert("Please select Booking date and time!");
         } else {
-          console.error("Error posting booking data:", error);
+          console.error(
+            "Error posting booking data:",
+            error.response.data.message
+          );
         }
       }
     }
@@ -106,7 +129,7 @@ function BookTraining() {
   }
   return (
     <div>
-      <Notifications />
+      {/* <Notifications /> */}
       <div
         style={{
           position: "relative",
@@ -121,7 +144,7 @@ function BookTraining() {
         <form onSubmit={onSubmit}>
           {step}
           <div
-            className="bg-black text-white"
+            className=" text-white"
             style={{
               marginTop: "1rem",
               display: "flex",
@@ -130,11 +153,29 @@ function BookTraining() {
             }}
           >
             {!isFirstStep && (
-              <button type="button" onClick={back}>
+              <button
+                type="button"
+                className="text-gray-700 font-bold flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
+                onClick={back}
+              >
                 Back
               </button>
             )}
-            <button type="submit">{isLastStep ? "Pay" : "Next"}</button>
+            {isLastStep ? (
+              <button
+                type="submit"
+                className="text-white flex items-center bg-dark-blue py-2 px-3 rounded-pill fs-6 no-underline"
+              >
+                Pay
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="text-gray-700   flex items-center font-bold bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
+              >
+                Next
+              </button>
+            )}
           </div>
         </form>
       </div>
@@ -145,7 +186,6 @@ function BookTraining() {
             src="http://localhost:3000/assets/bookingSuccess.gif"
             alt="Booking Confirmation"
           />
-          <p>Redirecting to payment page...</p>
         </div>
       )}
     </div>

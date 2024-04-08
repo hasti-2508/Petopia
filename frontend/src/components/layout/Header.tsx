@@ -5,41 +5,32 @@ import { Menu, Transition } from "@headlessui/react";
 import classNames from "classnames";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import axiosInstance from "@/utils/axios";
+import { RouteKind } from "next/dist/server/future/route-kind";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [token, setToken] = useState<string | null>();
+  const [token, setToken] = useState<string | null>(null);
   const [userRole, setUserRole] = useState<string | null>();
   const router = useRouter();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
-  // const getCookie = (name: string) => {
-  //   const cookies = document.cookie.split("; ");
-  //   for (let i = 0; i < cookies.length; i++) {
-  //     const cookie = cookies[i];
-  //     const [cookieName, cookieValue] = cookie.split("=");
-  //     if (cookieName === name) {
-  //       return cookieValue;
-  //     }
-  //   }
-  //   return null;
-  // };
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    // const token = getCookie("jwt");
-    setToken(token);
-    if (token) {
-      getRole(token);
-    }
-  }, []);
+    setToken(localStorage.getItem("jwt"));
 
-  const getRole = async (token: string) => {
+    if(token){
+      getRole();
+    }
+  }, [token]);
+
+  const getRole = async () => {
     try {
-      const response = await axios.post(`${process.env.HOST}/currentUser`, {
-        jwt: token,
-      });
+      // const response = await axios.post(`${process.env.HOST}/currentUser`, {
+      //   jwt: token,
+      // });
+      const response = await axiosInstance.get("/currentUser");
       const role = response.data.role;
       setUserRole(role);
     } catch (error) {
@@ -50,12 +41,17 @@ function Header() {
   const handleLogout = () => {
     try {
       const response = axios.post(`${process.env.HOST}/logout`);
-      localStorage.removeItem("token");
-      router.push("/Home")
+      localStorage.removeItem("jwt");
+      setToken(null);
+      router.push("/Home");
     } catch (error) {
       console.error(error);
     }
   };
+
+  const handleClick = () => {
+    router.push('/availableVet');
+  }
 
   const redirectToProfile = useCallback(() => {
     if (userRole === "admin") {
@@ -63,9 +59,9 @@ function Header() {
     } else if (userRole === "user") {
       router.push("/User/Profile");
     } else if (userRole === "vet") {
-      router.push("/Vet/Profile")
+      router.push("/Vet/Profile");
     } else if (userRole === "trainer") {
-      router.push("/Trainer/Profile")
+      router.push("/Trainer/Profile");
     } else {
       console.log("Unknown role or no role assigned");
     }
@@ -132,7 +128,7 @@ function Header() {
         <div className="flex items-center space-x-6">
           <ul className="flex flex-col font-medium md:p-0 m-0 md:space-x-8 rtl:space-x-reverse md:flex-row">
             <li>
-              <button className="text-white flex items-center bg-red-600 py-2 px-3 rounded-pill fs-6">
+              <button className="text-white flex items-center bg-red-600 py-2 px-3 rounded-pill fs-6" onClick={handleClick}>
                 <img
                   src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1710150406/call-192-svgrepo-com_djygmx.svg"
                   className="w-6"
@@ -142,7 +138,7 @@ function Header() {
               </button>
             </li>
           </ul>
-          {token ? (
+          {token && (
             <Menu as="div" className="relative ml-3">
               <div>
                 <Menu.Button className="relative flex rounded-full bg-dark-blue text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -196,20 +192,17 @@ function Header() {
                 </Menu.Items>
               </Transition>
             </Menu>
-          ) : (
+          )}
+          {!token && (
             <li>
               <a
                 className="text-gray-700   flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
-                href="/Login"
+                href="/login"
               >
                 Login
               </a>
             </li>
           )}
-
-          {/* <Link href="/Login" className="bg-saddle-brown hover:text-white text-dark-blue font-bold py-2 px-4 rounded ">
-            Log In
-          </Link> */}
         </div>
 
         <div

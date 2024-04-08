@@ -1,31 +1,35 @@
 "use client";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import PetCard from "@/components/PetCard";
+import { PetAdoptCard } from "@/components/PetCard";
 import Pagination from "@/components/Pagination";
 import { Pet } from "../interfaces/pet";
-import Link from "next/link";
 
 function Adopt() {
   const [petData, setPetData] = useState<Pet[]>([]);
+  const [originalPetData, setOriginalPetData] = useState<Pet[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [categorySearch, setCategorySearch] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const searchFilter = () => {
-    const filterData = petData.filter((data) => {
+    const filterData = originalPetData.filter((data) => {
+      const ageString = String(data.age);
       if (
-        searchTerm === data.species ||
-        searchTerm === data.breed ||
-        searchTerm === String(data.age) ||
-        searchTerm === data.gender
+        data.color.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        data.species.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        data.pet_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ageString.includes(searchTerm.toLowerCase())
       ) {
         return true;
       }
+      return false;
     });
 
     setPetData(filterData);
   };
+  useEffect(() => {
+    setPetData(originalPetData);
+  }, [originalPetData]);
 
   useEffect(() => {
     async function fetchPets() {
@@ -34,7 +38,8 @@ function Adopt() {
           `${process.env.HOST}/pet?page=${currentPage}`
         );
 
-        setPetData(response.data);
+        // setPetData(response.data);
+        setOriginalPetData(response.data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching pets:", error);
@@ -84,146 +89,55 @@ function Adopt() {
               className="object-cover"
             />
           </div>
-          <form className="max-w-lg mx-auto">
-            <div className="flex">
-              <button
-                id="dropdown-button"
-                data-dropdown-toggle="dropdown"
-                className="flex-shrink-0 z-10 inline-flex 
-            items-center py-2.5 px-4 text-sm font-medium text-center
-             text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg
-              hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100
-             "
-                type="button"
-                style={{ fontFamily: "open-sans", fontSize: "20px" }}
-              >
-                All categories
+
+          <form className=" max-w-xl mx-auto mt-6">
+            {/* <label
+              htmlFor="default-search"
+              className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+            >
+              Search
+            </label> */}
+            <div className="relative">
+              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <svg
-                  className="w-2.5 h-2.5 ms-2.5"
+                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
                   aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
-                  viewBox="0 0 10 6"
+                  viewBox="0 0 20 20"
                 >
                   <path
                     stroke="currentColor"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth="2"
-                    d="m1 1 4 4 4-4"
+                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
                   />
                 </svg>
-              </button>
-
-              <div
-                id="dropdown"
-                className={` z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 hidden`}
-              >
-                <ul
-                  className="py-2 text-sm text-gray-700 dark:text-gray-600"
-                  aria-labelledby="dropdown-button"
-                  key={Math.random()}
-                >
-                  <li key={Math.random()}>
-                    <button
-                      onClick={(e: any) => {
-                        setCategorySearch(e.target.value);
-                      }}
-                      type="button"
-                      value={"species"}
-                      className="inline-flex w-full px-4 py-2"
-                    >
-                      species
-                    </button>
-                  </li>
-                  <li key={Math.random()}>
-                    <button
-                      value={"breed"}
-                      type="button"
-                      onClick={(e: any) => {
-                        setCategorySearch(e.target.value);
-                      }}
-                      className="inline-flex w-full px-4 py-2"
-                    >
-                      breed
-                    </button>
-                  </li>
-                  <li key={Math.random()}>
-                    <button
-                      value={"age"}
-                      onClick={(e: any) => {
-                        setCategorySearch(e.target.value);
-                      }}
-                      type="button"
-                      className="inline-flex w-full px-4 py-2"
-                    >
-                      age
-                    </button>
-                  </li>
-                  <li key={Math.random()}>
-                    <button
-                      value={"gender"}
-                      onClick={(e: any) => {
-                        setCategorySearch(e.target.value);
-                      }}
-                      type="button"
-                      className="inline-flex w-full px-4 py-2"
-                    >
-                      gender
-                    </button>
-                  </li>
-                  <li key={Math.random()}>
-                    <button
-                      value={"city"}
-                      onClick={(e: any) => {
-                        setCategorySearch(e.target.value);
-                      }}
-                      type="button"
-                      className="inline-flex w-full px-4 py-2"
-                    >
-                      city
-                    </button>
-                  </li>
-                </ul>
               </div>
-              <div className="relative w-full">
+              <div className="">
+                {" "}
                 <input
                   type="search"
-                  onKeyUp={(e: any) => setSearchTerm(e.target.value)}
-                  id="search-dropdown"
-                  className="block p-2.5 w-full z-20 text-sm  rounded-e-lg border-s-gray-50
-               border-s-2 border border-gray-300 focus:ring-saddle-brown focus:border-dark-blue
-            "
-                  placeholder="Search for pet, city....."
-                  required
+                  id="default-search"
+                  className="block w-full ml-2 p-4 ps-10 text-sm text-gray-700 border border-dark-blue rounded-lg bg-white  focus:ring-black focus:border-black "
+                  placeholder="Search by color, species, name, city..."
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <button
-                  type="button"
-                  onClick={() => searchFilter()}
-                  className="absolute top-0 end-0 p-2.5 text-sm font-medium h-full rounded-e-lg border
-               border-dark-blue focus:ring-4 focus:outline-none focus:ring-saddle-brown
-               "
-                >
-                  <svg
-                    className="w-4 h-4"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                    />
-                  </svg>
-                  <span className="sr-only">Search</span>
-                </button>
               </div>
+              <button
+                type="submit"
+                className="text-white absolute my-2 end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                onClick={(e) => {
+                  e.preventDefault();
+                  searchFilter();
+                }}
+              >
+                Search
+              </button>
             </div>
           </form>
+
           <h1
             className="card-title font-bold text-center mt-4 "
             style={{ fontFamily: "open-sans", fontSize: "40px" }}
@@ -234,21 +148,21 @@ function Adopt() {
             <div className="row">
               {petData.map((pet) => (
                 <div
-                  className="col-md-4 mb-4 d-flex justify-center"
+                  className="col-md-3 mb-6 flex-col justify-center"
                   key={pet._id}
                 >
-                  <PetCard key={pet._id} pet={pet} />
-                  <Link
+                  <PetAdoptCard key={pet._id} pet={pet} />
+                  {/* <Link
                     href="/PetData"
                     className="no-underline flex justify-center items-center"
                   >
                     <button
                       type="button"
-                      className="text-white bg-primary py-1.5 px-6 my-2 rounded-xl fs-6"
+                      className="text-gray-700 font-bold items-center bg-saddle-brown py-2 px-8 mr-20 shadow mt-4 rounded-xl fs-6 no-underline"
                     >
                       Adopt
                     </button>
-                  </Link>
+                  </Link> */}
                 </div>
               ))}
             </div>

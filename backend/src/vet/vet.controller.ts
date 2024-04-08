@@ -6,6 +6,7 @@ import {
   Get,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Put,
   Req,
@@ -88,7 +89,7 @@ export class VetController {
       throw new BadRequestException('Phone number must be exactly 10 digits');
     }
 
-    if (!address  && !city && !state) {
+    if (!address && !city && !state) {
       throw new BadRequestException('please provide complete address details');
     }
     if (!YearsOfExperience) {
@@ -123,12 +124,17 @@ export class VetController {
   // @Roles(Role.ADMIN)
   @Get('/')
   async getTrainers() {
-    return this.vetService.findVet();
+    return await this.vetService.findVet();
+  }
+
+  @Get('/available/')
+  async getAvailableVet() {
+    return await this.vetService.findAvailableVet();
   }
 
   @Get('/:id')
   async getTrainerByID(@Param('id') trainerId: string) {
-    return this.vetService.findVetById(trainerId);
+    return await this.vetService.findVetById(trainerId);
   }
 
   @Post(':id/uploadImage')
@@ -209,5 +215,13 @@ export class VetController {
     return await this.vetService.confirm(bookingId, vetId);
   }
 
+  @Patch(':id/available')
+  async markIsAvailable(@Param('id') id: string) {
+    return await this.vetService.markIsAvailable(id);
+  }
 
+  @Get('/:id/notify')
+  async notifyVet(@Param('id') roomId: string) {
+    return await this.vetService.notifyVet(roomId);
+  }
 }

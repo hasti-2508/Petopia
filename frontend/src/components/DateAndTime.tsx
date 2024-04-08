@@ -19,8 +19,8 @@ export default function DateAndTime({
   booking_time,
   updateFields,
 }: DateAndTimeProps) {
-  const now = moment(); // Get the current date and time
-  const minDateTime = now.clone().add(1, "hour"); // Set minimum date and time to one hour from now
+  const now = moment(); 
+  const minDateTime = now.clone().add(1, "hour"); 
 
   const [value, setValue] = React.useState<Moment | null>(
     moment(`${booking_date}T${booking_time}`, "DD/MM/YYTHH:mm:ss")

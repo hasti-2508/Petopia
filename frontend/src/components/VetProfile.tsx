@@ -1,42 +1,41 @@
 "use client";
 import { Service } from "@/interfaces/service";
 import { Vet } from "@/interfaces/vet";
+import axiosInstance from "@/utils/axios";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
 function VetProfile() {
   const [vet, setVet] = useState<Vet>();
   const [bookings, setBookings] = useState<Service[]>([]);
+  const [isChecked, setIsChecked] = useState(true);
 
-  const [activeTab, setActiveTab] = useState("Profile");
+  const [activeTab, setActiveTab] = useState("profile");
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
   };
-  const getUser = async (token: string) => {
-    try {
-      const response = await axios.post(`${process.env.HOST}/currentUser`, {
-        jwt: token,
-      });
-      setVet(response.data);
-      const bookingDetailsPromises = response.data.bookings.map(
-        async (bookingId: string) => {
-          const bookingResponse = await axios.get(
-            `${process.env.HOST}/serviceBooking/${bookingId}`
-          );
-          return bookingResponse.data;
-        }
-      );
-      const bookingDetails = await Promise.all(bookingDetailsPromises);
-      setBookings(bookingDetails);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      getUser(storedToken);
-    }
+    const getUser = async () => {
+      try {
+        const response = await axiosInstance.get('/currentUser');
+        setVet(response.data);
+        const bookingDetailsPromises = response.data.bookings.map(
+          async (bookingId: string) => {
+            const bookingResponse = await axios.get(
+              `${process.env.HOST}/serviceBooking/${bookingId}`
+            );
+            return bookingResponse.data;
+          }
+        );
+        const bookingDetails = await Promise.all(bookingDetailsPromises);
+        setBookings(bookingDetails);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getUser();
   }, []);
 
   const handleComplete = async (bookingId) => {
@@ -56,29 +55,55 @@ function VetProfile() {
     }
   };
 
+  const handleCheckboxChange = async () => {
+    setIsChecked(!isChecked);
+    try {
+      const response = await axios.patch(
+        `${process.env.HOST}/vet/${vet._id}/available`
+      );
+    } catch (error) {
+      console.error(error.response.data.message);
+    }
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "profile":
         return (
           <div>
             <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="profileImage"
-                >
-                  Profile Image
+              <div className="flex justify-between">
+                <div className="">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mt-4 "
+                    htmlFor="profileImage"
+                  >
+                    Profile Image
+                  </label>
+                </div>
+                <label className="inline-flex items-center cursor-pointer mb-12">
+                  <input
+                    type="checkbox"
+                    value=""
+                    className="sr-only peer"
+                    checked={isChecked}
+                    onChange={handleCheckboxChange}
+                  />
+                  <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4  peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                  <span className="ms-3 text-sm font-medium text-gray-900 ">
+                    {isChecked ? "Available" : "Not Available"}
+                  </span>
                 </label>
-                <img
-                  className="w-40 h-40 rounded-full object-cover"
-                  src={
-                    vet?.imageUrl
-                      ? vet.imageUrl
-                      : "http://localhost:3000/assets/user.png"
-                  }
-                  alt="Profile Image"
-                />
               </div>
+              <img
+                className="w-40 h-40 rounded-full object-cover mb-3"
+                src={
+                  vet?.imageUrl
+                    ? vet.imageUrl
+                    : "http://localhost:3000/assets/user.png"
+                }
+                alt="Profile Image"
+              />
               <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
@@ -162,7 +187,7 @@ function VetProfile() {
                     ) : (
                       <button
                         className="bg-blue-600 text-white px-3 py-1 rounded-md mr-2 no-underline"
-                        onClick={() => handleComplete(booking._id)} 
+                        onClick={() => handleComplete(booking._id)}
                       >
                         Complete
                       </button>

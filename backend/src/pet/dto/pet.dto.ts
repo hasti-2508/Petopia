@@ -10,8 +10,8 @@ export class PetDto {
   @IsString()
   breed: string;
 
-  @IsNumber()
-  age: number;
+  @IsString()
+  age: string;
 
   @IsString()
   gender: string;
@@ -20,9 +20,9 @@ export class PetDto {
   @IsOptional()
   color: string;
 
-  @IsNumber()
+  @IsString()
   @IsOptional()
-  weight: number;
+  weight: string;
 
   @IsString()
   @IsOptional()

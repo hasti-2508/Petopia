@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   NotFoundException,
   Param,
   Post,
@@ -19,9 +20,10 @@ import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
-import { AuthGuard } from './guards/auth.guard';
 import { LoginDto, ResetPasswordDto } from './dto/auth.dto';
-import { UserService } from 'src/user/user.service';
+import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
+import JwtPayload from 'src/interceptor/interface/jwtpayload';
+
 
 @Controller()
 export class AuthController {
@@ -36,9 +38,13 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<object> {
     const { email, password, role } = loginDto;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!role) {
       throw new BadRequestException('Please define your Role');
+    }
+    if (!emailRegex.test(email)) {
+      throw new BadRequestException('Invalid email format');
     }
     let user;
     if (role === 'user' || role === 'admin') {
@@ -50,11 +56,11 @@ export class AuthController {
     }
 
     if (!user) {
-      throw new BadRequestException('No such user found');
+      throw new UnauthorizedException('No such user found');
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw new UnauthorizedException('Password Incorrect');
+      throw new HttpException('Password Incorrect',403);
     }
     const payload = {
       email: user.email,
@@ -67,12 +73,19 @@ export class AuthController {
   }
 
   // @UseGuards(AuthGuard)
-  @Post('/currentUser')
+  @Get('/currentUser')
+  @UseInterceptors(JwtInterceptor)
   async currentUser(@Req() request: Request) {
     try {
       // const cookie = request.cookie.jwt;
-      const { jwt } = request.body;
-      const data = await this.jwtService.verifyAsync(jwt);
+      // const { jwt } = request.body;
+      // const authHeader = request.headers.authorization;
+      // if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      //   throw new UnauthorizedException('Bearer token not found');
+      // }
+     
+      // const token = authHeader.substring(7);
+      const data : JwtPayload = request.token;
       if (!data) {
         throw new UnauthorizedException('No Data found');
       }
@@ -132,6 +145,8 @@ export class AuthController {
     }
   }
 }
+
+
 
 // @Post('/SendOtp')
 // async sendOtp(@Body() data: { phone: string }){
