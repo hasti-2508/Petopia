@@ -379,7 +379,7 @@ function UserProfile() {
                             data-bs-toggle="modal"
                             data-bs-target="#myModal"
                             onClick={() => setServiceId(ser._id)}
-                            className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
+                            className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
                             style={{ width: "68px" }}
                           >
                             Rate
