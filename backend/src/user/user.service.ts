@@ -53,25 +53,51 @@ export class UserService {
     return user;
   }
 
-  async updateUser(id: string, fieldToUpdate: any): Promise<User> {
+  // async updateUser(id: string, fieldToUpdate: any): Promise<User> {
+  //   const isValid = mongoose.Types.ObjectId.isValid(id);
+  //   if (!isValid) {
+  //     throw new HttpException('Invalid Id', 400);
+  //   }
+
+  //   const updatedUser = await this.UserModel.findByIdAndUpdate(
+  //     id,
+  //     { $set: fieldToUpdate },
+  //     { new: true },
+  //   );
+
+  //   if (!updatedUser) {
+  //     throw new NotFoundException('User not found');
+  //   }
+
+  //   return updatedUser;
+  // }
+  async updateUser(id: string, fieldsToUpdate: any): Promise<User> {
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) {
       throw new HttpException('Invalid Id', 400);
     }
-
+  
+    // Construct the update object dynamically
+    const updateObj: any = {};
+    for (const key in fieldsToUpdate) {
+      if (fieldsToUpdate.hasOwnProperty(key)) {
+        updateObj[key] = fieldsToUpdate[key];
+      }
+    }
+  
     const updatedUser = await this.UserModel.findByIdAndUpdate(
       id,
-      { $set: fieldToUpdate },
+      { $set: updateObj },
       { new: true },
     );
-
+  
     if (!updatedUser) {
       throw new NotFoundException('User not found');
     }
-
+  
     return updatedUser;
   }
-
+  
   async deleteUser(id: string) {
     const user = await this.findUserById(id);
     user.isActive = false;

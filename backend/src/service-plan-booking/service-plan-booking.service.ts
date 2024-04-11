@@ -192,6 +192,7 @@ export class ServicePlanBookingService {
     plan.average_rating = Number(booking.averageRating.toFixed(1));
     plan.save();
     return booking.save();
+
   }
 
   async markBookingAsComplete(id: string): Promise<ServicePlanBooking> {

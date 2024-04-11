@@ -54,9 +54,6 @@ export class JwtInterceptor implements NestInterceptor {
       throw new UnauthorizedException('Invalid token');
     }
 
-    // Attach the decoded token to the request object for further processing
-    // request.token = decodedToken;
-
     return next.handle();
   }
 }

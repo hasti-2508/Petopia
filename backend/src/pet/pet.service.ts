@@ -21,7 +21,7 @@ export class PetService {
     qu: Query,
   ): Promise<Pet[]> {
     let query = this.petModel.find({ isActive: "true", isAdopted:"false" }); //isAdopted: false
-    const resPerPage = 16;
+    const resPerPage = 2;
     const currentPage = Number(qu.page) || 1;
     const skip = resPerPage * (currentPage - 1);
 

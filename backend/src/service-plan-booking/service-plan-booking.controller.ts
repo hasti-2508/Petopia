@@ -10,6 +10,8 @@ import {
   Query,
   Req,
   Res,
+  UnauthorizedException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ServicePlanBookingService } from './service-plan-booking.service';
 import { JwtService } from '@nestjs/jwt';
@@ -20,6 +22,8 @@ import {
   RateDto,
 } from './dto/service-booking-plan.dto';
 import { Query as ExpressQuery } from 'express-serve-static-core';
+import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
+import JwtPayload from 'src/interceptor/interface/jwtpayload';
 
 @Controller('serviceBooking')
 export class ServicePlanBookingController {
@@ -55,22 +59,17 @@ export class ServicePlanBookingController {
 
   @Post('/:servicePlanId')
   async create(
-    @Req() req,
+    @Req() request,
     @Res() res,
     @Param('servicePlanId') servicePlanId: string,
     @Body() createServicePlanBookingDto: CreateServicePlanBookingDto,
   ): Promise<ServicePlanBooking> {
     try {
-      const authorizationHeader = req.headers['authorization'];
-      if (!authorizationHeader) {
-        throw new HttpException('Authorization header is missing', 401);
+      const data : JwtPayload = request.token;
+      if (!data) {
+        throw new UnauthorizedException('No Data found');
       }
-      const token = authorizationHeader.split(' ')[1]; 
-      if (!token) {
-        throw new HttpException('Token is missing', 401);
-      }
-      const decodedToken = this.jwtService.decode(token) as { userId: string };
-      const userId = decodedToken.userId;
+      const userId = data.userId;
       const booking =  await this.servicePlanBookingService.bookService(
         userId,
         servicePlanId,  
@@ -98,33 +97,23 @@ export class ServicePlanBookingController {
   }
 
   @Post(':BookingId/rate')
+  @UseInterceptors(JwtInterceptor)
   async rateVet(  
-    @Req() req,
+    @Req() request,
     @Param('BookingId') BookingId: string,
     @Body() rateDto: RateDto,
   ): Promise<ServicePlanBooking> {
-    // const token = req.cookies?.jwt;    
-    // const token = req.body.jwt;
-    // console.log(token)
-    // if (!token) {
-    //   throw new HttpException('User should be logged in!',401);
-    // }
-    const authorizationHeader = req.headers['authorization'];
-      if (!authorizationHeader) {
-        throw new HttpException('Authorization header is missing', 401);
+    const data : JwtPayload = request.token;
+      if (!data) {
+        throw new UnauthorizedException('No Data found');
       }
-      const token = authorizationHeader.split(' ')[1]; 
-      if (!token) {
-        throw new HttpException('Token is missing', 401);
-      }
-    const decodedToken = await this.jwtService.decode(token) as { userId: string };
-    const userId = decodedToken.userId;
+      const userId = data.userId;
     return this.servicePlanBookingService.addRating(
       userId,
       BookingId,
       rateDto.rating,
     );
-  }//ahiya save krvu pade?
+  }
 
   @Patch(':id/complete')
   async markBookingAsComplete(@Param('id') id: string) {
