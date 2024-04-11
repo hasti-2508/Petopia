@@ -7,6 +7,7 @@ import {
   HttpException,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Put,
   Req,
@@ -176,17 +177,25 @@ export class UserController {
     }
   }
 
-  @Put('/:id')
-  async updateUser(
-    @Body() updateUserDto: CreateUserDto,
-    @Param('id') userid: string,
-  ) {
-    return this.userService.updateUser(userid, updateUserDto);
-  }
+  // @Put('update/:id')
+  // async updateUser(
+  //   @Body() updateUserDto: CreateUserDto,
+  //   @Param('id') userId: string,
+  // ) {
+  //   return this.userService.updateUser(userId, updateUserDto);
+  // }
+  @Patch('update/:id')
+async updateUser(
+  @Body() updateUserDto,
+  @Param('id') userId: string,
+) {
+  return this.userService.updateUser(userId, updateUserDto);
+}
+
 
   // @UseGuards(RolesGuard)
   // @Roles(Role.ADMIN)
-  @Delete(':id')
+  @Delete('delete/:id')
   async deleteUser(@Param('id') userId: string) {
     return this.userService.deleteUser(userId);
   }

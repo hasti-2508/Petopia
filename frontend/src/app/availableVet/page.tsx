@@ -1,5 +1,5 @@
 
-import AvailableVet from '@/components/AvailableVet'
+import AvailableVet from '@/components/emergency/AvailableVet'
 import React from 'react'
 
 function page() {

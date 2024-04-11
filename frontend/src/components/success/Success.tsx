@@ -2,7 +2,7 @@
 import axiosInstance from "@/utils/axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
-// Assuming you're using react-router-dom for routing
+
 
 function Success() {
   const searchResult = useSearchParams();
@@ -14,7 +14,7 @@ function Success() {
         `/stripe/${id}/confirmation`,
         { isConfirmed: true }
       );
-      router.push("/Home");
+      router.push("/home");
     } catch (error) {
       console.error(
         "error updating confirmation:",

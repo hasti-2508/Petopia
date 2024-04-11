@@ -1,7 +1,8 @@
 "use client";
 import axios from "axios";
 import React, { useState } from "react";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 function ForgetPassword() {
   const router = useRouter();
@@ -24,12 +25,12 @@ function ForgetPassword() {
       {
         console.log(Data);
       }
-      alert("Mail sent to you email id!");
+      toast.success("Mail sent to you email id!");
       router.push("/login");
     } catch (error) {
       console.error(error);
-      alert("No Account Found! Please Sign Up!");
-      router.push("/SignUp")
+      toast.error("No Account Found! Please Sign Up!");
+      router.push("/signup");
     }
   };
 

@@ -2,6 +2,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 function Login() {
   const router = useRouter();
@@ -12,8 +13,6 @@ function Login() {
   });
   const [token, setToken] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
     const storedToken = localStorage.getItem("jwt");
@@ -38,36 +37,32 @@ function Login() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    if (e.target.name === "email" || e.target.name === "password") {
-      setEmailError("");
-      setPasswordError("");
-    }
   };
   function validateEmail(email: string) {
     const parts = email.split("@");
     if (parts.length !== 2) {
-      return false; // If email doesn't contain exactly one '@', it's invalid
+      return false; 
     }
 
     const localPart = parts[0];
     const domainPart = parts[1];
 
     if (!localPart || !domainPart) {
-      return false; // If local part or domain part is empty, it's invalid
+      return false;
     }
 
     if (localPart.length > 64 || domainPart.length > 255) {
-      return false; // If local part or domain part is too long, it's invalid
+      return false; 
     }
 
     const domainParts = domainPart.split(".");
     if (domainParts.length < 2) {
-      return false; // If domain part doesn't contain at least one '.', it's invalid
+      return false; 
     }
 
     for (const part of domainParts) {
       if (part.length > 63) {
-        return false; // If any part of domain is too long, it's invalid
+        return false;
       }
     }
 
@@ -77,7 +72,7 @@ function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateEmail(formData.email)) {
-      setEmailError("Invalid email format");
+      toast.error("Invalid email format");
       return;
     }
     let role = formData.role;
@@ -92,16 +87,28 @@ function Login() {
 
       switch (role) {
         case "admin":
-          window.location.href = "/Home";
+          toast.success("Login Successful!");
+          setTimeout(() => {
+            window.location.href = "/home";
+          }, 2000);
           break;
         case "user":
-          window.location.href = "/Home";
+          toast.success("Login Successful!");
+          setTimeout(() => {
+            window.location.href = "/home";
+          }, 2000);
           break;
         case "trainer":
-          window.location.href = "/Home";
+          toast.success("Login Successful!");
+          setTimeout(() => {
+            window.location.href = "/home";
+          }, 2000);
           break;
         case "vet":
-          window.location.href = "/Home";
+          toast.success("Login Successful!");
+          setTimeout(() => {
+            window.location.href = "/home";
+          }, 2000);
       }
     } catch (error) {
       if (
@@ -109,15 +116,16 @@ function Login() {
         error.response &&
         error.response.status === 401
       ) {
-        alert("No Account Found! Please Sign Up!");
-        router.push("/SignUp");
+        toast.error("No Account Found! Please Sign Up!");
+        setTimeout(() => {
+          router.push("/signup");
+        }, 2000);
       } else if (
         axios.isAxiosError(error) &&
         error.response &&
         error.response.status === 403
       ) {
-        setPasswordError("Incorrect Password");
-        // alert("Password Incorrect!");
+        toast.error("Incorrect Password!");
         setFormData((prevState) => ({
           ...prevState,
           password: "",
@@ -127,17 +135,20 @@ function Login() {
         error.response &&
         error.response.status === 404
       ) {
-        alert("No Account Found! Please Sign Up!");
-        router.push("/SignUp");
+        toast.error("No Account Found! Please Sign Up!");
+        setTimeout(() => {
+          router.push("/signup");
+        }, 2000);
       } else {
-        console.error("Error posting user data:", error.response.data.message);
+        toast.error("Error Occurred! Try Again Later.");
+        // console.error("Error posting user data:", error.response.data.message);
       }
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <section className="form-02-main">
+      <section className="form-02-main mt-">
         <div className="container">
           <div className="row">
             <div className="col-md-12">
@@ -160,7 +171,6 @@ function Login() {
                       required
                       aria-required="true"
                     />
-                    {emailError && <p className="text-red-500">{emailError}</p>}
                   </div>
 
                   <div className="form-group">
@@ -187,9 +197,6 @@ function Login() {
                     >
                       {showPassword ? "Hide" : "Show"}
                     </button>
-                    {passwordError && (
-                      <p className="text-red-500">{passwordError}</p>
-                    )}
                   </div>
 
                   <div className="form-check">
@@ -232,7 +239,7 @@ function Login() {
 
                   <div className="form-group">
                     <button type="submit" className="_btn_04">
-                      <a href="/Adopt">Login</a>
+                      Login
                     </button>
                     <p className="mt-4 flex justify-center">
                       Don't have an account?

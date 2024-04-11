@@ -9,6 +9,8 @@ import {
   Post,
   Query,
   Req,
+  UnauthorizedException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TrainingPlanBookingService } from './training-plan-booking.service';
@@ -19,6 +21,8 @@ import {
 } from './dto/training-plan-booking.dto';
 import { TrainingPlanBooking } from './schemas/training-plan-booking.schema';
 import { Query as ExpressQuery } from 'express-serve-static-core';
+import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
+import JwtPayload from 'src/interceptor/interface/jwtpayload';
 
 @Controller('trainingBooking')
 export class TrainingPlanBookingController {
@@ -34,7 +38,7 @@ export class TrainingPlanBookingController {
     return await this.TrainingPlanBookingService.findTrainings(query);
   }
 
-  @Get('/:bookingId')
+  @Get('booking/:bookingId')
   async findBookingById(
     @Param('bookingId') bookingId: string,
   ):Promise<TrainingPlanBooking>{
@@ -43,7 +47,7 @@ return booking;
 
   }
 
-  @Get('/:userId')
+  @Get('user/:userId')
   async getTraining(
     @Param('userId') userId: string,
   ): Promise<TrainingPlanBooking[]> {
@@ -54,18 +58,17 @@ return booking;
     return booking;
   }
 
-  @Post('/:TrainingPlanId')
+  @Post('booking/:TrainingPlanId')
   async create(
-    @Req() req,
+    @Req() request,
     @Param('TrainingPlanId') TrainingPlanId: string,
     @Body() createTrainingPlanBookingDto: CreateTrainingPlanBookingDto,
   ): Promise<TrainingPlanBooking> {
-    const token = req.body.jwt;
-    if (!token) {
-      throw new HttpException('User Should be logged in', 401);
+    const data : JwtPayload = request.token;
+    if (!data) {
+      throw new UnauthorizedException('No Data found');
     }
-    const decodedToken = await this.jwtService.decode(token) as { userId: string };
-    const userId = decodedToken.userId;
+    const userId = data.userId;
     return this.TrainingPlanBookingService.bookService(
       userId,
       TrainingPlanId,
@@ -85,17 +88,17 @@ return booking;
   }
 
   @Post(':BookingId/rate')
+  @UseInterceptors(JwtInterceptor)
   async rateVet(
-    @Req() req,
+    @Req() request,
     @Param('BookingId') BookingId: string,
     @Body() rateDto: RateDto,
   ): Promise<TrainingPlanBooking> {
-    const token = req.cookies?.jwt;
-    if (!token) {
-      throw new NotFoundException('User should be logged in!');
+    const data = request.token;
+    if(!data){
+      throw new UnauthorizedException("No Data found!")
     }
-    const decodedToken = await this.jwtService.decode(token) as { userId: string };
-    const userId = decodedToken.userId;
+    const userId = data.userId;
     return this.TrainingPlanBookingService.addRating(
       userId,
       BookingId,
