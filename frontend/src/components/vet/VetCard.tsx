@@ -1,20 +1,19 @@
 "use client";
 import Link from "next/link";
-const UserCard = ({ user }) => {
+const VetCard = ({ user }) => {
   return (
-    <div className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom w-1/4">
+    <div className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom w-1/3">
+      <img
+        style={{ height: "320px" }}
+        className="w-full p-4 img-responsive"
+        src={
+          user?.imageUrl
+            ? user.imageUrl
+            : "http://localhost:3000/assets/user.png"
+        }
+        alt={user?.name}
+      />
 
-        <img
-          style={{ height: "250px" }}
-          className="w-full p-4 img-responsive"
-          src={
-            user?.imageUrl
-              ? user.imageUrl
-              : "http://localhost:3000/assets/user.png"
-          }
-          alt={user?.name}
-        />
-  
       <div className="px-6 py-3">
         <div className="font-bold text-xl mb-2">{user?.name}</div>
         <div className="text-gray-700 text-base">
@@ -43,6 +42,12 @@ const UserCard = ({ user }) => {
               </label>{" "}
               <div className="fw-medium">{user?.city}</div>
             </div>
+            <div className="mt-1">
+              <label htmlFor="species" className="font-bold text-dark-blue  ">
+                year Of Experience:
+              </label>{" "}
+              <div className="fw-medium">{user?.YearsOfExperience}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -50,21 +55,19 @@ const UserCard = ({ user }) => {
   );
 };
 
-const UserUpdateCard = ({ editedUser, handleChange }) => {
+const VetUpdateCard = ({ editedUser, handleChange }) => {
   return (
-    <div className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom w-1/4">
-      <Link href="/Adopt/PetData">
-        <img
-          style={{ height: "250px" }}
-          className="w-full p-4 img-responsive"
-          src={
-            editedUser?.imageUrl
-              ? editedUser.imageUrl
-              : "http://localhost:3000/assets/user.png"
-          }
-          alt={editedUser?.name}
-        />
-      </Link>
+    <div className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom w-1/3">
+      <img
+        style={{ height: "320px" }}
+        className="w-full p-4 img-responsive"
+        src={
+          editedUser?.imageUrl
+            ? editedUser.imageUrl
+            : "http://localhost:3000/assets/user.png"
+        }
+        alt={editedUser?.name}
+      />
       <div className="px-6 py-3">
         <div className="font-bold text-xl mb-2">
           {" "}
@@ -142,6 +145,21 @@ const UserUpdateCard = ({ editedUser, handleChange }) => {
                 />
               </div>
             </div>
+            <div className="mt-1">
+              <label htmlFor="species" className="font-bold text-dark-blue  ">
+                year Of Experience:
+              </label>{" "}
+              <div className="fw-medium">
+                <input
+                  className="border-2 border-gray-200"
+                  type="text"
+                  name="YearsOfExperience"
+                  value={editedUser.YearsOfExperience}
+                  onChange={handleChange}
+                  style={{ width: `${editedUser.name.length * 30}px` }}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -149,4 +167,4 @@ const UserUpdateCard = ({ editedUser, handleChange }) => {
   );
 };
 
-export { UserUpdateCard, UserCard };
+export { VetUpdateCard, VetCard };

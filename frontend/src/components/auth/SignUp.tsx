@@ -5,18 +5,15 @@ function SignUp() {
   const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
     const role = e.target.value;
-    {
-      console.log(role);
-    }
     switch (role) {
       case "vet":
-        window.location.href = "/Vet/register";
+        window.location.href = "/vet/register";
         break;
       case "trainer":
-        window.location.href = "/Trainer/register";
+        window.location.href = "/trainer/register";
         break;
       case "user":
-        window.location.href = "/User/register";
+        window.location.href = "/user/register";
         break;
       default:
         break;

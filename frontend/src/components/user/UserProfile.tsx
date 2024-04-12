@@ -551,7 +551,6 @@ function UserProfile() {
   return (
     <div>
       <div className="p-9">
-        {/* className=" p-9 bg-white border border-gray-200 rounded-lg shadow m-8 border-1" */}
         <div className="text-sm font-medium text-center text-gray-500 ">
           <ul className="flex flex-wrap -mb-px">
             <li className="me-2">

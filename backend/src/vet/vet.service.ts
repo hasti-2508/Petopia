@@ -52,22 +52,30 @@ export class VetService {
     return vet;
   }
 
-  async updateTrainer(id: string, fieldToUpdate: any): Promise<Vet> {
+
+  async updateVet(id: string, fieldsToUpdate: any): Promise<Vet> {
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) {
       throw new HttpException('Invalid Id', 400);
     }
 
+    const updateObj: any = {};
+    for (const key in fieldsToUpdate) {
+      if (fieldsToUpdate.hasOwnProperty(key)) {
+        updateObj[key] = fieldsToUpdate[key];
+      }
+    }
+  
     const updatedVet = await this.VetModel.findByIdAndUpdate(
       id,
-      fieldToUpdate,
+      { $set: updateObj },
       { new: true },
     );
-
+  
     if (!updatedVet) {
       throw new NotFoundException('Vet not found');
     }
-
+  
     return updatedVet;
   }
 
@@ -141,12 +149,14 @@ export class VetService {
     }
   }
 
-  async notifyVet(roomId : string){
-    const vet = await this.VetModel.findOne({_id: roomId})
+  async notifyVet(id : string){
+    const vet = await this.VetModel.findOne({_id: id})
     if(!vet){
       throw new NotFoundException("Vet Not Found!")
     }
-    if(vet){
+    if (vet) {
+      vet.isHavingCall = !vet.isHavingCall;
+      if(vet){
  
         const transporter = nodemailer.createTransport({
           service: 'Gmail',
@@ -158,14 +168,32 @@ export class VetService {
         const mailOptions = {
           from: process.env.EMAIL,
           to: process.env.EMAIL,
-          subject: 'Assigned Booking',
+          subject: 'Emergency call',
           text: `Hello Vet, 
-       You are having a video call right now.
+       You are having a emergency call right now.
        Please join the link attached
-       Link : http://localhost:3000/room?roomId=${roomId}`,
+       Link : http://localhost:3000/room?roomId=${id}`,
         };
     
         await transporter.sendMail(mailOptions);
     }
+      return vet.save();
+    } else {
+      throw new Error('Vet not found');
+    }
+   
   }
+
+  // async callVet(id: string){
+  //   const vet = await this.VetModel.findOne({ _id: id });
+  //   if (!vet) {
+  //     throw new NotFoundException('Vet not found');
+  //   }
+  //   if (vet) {
+  //     vet.isHavingCall = !vet.isAvailable;
+  //     return vet.save();
+  //   } else {
+  //     throw new Error('Vet not found');
+  //   }
+  // }
 }

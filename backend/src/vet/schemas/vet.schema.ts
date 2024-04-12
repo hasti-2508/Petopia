@@ -58,6 +58,9 @@ export class Vet extends Document {
   @Prop({default: true})
   isAvailable: boolean;
 
+  @Prop({default: false})
+  isHavingCall: boolean;
+
   @Prop()
   resetToken: string;
 
