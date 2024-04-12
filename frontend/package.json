@@ -17,6 +17,7 @@
     "@mui/material": "^5.15.13",
     "@mui/styled-engine-sc": "^6.0.0-alpha.17",
     "@mui/x-date-pickers": "^6.19.7",
+    "@reduxjs/toolkit": "^2.2.3",
     "@refinitiv-ui/elements": "^7.10.8",
     "@stripe/stripe-js": "^3.0.10",
     "@zegocloud/zego-uikit-prebuilt": "^2.0.1",
@@ -33,6 +34,7 @@
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
     "react-push-notification": "^1.5.4",
+    "react-redux": "^9.1.0",
     "react-router-dom": "^6.22.3",
     "styled-components": "^6.1.8",
     "zego-express-engine-webrtc": "^3.3.0"

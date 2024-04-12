@@ -184,12 +184,12 @@ export class VetController {
     }
   }
 
-  @Put('/:id')
+  @Patch('update/:id')
   async updateUser(
-    @Body() updateUserDto: CreateVetDto,
+    @Body() updateUserDto,
     @Param('id') trainerId: string,
   ) {
-    return this.vetService.updateTrainer(trainerId, updateUserDto);
+    return this.vetService.updateVet(trainerId, updateUserDto);
   }
 
   // @UseGuards(RolesGuard)
@@ -220,8 +220,13 @@ export class VetController {
     return await this.vetService.markIsAvailable(id);
   }
 
-  @Get('/:id/notify')
-  async notifyVet(@Param('id') roomId: string) {
-    return await this.vetService.notifyVet(roomId);
+  @Patch('/:id/notify')
+  async notifyVet(@Param('id') vetId: string) {
+    return await this.vetService.notifyVet(vetId);
   }
+
+  // @Patch('/:id/call')
+  // async callVet(@Param('id') vetId: string){
+  //   return await this.vetService.callVet(vetId)
+  // }
 }

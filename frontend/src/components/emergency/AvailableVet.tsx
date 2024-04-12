@@ -82,7 +82,7 @@ function AvailableVet() {
     async (id: string) => {
       //   const notify = await axios.get(`${process.env.HOST}/${id}/notify`);
       try {
-        const notify = await axiosInstance.get(`${id}/notify`);
+        const notify = await axiosInstance.patch(`vet/${id}/notify`);
 
         router.push(`/room?roomId=${id}`);
       } catch (error) {

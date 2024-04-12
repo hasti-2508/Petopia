@@ -37,7 +37,7 @@ constructor(
       throw new NotFoundException('Trainer not found');
     }
     return user;
-  }
+  }//frontend no code 
   async findByEmailInVet(email: string): Promise<Vet>{
     const user = await this.VetModel.findOne({email, isActive: true});
     if (!user) {

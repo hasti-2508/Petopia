@@ -46,6 +46,8 @@ export class AuthController {
     if (!emailRegex.test(email)) {
       throw new BadRequestException('Invalid email format');
     }
+    //avadi aa error automatic ave che
+    
     let user;
     if (role === 'user' || role === 'admin') {
       user = await this.authService.findByEmailInUser(email);
@@ -84,7 +86,7 @@ export class AuthController {
       //   throw new UnauthorizedException('Bearer token not found');
       // }
      
-      // const token = authHeader.substring(7);
+      // const token = authHeader.substring(7);// aa error kya \ kai error?
       const data : JwtPayload = request.token;
       if (!data) {
         throw new UnauthorizedException('No Data found');
