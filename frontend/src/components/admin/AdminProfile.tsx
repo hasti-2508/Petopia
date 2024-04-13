@@ -5,7 +5,7 @@ import { User } from "@/interfaces/user";
 import axios from "axios";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import UserCard from "../booking/UserCard";
+import UserCard from "../pet/UserCard";
 import { Vet } from "@/interfaces/vet";
 import { Trainer } from "@/interfaces/trainer";
 import { Pet } from "@/interfaces/pet";

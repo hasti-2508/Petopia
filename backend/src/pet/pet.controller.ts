@@ -10,6 +10,7 @@ import {
   Query,
   Req,
   Res,
+  UnauthorizedException,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -21,6 +22,8 @@ import { diskStorage } from 'multer';
 import * as path from 'path';
 import { JwtService } from '@nestjs/jwt';
 import { Query as ExpressQuery} from 'express-serve-static-core';
+import JwtPayload from 'src/interceptor/interface/jwtpayload';
+import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 
 @Controller('pet')
 export class PetController {
@@ -45,14 +48,13 @@ export class PetController {
   }
 
   @Post('/')
-  async createPet(@Body() petDto: PetDto, @Req() req) {
-    // const token = req.cookies.jwt;
-    const token  = req.body.jwt;
-    if (!token) {
+  @UseInterceptors(JwtInterceptor)
+  async createPet(@Body() petDto: PetDto, @Req() request) {
+    const data : JwtPayload = request.token;;
+    if (!data) {
       throw new HttpException('User Should be logged in',401);
     }
-    const decodedToken = this.jwtService.decode(token) as { userId: string };
-    const userId = decodedToken.userId;
+    const userId = data.userId;
     return await this.petService.createPet(petDto, userId);
   }
 

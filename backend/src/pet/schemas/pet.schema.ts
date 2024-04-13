@@ -19,7 +19,7 @@ export class Pet extends Document {
   breed: string;
 
   @Prop()
-  age: number;
+  age: string;
 
   @Prop()
   city: string
@@ -34,7 +34,7 @@ export class Pet extends Document {
   color: string;
 
   @Prop()
-  weight: number;
+  weight: string;
 
   @Prop()
   health_status: string;
