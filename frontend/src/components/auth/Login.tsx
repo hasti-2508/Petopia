@@ -15,13 +15,13 @@ function Login() {
     (state: RootState) => state.auth
   );
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem("jwt");
-    if (storedToken) {
-      toast.success("Welcome!");
-      router.push("/home");
-    }
-  }, []);
+  // useEffect(() => {
+  //   const storedToken = localStorage.getItem("jwt");
+  //   if (!storedToken) {
+  //     toast.success("Please Login First!");
+  //     router.push("/login");
+  //   }
+  // }, []);
   
   const togglePasswordVisibility = () => {
     dispatch(setShowPassword(!showPassword));

@@ -66,11 +66,14 @@ import { Vet } from "@/interfaces/vet";
 import axiosInstance from "@/utils/axios";
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { getVetData, notifyVet } from "@/redux/vet/vetService";
 
 function AvailableVet() {
   const router = useRouter();
+  const dispatch: AppDispatch = useDispatch();
+
 
   const [vet, setVet] = useState<Vet[]>([]);
 
@@ -82,7 +85,9 @@ function AvailableVet() {
     async (id: string) => {
       //   const notify = await axios.get(`${process.env.HOST}/${id}/notify`);
       try {
-        const notify = await axiosInstance.patch(`vet/${id}/notify`);
+        // const notify = await axiosInstance.patch(`vet/${id}/notify`);
+        dispatch(notifyVet(id));
+        // dispatch(getVetData());
 
         router.push(`/room?roomId=${id}`);
       } catch (error) {

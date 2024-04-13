@@ -22,6 +22,5 @@ export interface VetData {
     YearsOfExperience: number;
     imageUrl: string;
     bookings: string[];
-    isHavingCall: boolean;
     services  : string[];
   }

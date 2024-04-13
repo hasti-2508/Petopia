@@ -77,7 +77,7 @@ const VetUpdateCard = ({ editedUser, handleChange }) => {
             name="name"
             value={editedUser.name}
             onChange={handleChange}
-            style={{ width: `${editedUser.name.length * 13}px` }}
+            // style={{ width: `${editedUser?.name.length * 13}px` }}
           />
         </div>
         <div className="text-gray-700 text-base">
@@ -93,7 +93,7 @@ const VetUpdateCard = ({ editedUser, handleChange }) => {
                   name="email"
                   value={editedUser.email}
                   onChange={handleChange}
-                  style={{ width: `${editedUser.name.length * 30}px` }}
+                  // style={{ width: `${editedUser.name.length * 30}px` }}
                 />
               </div>
             </div>
@@ -109,7 +109,7 @@ const VetUpdateCard = ({ editedUser, handleChange }) => {
                   name="address"
                   value={editedUser.address}
                   onChange={handleChange}
-                  style={{ width: `${editedUser.name.length * 30}px` }}
+                  // style={{ width: `${editedUser.name.length * 30}px` }}
                 />
               </div>
             </div>
@@ -125,7 +125,7 @@ const VetUpdateCard = ({ editedUser, handleChange }) => {
                   name="phoneNo"
                   value={editedUser.phoneNo}
                   onChange={handleChange}
-                  style={{ width: `${editedUser.name.length * 30}px` }}
+                  // style={{ width: `${editedUser.name.length * 30}px` }}
                 />
               </div>
             </div>
@@ -141,7 +141,7 @@ const VetUpdateCard = ({ editedUser, handleChange }) => {
                   name="city"
                   value={editedUser.city}
                   onChange={handleChange}
-                  style={{ width: `${editedUser.name.length * 30}px` }}
+                  // style={{ width: `${editedUser.name.length * 30}px` }}
                 />
               </div>
             </div>
@@ -156,7 +156,7 @@ const VetUpdateCard = ({ editedUser, handleChange }) => {
                   name="YearsOfExperience"
                   value={editedUser.YearsOfExperience}
                   onChange={handleChange}
-                  style={{ width: `${editedUser.name.length * 30}px` }}
+                  // style={{ width: `${editedUser.name.length * 30}px` }}
                 />
               </div>
             </div>

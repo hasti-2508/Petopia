@@ -71,7 +71,7 @@ function Header() {
     } else if (userRole === "trainer") {
       router.push("/trainer/profile");
     } else {
-      console.log("Unknown role or no role assigned");
+      toast.success("Unknown role or no role assigned");
     }
   }, [userRole]);
 

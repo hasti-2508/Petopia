@@ -298,7 +298,7 @@ function UserProfile() {
                           alt={`Service ${index}`}
                           className="w-full h-48 mb-4 border-2"
                         />
-                        <div>
+                        <div> 
                           <p>
                             {" "}
                             <label
