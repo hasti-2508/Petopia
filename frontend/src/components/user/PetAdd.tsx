@@ -1,80 +1,58 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import axios from "axios";
-import { PetDto } from "@/interfaces/pet";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { setImageFile, setPetDataForm } from "@/redux/user/userSlice";
+import { petAdd } from "@/redux/user/userService";
 
 function PetAdd() {
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [formData, setFormData] = useState<PetDto>({
-    pet_name: "",
-    species: "",
-    breed: "",
-    age: "",
-    gender: "",
-    color: "",
-    weight: "",
-    health_conditions: "",
-    allergies: "",
-    additional_notes: "",
-    imageUrl: "",
-    isAdopted: false,
-  });
+  const router = useRouter();
+  const dispatch: AppDispatch = useDispatch();
+  const { petDataForm, imageFile } = useSelector(
+    (state: RootState) => state.user
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    dispatch(setPetDataForm({ [e.target.name]: e.target.value }));
   };
 
   const handleAdoptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value === "true";
-    setFormData({
-      ...formData,
-      isAdopted: value,
-    });
+    dispatch(setPetDataForm({ ...petDataForm, isAdopted: value }));
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
-      setImageFile(event.target.files[0]);
+      dispatch(setImageFile(event.target.files[0]));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const jwt = localStorage.getItem("jwt");
-    const requestData = {
-      ...formData,
-      jwt: jwt,
-    };
-
     try {
-      const response = await axios.post(
-        `${process.env.HOST}/pet/`,
-        requestData
-      );
-      const petId = response.data._id;
-      if (imageFile) {
-        const formData = new FormData();
-        formData.append("image", imageFile);
-        const res = await axios.post(
-          `${process.env.HOST}/pet/${petId}/uploadImage`,
-          formData
-        );
-      }
-      window.location.href = "/user/profile";
-    } catch (error) {
-      if (
-        axios.isAxiosError(error) &&
-        error.response &&
-        error.response.status === 401
-      ) {
-        window.location.href = "/Login";
+      const result = await dispatch(petAdd(petDataForm));
+      if (result.type === "petAdd/rejected") {
+        throw result;
       } else {
-        console.error("Error posting Pet data:", error);
+        const petId = result.payload._id;
+        if (imageFile) {
+          const petDataFormWithImage = new FormData();
+          petDataFormWithImage.append("image", imageFile);
+          const res = await axios.post(
+            `${process.env.HOST}/pet/${petId}/uploadImage`,
+            petDataFormWithImage
+          );
+          toast.success("Pet Added!");
+          router.push("user/profile");
+        }
       }
+      router.push("/user/profile");
+    } catch (error) {
+      toast.error(error.payload);
     }
   };
   return (
@@ -96,7 +74,7 @@ function PetAdd() {
         <input
           type="text"
           name="pet_name"
-          value={formData.pet_name}
+          value={petDataForm.pet_name}
           onChange={handleChange}
           placeholder="eg. maggie"
           className="w-full px-4 py-2 rounded-lg border border-dark-blue"
@@ -112,7 +90,7 @@ function PetAdd() {
           type="text"
           name="species"
           placeholder="eg. dog"
-          value={formData.species}
+          value={petDataForm.species}
           onChange={handleChange}
           className="w-full px-4 py-2 rounded-lg border border-dark-blue"
           required
@@ -127,7 +105,7 @@ function PetAdd() {
           type="text"
           name="breed"
           placeholder=" eg. labrador"
-          value={formData.breed}
+          value={petDataForm.breed}
           onChange={handleChange}
           className="w-full px-4 py-2 rounded-lg border border-dark-blue"
           required
@@ -144,7 +122,7 @@ function PetAdd() {
           step={0.1}
           min={0.1}
           maxLength={2}
-          value={formData.age}
+          value={petDataForm.age}
           onChange={handleChange}
           className="w-full px-4 py-2 rounded-lg border border-dark-blue"
           required
@@ -161,7 +139,7 @@ function PetAdd() {
           name="gender"
           placeholder="eg. male"
           className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
-          value={formData.gender}
+          value={petDataForm.gender}
           onChange={handleChange}
           required
         />
@@ -175,7 +153,7 @@ function PetAdd() {
           type="text"
           name="color"
           placeholder="eg. golden"
-          value={formData.color}
+          value={petDataForm.color}
           onChange={handleChange}
           className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
           required
@@ -190,7 +168,7 @@ function PetAdd() {
           type="text"
           name="weight"
           maxLength={3}
-          value={formData.weight}
+          value={petDataForm.weight}
           onChange={handleChange}
           className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
           required
@@ -204,7 +182,7 @@ function PetAdd() {
         <input
           type="text"
           name="health_conditions"
-          value={formData.health_conditions}
+          value={petDataForm.health_conditions}
           onChange={handleChange}
           className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
           placeholder="eg. Good"
@@ -219,7 +197,7 @@ function PetAdd() {
         <input
           type="text"
           name="allergies"
-          value={formData.allergies}
+          value={petDataForm.allergies}
           className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
           onChange={handleChange}
           placeholder="eg. dust"
@@ -233,7 +211,7 @@ function PetAdd() {
         <input
           type="text"
           name="additional_notes"
-          value={formData.additional_notes}
+          value={petDataForm.additional_notes}
           className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
           onChange={handleChange}
         />
@@ -267,7 +245,7 @@ function PetAdd() {
               type="radio"
               name="isAdopted"
               value="false"
-              checked={!formData.isAdopted}
+              checked={!petDataForm.isAdopted}
               onChange={handleAdoptionChange}
             />
             Yes
@@ -280,7 +258,7 @@ function PetAdd() {
               type="radio"
               name="isAdopted"
               value="true"
-              checked={formData.isAdopted}
+              checked={petDataForm.isAdopted}
               onChange={handleAdoptionChange}
             />
             No

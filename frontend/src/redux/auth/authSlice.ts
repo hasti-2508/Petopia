@@ -1,7 +1,6 @@
 
 import {  createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { currentUser, forgetPassword, login } from "./authService";
-import { User } from "@/interfaces/user";
 
 interface AuthState {
   token: string | null;
@@ -50,6 +49,7 @@ const authSlice = createSlice({
           },
         setShowPassword: (state, action: PayloadAction<boolean>) => {
             state.showPassword = action.payload;
+
           },
         setForgetPasswordData:(state,action:PayloadAction<Partial<AuthState["forgetPasswordData"]>>) => {
             state.forgetPasswordData = {...state.forgetPasswordData, ...action.payload}

@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useEffect, useCallback } from "react";
 import { Fragment } from "react";
@@ -16,7 +15,6 @@ import { currentUser, logout } from "@/redux/auth/authService";
 function Header() {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
-  let role;
   const { token, userRole } = useSelector((state: RootState) => state.auth);
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -25,13 +23,11 @@ function Header() {
         dispatch(setToken(AuthToken));
       }
     }
-  }, []); 
 
-  useEffect(() => {
     if (token) {
       getRole();
     }
-  }, []);
+  }, [token]);
 
   const getRole = async () => {
     try {
@@ -39,6 +35,7 @@ function Header() {
       if (result.type === "currentUser/rejected") {
         throw result;
       } else {
+        return result;
       }
     } catch (error) {
       toast.error(error.payload);
@@ -229,8 +226,6 @@ function Header() {
 }
 
 export default Header;
-
-
 
 // "use client";
 // import React, { useState, useEffect, useCallback } from "react";
@@ -452,4 +447,3 @@ export default Header;
 // }
 
 // export default Header;
-

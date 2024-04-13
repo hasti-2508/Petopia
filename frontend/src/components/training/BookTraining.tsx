@@ -3,7 +3,7 @@ import { TrainingPlanBooking } from "@/interfaces/trainingPlanBooking";
 import React, { FormEvent, useEffect, useState } from "react";
 import useMultipleStep from "@/Hooks/useMultipleStep";
 import PetDataForm from "../booking/PetDataForm";
-import UserDataForm from "../user/UserDataForm";
+import UserDataForm from "../booking/UserDataForm";
 import DateAndTime from "../booking/DateAndTime";
 import axios from "axios";
 // import { Notifications } from "react-push-notification";
@@ -110,8 +110,9 @@ function BookTraining() {
           error.response.status === 401
         ) {
           toast.error("Please login to continue your booking!");
-          setTimeout(() => {router.push("/login")},2000)
-          
+          setTimeout(() => {
+            router.push("/login");
+          }, 2000);
         } else if (
           axios.isAxiosError(error) &&
           error.response &&
@@ -119,7 +120,7 @@ function BookTraining() {
         ) {
           toast.error("Please select Booking date and time!");
         } else {
-          toast.error("Error Occurred!")
+          toast.error("Error Occurred!");
           // console.error(
           //   "Error posting booking data:",
           //   error.response.data.message

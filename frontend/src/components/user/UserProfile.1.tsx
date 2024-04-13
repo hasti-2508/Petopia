@@ -1,6 +1,8 @@
-"use client"
+"use client";
 import RatingModal from "@/components/rating/Rating";
-import React, { useEffect, useState } from "react";
+import axiosInstance from "@/utils/axios";
+import axios from "axios";
+import React, { useEffect } from "react";
 import RateStar from "../rating/RateStar";
 import { UserCard, UserUpdateCard } from "./UserCard";
 import { PetProfileCard } from "../pet/PetCard";
@@ -11,44 +13,12 @@ import { AppDispatch, RootState } from "@/redux/store";
 import {
   setActiveTab,
   setEditedUser,
-  setIsEditing,
   setLoading,
-  setPets,
-  setRate,
-  setService,
-  setServiceId,
-  setServiceImages,
-  setTraining,
-  setTrainingId,
-  setTrainingImages,
   setUser,
 } from "@/redux/user/userSlice";
-import {
-  getPetsData,
-  getServiceData,
-  getTrainingData,
-  getUserData,
-  serviceRating,
-  trainingRating,
-  userUpdate,
-} from "@/redux/user/userService";
+import { imageUrls, images } from "./UserProfile";
 
-const imageUrls = [
-  "http://localhost:3000/assets/service1.jpeg",
-  "http://localhost:3000/assets/service2.jpeg",
-  "http://localhost:3000/assets/service3.jpeg",
-  "http://localhost:3000/assets/service4.jpeg",
-];
-
-const images = [
-  "http://localhost:3000/assets/training1.jpeg",
-  "http://localhost:3000/assets/training2.jpeg",
-  "http://localhost:3000/assets/training3.jpeg",
-  "http://localhost:3000/assets/training4.jpeg",
-  "http://localhost:3000/assets/training5.jpeg",
-];
-
-function UserProfile() {
+export function UserProfile() {
   const dispatch: AppDispatch = useDispatch();
   const {
     user,
@@ -66,50 +36,57 @@ function UserProfile() {
     editedUser,
   } = useSelector((state: RootState) => state.user);
 
+  // const [user, setUser] = useState<User>();
+  // const [pets, setPets] = useState<Pet[]>([]);
+  // const [service, setService] = useState<Service[]>([]);
+  // const [training, setTraining] = useState<Training[]>([]);
+  // const [rate, setRate] = useState<number>();
+  // const [serviceId, setServiceId] = useState<string>();
+  // const [trainingId, setTrainingId] = useState<string>();
+  // // const [averageServiceRating, setAverageServiceRating] = useState(0);
+  // // const [averageTrainingRating, setAverageTrainingRating] = useState(0);
+  // const [activeTab, setActiveTab] = useState<string>("Profile");
+  // const [loading, setLoading] = useState<boolean>(true);
+  // const [serviceImages, setServiceImages] = useState<string[]>([]);
+  // const [trainingImages, setTrainingImages] = useState<string[]>([]);
+  // const [isEditing, setIsEditing] = useState(false);
+  // const [editedUser, setEditedUser] = useState(null);
   const handleTabClick = (tab: string) => {
+    // setActiveTab(tab);
     dispatch(setActiveTab(tab));
   };
 
   useEffect(() => {
     const getUser = async () => {
       try {
-        const result = await dispatch(getUserData());
-        if (result.type === "getUserData/rejected") {
-          throw result;
-        } else {
-          dispatch(setUser(result.payload));
+        // const response = await axiosInstance.get("/currentUser");
+        const result = await dispatch(user());
+        // setUser(response.data);
+        dispatch(setUser(result.payload));
+        // setEditedUser(response.data);
+        dispatch(setEditedUser(result.payload));
+        // setLoading(false);
+        dispatch(setLoading(false));
 
-          dispatch(setEditedUser(result.payload));
+        const petResponse = await axios.get(
+          `${process.env.HOST}/user/${response.data._id}`
+        );
+        const { pets } = petResponse.data;
+        setPets(pets);
 
-          dispatch(setLoading(false));
+        const serviceBooking = await axios.get(
+          `${process.env.HOST}/serviceBooking/user/${response.data._id}`
+        );
+        // setAverageServiceRating(serviceBooking.data[0].averageRating);
+        setService(serviceBooking.data);
 
-          const petResult = await dispatch(getPetsData(result.payload._id));
-          if (petResult.type === "getPetsData/rejected") {
-            throw petResult;
-          } else {
-            const { pets } = petResult.payload;
-            dispatch(setPets(pets));
-          }
-
-          const serviceResult = await dispatch(
-            getServiceData(result.payload._id)
-          );
-          if (serviceResult.type === "getServiceData/rejected") {
-            throw serviceResult;
-          } else {
-            dispatch(setService(serviceResult.payload));
-          }
-          const trainingResult = await dispatch(
-            getTrainingData(result.payload._id)
-          );
-          if (trainingResult.type === "getTrainingData/rejected") {
-            throw trainingResult;
-          } else {
-            dispatch(setTraining(trainingResult.payload));
-          }
-        }
+        const trainingBooking = await axios.get(
+          `${process.env.HOST}/trainingBooking/user/${response.data._id}`
+        );
+        // setAverageServiceRating(trainingBooking.data[0].averageRating);
+        setTraining(trainingBooking.data);
       } catch (error) {
-        toast.error(error.payload);
+        console.error(error);
       }
     };
     setLoading(true);
@@ -117,65 +94,93 @@ function UserProfile() {
   }, []);
 
   const Rating = (value: number) => {
-    dispatch(setRate(value));
-  };
-  const handleTrainingSubmit = async (trainingPlanId: string) => {
-    try {
-      const trainingRatingResult = await dispatch(
-        trainingRating({ trainingPlanId, rating: rate })
-      );
-      if (trainingRatingResult.type === "trainingRating/rejected") {
-        throw trainingRatingResult;
-      } else {
-        return trainingRatingResult;
-      }
-    } catch (error) {
-      toast.error(error.payload);
-    }
+    setRate(value);
   };
   const handleServiceSubmit = async (servicePlanId: string) => {
     try {
-      const ratingResult = await dispatch(
-        serviceRating({ servicePlanId, rating: rate })
+      const data = { rating: rate };
+      const rating = await axiosInstance.post(
+        `serviceBooking/${servicePlanId}/rate`,
+        data
       );
-      if (ratingResult.type === "serviceRating/rejected") {
-        throw ratingResult;
-      } else {
-        return ratingResult;
-      }
+      // setService(rating.data);
+      // console.log(rating.data);
+      // setAverageServiceRating(rating.data.averageRating);
+      // window.location.reload();
+      // setActiveTab("Services");
     } catch (error) {
-      toast.error(error.payload);
+      if (
+        axios.isAxiosError(error) &&
+        error.response &&
+        error.response.status === 409
+      ) {
+        toast.error("you have already rated this service!");
+      } else if (
+        axios.isAxiosError(error) &&
+        error.response &&
+        error.response.status === 404
+      ) {
+        toast.error("Booking not found!");
+      } else {
+        toast.error("Error occurred! Please try again later.");
+        // console.error("Error posting booking data:", error);
+      }
+    }
+  };
+
+  const handleTrainingSubmit = async (trainingId: string) => {
+    try {
+      const data = { rating: rate };
+      const rating = await axiosInstance.post(
+        `trainingBooking/${trainingId}/rate`,
+        data
+      );
+
+      // setAverageTrainingRating(rating.data.averageRating);
+    } catch (error) {
+      if (
+        axios.isAxiosError(error) &&
+        error.response &&
+        error.response.status === 409
+      ) {
+        toast.error("you have already rated this service!");
+      } else if (
+        axios.isAxiosError(error) &&
+        error.response &&
+        error.response.status === 404
+      ) {
+        toast.error("Booking not found!");
+      } else {
+        toast.error("Error occurred! Please try again later.");
+        // console.error("Error posting booking data:", error);
+      }
     }
   };
 
   const handleEditClick = () => {
-    dispatch(setIsEditing(true));
+    setIsEditing(true);
   };
 
   const handleCancelEdit = () => {
-    dispatch(setIsEditing(false));
-    dispatch(setEditedUser(user));
+    setIsEditing(false);
+    setEditedUser(user);
   };
 
   const handleSaveEdit = async () => {
-    try {
-      dispatch(setIsEditing(false));
-      const updateResult = await dispatch(
-        userUpdate({ userId: user._id, editedUser })
-      );
-      if (updateResult.type === "userUpdate/rejected") {
-        throw updateResult;
-      } else {
-        return updateResult;
-      }
-    } catch (error) {
-      toast.error(error.payload);
-    }
+    setIsEditing(false);
+    const response = await axiosInstance.patch(
+      `user/update/${user._id}`,
+      editedUser
+    );
+    setUser(response.data);
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    dispatch(setEditedUser({[name]: value}))
+    setEditedUser((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
   };
 
   useEffect(() => {
@@ -187,8 +192,8 @@ function UserProfile() {
       const randomIndex2 = Math.floor(Math.random() * images.length);
       return images[randomIndex2];
     });
-   dispatch(setServiceImages (randomImages));
-    dispatch(setTrainingImages(randomImages2));
+    setServiceImages(randomImages);
+    setTrainingImages(randomImages2);
   }, [service]);
 
   const renderTabContent = () => {
@@ -198,7 +203,13 @@ function UserProfile() {
           <div>
             {isEditing ? (
               <>
-
+                {/* Name:
+                                <input
+                                  type="text"
+                                  name="name"
+                                  value={editedUser.name}
+                                  onChange={handleChange}
+                                /> */}
                 <UserUpdateCard
                   editedUser={editedUser}
                   handleChange={handleChange}
@@ -294,7 +305,7 @@ function UserProfile() {
                     >
                       <div>
                         <img
-                          src={serviceImages[index]} 
+                          src={serviceImages[index]} // Use random image for each service
                           alt={`Service ${index}`}
                           className="w-full h-48 mb-4 border-2"
                         />
@@ -373,11 +384,12 @@ function UserProfile() {
                         </div>
                         <div>
                           <RateStar averageRating={ser.averageRating} />
+                          {/* <RateStar averageRating={averageServiceRating} /> */}
                           <button
                             type="button"
                             data-bs-toggle="modal"
                             data-bs-target="#myModal"
-                            onClick={() => dispatch(setServiceId(ser._id))}
+                            onClick={() => setServiceId(ser._id)}
                             className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
                             style={{ width: "68px" }}
                           >
@@ -421,7 +433,7 @@ function UserProfile() {
                 >
                   <div>
                     <img
-                      src={trainingImages[index]} 
+                      src={trainingImages[index]} // Use random image for each service
                       alt={`training ${index}`}
                       className="w-full h-48 mb-4 border-2"
                     />
@@ -499,11 +511,12 @@ function UserProfile() {
                     </div>
                     <div>
                       <RateStar averageRating={training.averageRating} />
+                      {/* <RateStar averageRating={averageServiceRating} /> */}
                       <button
                         type="button"
                         data-bs-toggle="modal"
                         data-bs-target="#myModal"
-                        onClick={() => dispatch(setTrainingId(training._id))}
+                        onClick={() => setTrainingId(training._id)}
                         className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
                       >
                         Rate
@@ -610,7 +623,3 @@ function UserProfile() {
     </div>
   );
 }
-
-export default UserProfile;
-
-

@@ -46,7 +46,6 @@ export class AuthController {
     if (!emailRegex.test(email)) {
       throw new BadRequestException('Invalid email format');
     }
-    //avadi aa error automatic ave che
     
     let user;
     if (role === 'user' || role === 'admin') {

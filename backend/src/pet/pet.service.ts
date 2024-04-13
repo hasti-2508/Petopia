@@ -82,9 +82,7 @@ export class PetService {
   }
 
   async uploadPetImageUrl(id: string, imageUrl: string): Promise<Pet> {
-    console.log('i am in service');
     const pet = await this.petModel.findById(id);
-
     if (!pet) {
       throw new Error('Pet not found');
     }

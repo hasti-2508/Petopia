@@ -43,7 +43,7 @@ export class JwtInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest();
     const authHeader = request.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      throw new UnauthorizedException('Bearer token not found');
+      throw new UnauthorizedException('Please, Login First!');
     }
   
     const token = authHeader.substring(7);
