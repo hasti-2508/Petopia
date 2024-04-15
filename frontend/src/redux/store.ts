@@ -3,12 +3,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import  authReducer  from "./auth/authSlice";
 import userReducer from "./user/userSlice";
 import vetReducer from "./vet/vetSlice";
+import trainerReducer from "./trainer/trainerSlice";
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     user: userReducer,
-    vet: vetReducer
+    vet: vetReducer,
+    trainer: trainerReducer
   },
 });
 

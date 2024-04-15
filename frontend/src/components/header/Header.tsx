@@ -11,11 +11,12 @@ import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "@/redux/auth/authSlice";
 import { currentUser, logout } from "@/redux/auth/authService";
+import { dividerClasses } from "@mui/material";
 
 function Header() {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
-  const { token, userRole } = useSelector((state: RootState) => state.auth);
+  const { token, userRole, imageUrl } = useSelector((state: RootState) => state.auth);
   useEffect(() => {
     if (typeof window !== "undefined") {
       const AuthToken = localStorage.getItem("jwt");
@@ -123,20 +124,20 @@ function Header() {
               Trainings
             </a>
           </li>
-          <li>
+          {/* <li>
             <a
               href="#"
               className="block py-2 px-3 text-dark text-decoration-none text-white rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
             >
               Contact Us
             </a>
-          </li>
+          </li> */}
         </ul>
 
         <div className="flex items-center space-x-6">
           <ul className="flex flex-col font-medium md:p-0 m-0 md:space-x-8 rtl:space-x-reverse md:flex-row">
             <li>
-              <button
+              {/* <button
                 className="text-white flex items-center bg-red-600 py-2 px-3 rounded-pill fs-6"
                 onClick={handleClick}
               >
@@ -145,8 +146,39 @@ function Header() {
                   className="w-6"
                   alt="Emergency Consultation"
                 />
-                <span className="ml-3">Emergency</span>
-              </button>
+                <span className="ml-3">
+Urgently need a vet? Let us help!</span>
+              </button> */}
+              {/* <div className="fixed bottom-6 right-6">
+                <button
+                  className="text-white flex items-center bg-red-600 py-3 px-4 rounded-pill fs-6"
+                  onClick={handleClick}
+                >
+                  <img
+                    src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1710150406/call-192-svgrepo-com_djygmx.svg"
+                    className="w-6"
+                    alt="Emergency Consultation"
+                  />
+                  <span className="ml-3">
+                    Need a vet Urgently?
+                  </span>
+                </button>
+              </div> */}
+              {userRole === "vet" ? (<div></div>): ( <div className="fixed bottom-6 right-6">
+                <button
+                  className="text-white flex items-center bg-red-600 py-3 px-4 rounded-pill fs-6"
+                  onClick={handleClick}
+                >
+                  <img
+                    src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1710150406/call-192-svgrepo-com_djygmx.svg"
+                    className="w-6"
+                    alt="Emergency Consultation"
+                  />
+                  <span className="ml-3">
+                    Need a vet Urgently?
+                  </span>
+                </button>
+              </div>)}
             </li>
           </ul>
           {token && (
@@ -212,10 +244,10 @@ function Header() {
           {!token && (
             <li>
               <a
-                className="text-gray-700   flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
+                className="text-saddle-brown   flex items-center bg-gray-500 py-2 px-3 rounded-pill fs-6 no-underline"
                 href="/login"
               >
-                Login
+                Login / SignUp
               </a>
             </li>
           )}

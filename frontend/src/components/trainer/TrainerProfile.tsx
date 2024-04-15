@@ -1,241 +1,289 @@
 "use client";
-// import { Service } from "@/interfaces/service";
-import { Trainer } from "@/interfaces/trainer";
 import { Training } from "@/interfaces/training";
-import axiosInstance from "@/utils/axios";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import {
+  getTrainerData,
+  getTrainingBookingData,
+  setTrainingComplete,
+} from "@/redux/trainer/trainerService";
+import {
+  setActiveTrainerTab,
+  setTrainings,
+  setTrainingsImages,
+} from "@/redux/trainer/trainerSlice";
+import toast from "react-hot-toast";
+import { TrainerCard, TrainerUpdateCard } from "./TrainerCard";
+
+const images = [
+  "http://localhost:3000/assets/training1.jpeg",
+  "http://localhost:3000/assets/training2.jpeg",
+  "http://localhost:3000/assets/training3.jpeg",
+  "http://localhost:3000/assets/training4.jpeg",
+  "http://localhost:3000/assets/training5.jpeg",
+];
 
 function TrainerProfile() {
-  const [trainer, setTrainer] = useState<Trainer>();
-  const [bookings, setBookings] = useState<Training[]>([]);
+  const dispatch: AppDispatch = useDispatch();
+  const { trainer, trainings, trainingImages, activeTrainerTab } = useSelector(
+    (state: RootState) => state.trainer
+  );
 
-  const [activeTab, setActiveTab] = useState("profile");
   const handleTabClick = (tab: string) => {
-    setActiveTab(tab);
+    dispatch(setActiveTrainerTab(tab));
   };
 
   useEffect(() => {
     const getUser = async () => {
       try {
-        const response = await axiosInstance.get("/currentUser");
-        setTrainer(response.data);
-        const bookingDetailsPromises = response.data.bookings.map(
+        // const response = await axiosInstance.get("/currentUser");
+        // setTrainer(response.data);
+        const result = await dispatch(getTrainerData());
+        const bookingDetailsPromises = result.payload.bookings.map(
           async (bookingId: string) => {
-            const bookingResponse = await axios.get(
-              `${process.env.HOST}/trainingBooking/${bookingId}`
+            const bookingResponse = await dispatch(
+              getTrainingBookingData(bookingId)
             );
-            return bookingResponse.data;
+            return bookingResponse.payload;
           }
         );
         const bookingDetails = await Promise.all(bookingDetailsPromises);
-        setBookings(bookingDetails);
+        // setBookings(bookingDetails);
+        dispatch(setTrainings(bookingDetails));
       } catch (error) {
-        console.error(error);
+        toast.error(error.payload);
       }
     };
     getUser();
   }, []);
 
+  useEffect(() => {
+    const randomImages = Array.from({ length: trainings.length }, () => {
+      const randomIndex = Math.floor(Math.random() * images.length);
+      return images[randomIndex];
+    });
+    dispatch(setTrainingsImages(randomImages));
+  }, [trainings]);
+
   const handleComplete = async (bookingId) => {
     try {
-      await axios.patch(
-        `${process.env.HOST}/trainingBooking/${bookingId}/complete`,
-        {
-          isComplete: true,
+      // await axios.patch(
+      //   `${process.env.HOST}/trainingBooking/${bookingId}/complete`,
+      //   {
+      //     isComplete: true,
+      //   }
+      // );
+      const response = await dispatch(
+        setTrainingComplete({ bookingId, isComplete: true })
+      );
+
+      // setBookings((prevBookings) =>
+      //   prevBookings.filter((booking) => booking._id !== bookingId)
+      // );
+
+      const bookingDetailsPromises = trainings.map(
+        async (booking: Training) => {
+          const bookingResponse = await dispatch(
+            getTrainingBookingData(booking._id)
+          );
+          return bookingResponse.payload;
         }
       );
 
-      setBookings((prevBookings) =>
-        prevBookings.filter((booking) => booking._id !== bookingId)
-      );
+      const bookingDetails = await Promise.all(bookingDetailsPromises);
+      dispatch(setTrainings(bookingDetails));
     } catch (error) {
-      console.error("Error completing booking:", error.response.data.message);
+      // console.error("Error completing booking:", error.response.data.message);
+      toast.error(error.payload);
     }
   };
 
+  // console.log(trainings.length)
+
   const renderTabContent = () => {
-    switch (activeTab) {
-      case "profile":
+    switch (activeTrainerTab) {
+      case "Profile":
         return (
           <div>
-            <div className="bg-white shadow-2xl rounded px-8 pt-6 pb-8 mb-4 border-gray-200">
-              <div className="mb-4">
-                {/* <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="profileImage"
-                >
-                  Profile Image
-                </label> */}
-                <img
-                  className="w-40 h-40 rounded-full object-cover"
-                  src={
-                    trainer?.imageUrl
-                      ? trainer.imageUrl
-                      : "http://localhost:3000/assets/user.png"
-                  }
-                  alt="Profile Image"
-                />
+            <div>
+              {/* {
+              isEditing ? (
+                <>
+                  <TrainerUpdateCard
+                    editedUser={editedVet}
+                    handleChange={handleChange}
+                  />
+                  <div className="flex mt-8 mx-6 ">
+                    <button
+                      className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
+                      onClick={handleSaveEdit}
+                    >
+                      Save
+                    </button>
+                    <button
+                      className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline mx-3"
+                      onClick={handleCancelEdit}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) :
+               (
+                <> */}
+              <div className="flex justify-between relative">
+                <TrainerCard user={trainer} />
               </div>
-              <div className="flex gap-56">
-                <div>
-                  <div className="mb-4">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                      htmlFor="username"
+              {/* 
+                  <div className="flex mt-12 mx-6">
+                    <button
+                      onClick={handleEditClick}
+                      className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
                     >
-                      Username :
-                    </label>
-                    <p className="text-gray-700">{trainer?.name}</p>
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                      htmlFor="email"
-                    >
-                      Email
-                    </label>
-                    <p className="text-gray-700">{trainer?.email}</p>
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                      htmlFor="role"
-                    >
-                      Phone No:
-                    </label>
-                    <p className="text-gray-700">{trainer?.phoneNo}</p>
-                  </div>
-                </div>
-                <div>
-                  <div className="mb-4">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                      htmlFor="role"
-                    >
-                      Years Of Experience
-                    </label>
-                    <p className="text-gray-700">
-                      {trainer?.YearsOfExperience}
-                    </p>
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                      htmlFor="role"
-                    >
-                      Number of Pets Trained
-                    </label>
-                    <p className="text-gray-700">
-                      {trainer?.NumberOfPetTrained
-                        ? trainer?.NumberOfPetTrained.toString()
-                        : "None"}
-                    </p>
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2"
-                      htmlFor="role"
-                    >
-                      City
-                    </label>
-                    <p className="text-gray-700">{trainer?.city}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
-                  htmlFor="role"
-                >
-                  Trainings
-                </label>
-                {trainer?.trainings.map((training, index) => (
-                  <div className="flex gap-1">
-                    <img
-                      src="http://localhost:3000/assets/bullet.webp"
-                      className="w-5 h-5"
-                    />
-                    <p key={index} className="text-gray-700">
-                      {training}
-                    </p>
-                  </div>
-                ))}
-              </div>
+                      Edit Profile
+                    </button>
+                  </div> */}
+              {/* </>
+              )} */}
             </div>
           </div>
         );
       case "ongoingBookings":
         return (
-          // <div>
-          //   {bookings.length > 0 ? (
-          //     bookings
-          //       .filter((booking) => !booking.isCompleted)
-          //       .map((booking, index) => (
-          //         <div
-          //           className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-          //           key={index}
-          //         >
-          //           <p>{`User Name: ${booking.user_name}`}</p>
-          //           <p>{`Address: ${booking.address}`}</p>
-          //           <p>{`City: ${booking.city}`}</p>
-          //           <p>{`Booking Date: ${booking.booking_date}`}</p>
-          //           <p>{`Booking Time: ${booking.booking_time}`}</p>
-          //           <p>{`Total Price: ${booking.totalPrice}`}</p>
-          //           {booking.isCompleted ? (
-          //             <span>Completed</span>
-          //           ) : (
-          //             <button
-          //               className="bg-blue-600 text-white px-3 py-1 rounded-md mr-2 no-underline"
-          //               onClick={() => handleComplete(booking._id)}
-          //             >
-          //               Complete
-          //             </button>
-          //           )}
-          //         </div>
-          //       ))
-          //   ) : (
-          //     <p>You have no Trainings Assigned!</p>
-          //     // <img src="http://localhost:3000/assets/puppy.png" alt="" />
-          //   )}
-          // </div>
           <div>
-            {bookings?.length > 0 ? (
-              bookings
+            {trainings.length > 0 &&
+            trainings.filter((booking) => !booking.isCompleted).length > 0 ? (
+              trainings
                 .filter((booking) => !booking.isCompleted)
                 .map((booking, index) => (
                   <div
-                    className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+                    style={{
+                      height: "630px",
+                      width: "400px",
+                    }}
+                    className="col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
                     key={index}
                   >
-                    <p>{`User Name: ${booking.user_name}`}</p>
-                    <p>{`Address: ${booking.address}`}</p>
-                    <p>{`City: ${booking.city}`}</p>
-                    <p>{`Booking Date: ${booking.booking_date}`}</p>
-                    <p>{`Booking Time: ${booking.booking_time}`}</p>
-                    <p>{`Total Price: ${booking.totalPrice}`}</p>
-                    {booking.isCompleted ? (
-                      <span>Completed</span>
-                    ) : (
-                      <button
-                        className="bg-blue-600 text-white px-3 py-1 rounded-md mr-2 no-underline"
-                        onClick={() => handleComplete(booking._id)}
-                      >
-                        Complete
-                      </button>
-                    )}
+                    <div>
+                      <img
+                        src={trainingImages[index]}
+                        alt={`Service ${index}`}
+                        className="w-full h-48 mb-4 border-2"
+                      />
+                      <div>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2 "
+                          >
+                            Name:
+                          </label>
+                          {booking.user_name}
+                        </p>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2 "
+                          >
+                            Email:
+                          </label>
+                          {booking.email}
+                        </p>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2 "
+                          >
+                            City:
+                          </label>
+                          {booking.city}
+                        </p>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2 "
+                          >
+                            Pet Species:
+                          </label>
+                          {booking.pet_species}
+                        </p>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2  "
+                          >
+                            Booking Date:
+                          </label>
+                          {booking.booking_date}
+                        </p>
+                        <p>
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2  "
+                          >
+                            Booking Time:
+                          </label>
+                          {booking.booking_time}
+                        </p>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2  "
+                          >
+                            Payment Status:
+                          </label>
+                          {booking.isConfirmed ? `Done` : `Pending`}
+                        </p>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2  "
+                          >
+                            Booking Status:
+                          </label>
+                          {booking.isCompleted ? `Completed` : `Not Completed`}
+                        </p>
+                        <div className="my-4 ">
+                          {booking.isCompleted ? (
+                            <span className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline my-3">
+                              Completed
+                            </span>
+                          ) : (
+                            <button
+                              className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline"
+                              onClick={() => handleComplete(booking._id)}
+                            >
+                              Complete
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))
             ) : (
-              <div>
+              <div
+                style={{ height: "80vh" }}
+                className="flex flex-col mb-3 items-center justify-center"
+              >
                 <img
                   src="http://localhost:3000/assets/NoTraining.jpg"
                   className="w-1/3 items-center"
                   alt=""
                 />
-                <p style={{ fontFamily: "open-sans", fontSize: "20px" }}>
-                  You have no Trainings Assigned!
+                <p
+                  style={{ fontSize: "18px" }}
+                  className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl"
+                >
+                  You have no trainings Assigned!
                 </p>
               </div>
             )}
@@ -244,31 +292,139 @@ function TrainerProfile() {
       case "bookingHistory":
         return (
           <div>
-            {bookings?.length > 0 ? (
-              bookings
+            {trainings.length > 0 &&
+            trainings.filter((booking) => booking.isCompleted).length > 0 ? (
+              trainings
                 .filter((booking) => booking.isCompleted)
                 .map((booking, index) => (
                   <div
-                    className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+                    style={{
+                      height: "630px",
+                      width: "400px",
+                    }}
+                    className="col-md-4 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
                     key={index}
                   >
-                    <p>{`User Name: ${booking.user_name}`}</p>
-                    <p>{`Address: ${booking.address}`}</p>
-                    <p>{`City: ${booking.city}`}</p>
-                    <p>{`Booking Date: ${booking.booking_date}`}</p>
-                    <p>{`Booking Time: ${booking.booking_time}`}</p>
-                    <p>{`Total Price: ${booking.totalPrice}`}</p>
+                    <div>
+                      <img
+                        src={trainingImages[index]}
+                        alt={`Service ${index}`}
+                        className="w-full h-48 mb-4 border-2"
+                      />
+                      <div>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2 "
+                          >
+                            Name:
+                          </label>
+                          {booking.user_name}
+                        </p>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2 "
+                          >
+                            Email:
+                          </label>
+                          {booking.email}
+                        </p>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2 "
+                          >
+                            City:
+                          </label>
+                          {booking.city}
+                        </p>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2 "
+                          >
+                            Pet Species:
+                          </label>
+                          {booking.pet_species}
+                        </p>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2  "
+                          >
+                            Booking Date:
+                          </label>
+                          {booking.booking_date}
+                        </p>
+                        <p>
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2  "
+                          >
+                            Booking Time:
+                          </label>
+                          {booking.booking_time}
+                        </p>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2  "
+                          >
+                            Payment Status:
+                          </label>
+                          {booking.isConfirmed ? `Done` : `Pending`}
+                        </p>
+                        <p>
+                          {" "}
+                          <label
+                            htmlFor="species"
+                            className="font-bold text-dark-blue mx-2  "
+                          >
+                            Booking Status:
+                          </label>
+                          {booking.isCompleted ? `Completed` : `Not Completed`}
+                        </p>
+
+                        <div className="my-4 ">
+                          {booking.isCompleted ? (
+                            <span className="bg-green-600 text-white px-3 py-2 rounded-md mr-2 no-underline my-3">
+                              Completed
+                            </span>
+                          ) : (
+                            <button
+                              className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline"
+                              onClick={() => handleComplete(booking._id)}
+                            >
+                              Complete
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))
             ) : (
-              <div>
+              <div
+                style={{ height: "80vh" }}
+                className="flex flex-col mb-3 items-center justify-center"
+              >
                 <img
                   src="http://localhost:3000/assets/NoTraining.jpg"
                   className="w-1/3 items-center"
                   alt=""
                 />
-                <p style={{ fontFamily: "open-sans", fontSize: "20px" }}>
-                  You have no Completed Assigned!
+                <p
+                  style={{ fontSize: "18px" }}
+                  className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl"
+                >
+                  You have no completed Trainings!
                 </p>
               </div>
             )}
@@ -281,16 +437,17 @@ function TrainerProfile() {
 
   return (
     <div>
-      <div className=" p-9 bg-white border border-gray-200 rounded-lg shadow m-8 border-1">
-        <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
+      <div className=" p-9 ">
+        <div className="text-sm font-medium text-center text-gray-500 ">
           <ul className="flex flex-wrap -mb-px">
             <li className="me-2">
               <button
-                onClick={() => handleTabClick("profile")}
+                style={{ fontSize: "18px" }}
+                onClick={() => handleTabClick("Profile")}
                 className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                  activeTab === "profile"
-                    ? "border-blue-600 text-blue-600 dark:border-blue-500 dark:text-blue-500"
-                    : "border-transparent text-gray-600 hover:text-black hover:border-black "
+                  activeTrainerTab === "Profile"
+                    ? "text-saddle-brown font-bold font-2xl border-saddle-brown"
+                    : " border-transparent text-dark-blue hover:text-saddle-brown"
                 }`}
               >
                 Profile
@@ -299,11 +456,12 @@ function TrainerProfile() {
 
             <li className="me-2">
               <button
+                style={{ fontSize: "18px" }}
                 onClick={() => handleTabClick("ongoingBookings")}
                 className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                  activeTab === "ongoingBookings"
-                    ? "border-blue-600 text-blue-600 dark:border-blue-500 dark:text-blue-500"
-                    : "border-transparent text-gray-600 hover:text-black hover:border-black "
+                  activeTrainerTab === "ongoingBookings"
+                    ? "text-saddle-brown font-bold font-2xl border-saddle-brown"
+                    : " border-transparent text-dark-blue hover:text-saddle-brown"
                 }`}
               >
                 Ongoing Trainings
@@ -311,11 +469,12 @@ function TrainerProfile() {
             </li>
             <li className="me-2">
               <button
+                style={{ fontSize: "18px" }}
                 onClick={() => handleTabClick("bookingHistory")}
                 className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                  activeTab === "bookingHistory"
-                    ? "border-blue-600 text-blue-500 "
-                    : "border-transparent text-gray-600 hover:text-black hover:border-black "
+                  activeTrainerTab === "bookingHistory"
+                    ? "text-saddle-brown font-bold font-2xl border-saddle-brown"
+                    : " border-transparent text-dark-blue hover:text-saddle-brown"
                 }`}
               >
                 Training History

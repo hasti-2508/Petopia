@@ -179,6 +179,7 @@ function UserProfile() {
   };
 
   useEffect(() => {
+    if (!service) return; 
     const randomImages = Array.from({ length: service.length }, () => {
       const randomIndex = Math.floor(Math.random() * imageUrls.length);
       return imageUrls[randomIndex];
@@ -190,6 +191,7 @@ function UserProfile() {
    dispatch(setServiceImages (randomImages));
     dispatch(setTrainingImages(randomImages2));
   }, [service]);
+  
 
   const renderTabContent = () => {
     switch (activeTab) {

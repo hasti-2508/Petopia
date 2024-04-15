@@ -1,4 +1,3 @@
-
 "use client";
 import { Vet } from "@/interfaces/vet";
 import axios from "axios";
@@ -36,7 +35,7 @@ function VetRegister() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (selectServices.length === 0) {
-      toast.error("Please select at least one Training");
+      toast.error("Please select at least one Service");
       return;
     }
     const reqData = {
@@ -49,21 +48,19 @@ function VetRegister() {
         throw vetResult;
       } else {
         const vetId = vetResult.payload._id;
-        console.log(vetImageFile);
         if (vetImageFile) {
-          console.log(" i m in")
           const formData = new FormData();
           formData.append("image", vetImageFile);
+          toast.success("You have Registered Successfully!");
+          router.push("/login");
           const res = await axios.post(
             `${process.env.HOST}/vet/${vetId}/uploadImage`,
             formData
           );
-          toast.success("You have Registered Successfully!");
-          router.push("/login");
         }
       }
     } catch (error) {
-      toast.error("Email Already exist!")
+      toast.error("Email Already exist!");
     }
   };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,12 +116,10 @@ function VetRegister() {
   };
 
   const togglePasswordVisibility = () => {
-    dispatch(setVetShowPassword(!vetShowPassword))
+    dispatch(setVetShowPassword(!vetShowPassword));
   };
 
-
   return (
-   
     <div className="w-full max-w-md mx-auto">
       <h2
         className="text-3xl font-bold mb-4 mt-6"
@@ -183,7 +178,9 @@ function VetRegister() {
               {vetShowPassword ? "Hide" : "Show"}
             </button>
           </div>
-          {vetPasswordError && <div className="text-red-500">{vetPasswordError}</div>}
+          {vetPasswordError && (
+            <div className="text-red-500">{vetPasswordError}</div>
+          )}
         </div>
         <div className="flex flex-col">
           <label htmlFor="phoneNo" className="mb-1">
