@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import RatingModal from "@/components/rating/Rating";
 import React, { useEffect, useState } from "react";
 import RateStar from "../rating/RateStar";
@@ -126,11 +126,14 @@ function UserProfile() {
       );
       if (trainingRatingResult.type === "trainingRating/rejected") {
         throw trainingRatingResult;
-      } else {
+      } if(trainingRatingResult.type === "trainingRating/fulfilled"){
+        const serviceResult =await dispatch(getTrainingData(user._id));
+        dispatch(setTraining(serviceResult.payload));
+     } else {
         return trainingRatingResult;
       }
     } catch (error) {
-      toast.error(error.payload);
+      toast.error("You have already rated this Training!");
     }
   };
   const handleServiceSubmit = async (servicePlanId: string) => {
@@ -140,11 +143,15 @@ function UserProfile() {
       );
       if (ratingResult.type === "serviceRating/rejected") {
         throw ratingResult;
+      }
+      if(ratingResult.type === "serviceRating/fulfilled"){
+         const serviceResult =await dispatch(getServiceData(user._id));
+         dispatch(setService(serviceResult.payload));
       } else {
         return ratingResult;
       }
     } catch (error) {
-      toast.error(error.payload);
+      toast.error("You have already rate this Service!");
     }
   };
 
@@ -175,11 +182,11 @@ function UserProfile() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    dispatch(setEditedUser({[name]: value}))
+    dispatch(setEditedUser({ [name]: value }));
   };
 
   useEffect(() => {
-    if (!service) return; 
+    if (!service) return;
     const randomImages = Array.from({ length: service.length }, () => {
       const randomIndex = Math.floor(Math.random() * imageUrls.length);
       return imageUrls[randomIndex];
@@ -188,10 +195,9 @@ function UserProfile() {
       const randomIndex2 = Math.floor(Math.random() * images.length);
       return images[randomIndex2];
     });
-   dispatch(setServiceImages (randomImages));
+    dispatch(setServiceImages(randomImages));
     dispatch(setTrainingImages(randomImages2));
   }, [service]);
-  
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -200,7 +206,6 @@ function UserProfile() {
           <div>
             {isEditing ? (
               <>
-
                 <UserUpdateCard
                   editedUser={editedUser}
                   handleChange={handleChange}
@@ -222,14 +227,16 @@ function UserProfile() {
               </>
             ) : (
               <>
-                <UserCard user={user} />
+                <div className="w-1/4">
+                  <UserCard user={user} />
+                </div>
                 <div className="flex mt-12 mx-6">
-                  <button
+                  {/* <button
                     onClick={handleEditClick}
                     className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
                   >
                     Edit Profile
-                  </button>
+                  </button> */}
                   <Link
                     href={"/pet"}
                     className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline mx-6"
@@ -296,11 +303,12 @@ function UserProfile() {
                     >
                       <div>
                         <img
-                          src={serviceImages[index]} 
+                          src={serviceImages[index]}
                           alt={`Service ${index}`}
                           className="w-full h-48 mb-4 border-2"
+                          style={{width: "350px"}}
                         />
-                        <div> 
+                        <div>
                           <p>
                             {" "}
                             <label
@@ -411,117 +419,124 @@ function UserProfile() {
       case "Trainings":
         return (
           <div>
-            {training?.length > 0 ? (
-              training?.map((training, index) => (
-                <div
-                  style={{
-                    height: "680px",
-                    width: "400px",
-                  }}
-                  className="col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
-                  key={index}
-                >
-                  <div>
-                    <img
-                      src={trainingImages[index]} 
-                      alt={`training ${index}`}
-                      className="w-full h-48 mb-4 border-2"
-                    />
-                    <div>
-                      <p>
-                        {" "}
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue  mx-2 "
-                        >
-                          Name:
-                        </label>
-                        {training.user_name}
-                      </p>
-                      <p>
-                        {" "}
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue mx-2  "
-                        >
-                          Pet Species:
-                        </label>
-                        {training.pet_species}
-                      </p>
-                      <p>
-                        {" "}
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue mx-2  "
-                        >
-                          Pet Gender:
-                        </label>
-                        {training.pet_gender}
-                      </p>
-                      <p>
-                        {" "}
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue mx-2  "
-                        >
-                          Booking Date:
-                        </label>
-                        {training.booking_date}
-                      </p>
-                      <p>
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue mx-2  "
-                        >
-                          Booking Time:
-                        </label>
-                        {training.booking_time}
-                      </p>
-                      <p>
-                        {" "}
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue mx-2  "
-                        >
-                          Payment Status:
-                        </label>
-                        {training.isConfirmed ? `Done` : `Pending`}
-                      </p>
-                      <p>
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue mx-2 "
-                        >
-                          Booking Status:
-                        </label>
-                        {training.isCompleted
-                          ? `Completed`
-                          : `Not Completed Yet`}
-                      </p>
+            <div className="container-fluid mt-3">
+              <div className="row">
+                {training?.length > 0 ? (
+                  training?.map((training, index) => (
+                    <div
+                      style={{
+                        height: "680px",
+                        width: "400px",
+                      }}
+                      className="col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
+                      key={index}
+                    >
+                      <div>
+                        <img
+                          src={trainingImages[index]}
+                          alt={`training ${index}`}
+                          className="w-full h-48 mb-4 border-2"
+                          style={{width: "350px"}}
+                        />
+                        <div>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue  mx-2 "
+                            >
+                              Name:
+                            </label>
+                            {training.user_name}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Pet Species:
+                            </label>
+                            {training.pet_species}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Pet Gender:
+                            </label>
+                            {training.pet_gender}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Booking Date:
+                            </label>
+                            {training.booking_date}
+                          </p>
+                          <p>
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Booking Time:
+                            </label>
+                            {training.booking_time}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Payment Status:
+                            </label>
+                            {training.isConfirmed ? `Done` : `Pending`}
+                          </p>
+                          <p>
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2 "
+                            >
+                              Booking Status:
+                            </label>
+                            {training.isCompleted
+                              ? `Completed`
+                              : `Not Completed Yet`}
+                          </p>
+                        </div>
+                        <div>
+                          <RateStar averageRating={training.averageRating} />
+                          <button
+                            type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#myModal"
+                            onClick={() =>
+                              dispatch(setTrainingId(training._id))
+                            }
+                            className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
+                          >
+                            Rate
+                          </button>
+                          <RatingModal
+                            handleRating={Rating}
+                            handleSubmit={handleTrainingSubmit}
+                            id={trainingId}
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <RateStar averageRating={training.averageRating} />
-                      <button
-                        type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#myModal"
-                        onClick={() => dispatch(setTrainingId(training._id))}
-                        className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
-                      >
-                        Rate
-                      </button>
-                      <RatingModal
-                        handleRating={Rating}
-                        handleSubmit={handleTrainingSubmit}
-                        id={trainingId}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p>You Have no training booked yet!</p>
-            )}
+                  ))
+                ) : (
+                  <p>You Have no training booked yet!</p>
+                )}
+              </div>
+            </div>
             <a
               href="/trainingPlan"
               className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline mt-8 mx-6"
@@ -614,5 +629,3 @@ function UserProfile() {
 }
 
 export default UserProfile;
-
-

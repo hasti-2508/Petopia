@@ -6,6 +6,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import Link from "next/link";
 import { PetCardProps } from "../../interfaces/pet";
 import { User, UserData } from "../../interfaces/user";
+import axiosInstance from "@/utils/axios";
+import { useRouter } from "next/navigation";
 
 const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const [owner, setOwner] = useState<User>();
@@ -13,9 +15,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   useEffect(() => {
     async function fetchOwnerName() {
       try {
-        const response = await axios.get(
-          `${process.env.HOST}/user/${pet.owner[0]}`
-        );
+        const response = await axiosInstance.get(`/user/${pet.owner[0]}`);
         const { user } = response.data;
         setOwner(user);
       } catch (error) {
@@ -42,10 +42,10 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
 
   return (
     <div className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom">
-      <Link href="/Adopt/PetData">
+      <Link href={`/adopt/petData/${pet._id}`}>
         <img
           style={{ height: "250px" }}
-          className="w-full p-4 img-responsive"
+          className="p-4 img-responsive"
           src={pet.imageUrl}
           alt={pet.pet_name}
         />
@@ -106,11 +106,13 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
               <div>
                 <div className="d-flex flex-column gap-1">
                   <span className="d-flex gap-2">
-                    <PersonIcon color="primary" /> Hasti Kapadiya
+                    <PersonIcon color="primary" /> {owner?.name}
                   </span>
                   <span className="d-flex gap-2">
                     <CallIcon color="success" />{" "}
-                    <a className="text-gray-700 no-underline">Contact Now</a>
+                    <a className="text-gray-700 no-underline">
+                      {owner?.phoneNo}
+                    </a>
                   </span>
                 </div>
               </div>
@@ -125,6 +127,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
 
 const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
   const [owner, setOwner] = useState<UserData>();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchOwnerName() {
@@ -156,16 +159,20 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
     fetchOwnerName();
   }, []);
 
+  const handlePetDetails = () => {
+    router.push(`adopt/petData/${pet._id}`);
+  }
   return (
     <div className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom">
-      <Link href="/Adopt/PetData">
+      {/* <Link  href={`/adopt/petData/${pet._id}`}> */}'
+      <button onClick={handlePetDetails}>
         <img
-          style={{ height: "250px" }}
-          className="w-full p-4 img-responsive"
+          style={{ height: "280px", width:"500px" }}
+          className="w-full p-3 img-responsive rounded-lg"
           src={pet.imageUrl}
           alt={pet.pet_name}
         />
-      </Link>
+      </button>
       <div className="px-6 py-3">
         <div className="font-bold text-2xl mb-2">{pet?.pet_name}</div>
         <div className="text-gray-700 text-base">
@@ -239,12 +246,11 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
       </ul>
       <div className="border-1 border-gray-200"></div>
       <Link
-        href="/PetData"
+        href={`/adopt/petData/${pet._id}`}
         className="no-underline flex justify-center items-center"
       >
         <button
           type="button"
-          // className="text-gray-700 font-bold items-center bg-saddle-brown py-2 px-8 mr-20 shadow mt-4 rounded-xl fs-6 no-underline"
           className="text-white bg-primary py-1.5 px-6 my-2 rounded-xl fs-6"
         >
           Adopt
@@ -256,6 +262,7 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
 
 const PetProfileCard: React.FC<PetCardProps> = ({ pet }) => {
   const [owner, setOwner] = useState<UserData>();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchOwnerName() {
@@ -286,17 +293,21 @@ const PetProfileCard: React.FC<PetCardProps> = ({ pet }) => {
 
     fetchOwnerName();
   }, []);
+  const handlePetDetails = () => {
+    router.push(`/adopt/petData/${pet._id}`)
+  }
+
 
   return (
     <div className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom">
-      <Link href="/Adopt/PetData">
+       <button onClick={handlePetDetails}>
         <img
-          style={{ height: "250px" }}
+          style={{ height: "250px", width:"380px" }}
           className="w-full p-4 img-responsive"
           src={pet.imageUrl}
           alt={pet.pet_name}
         />
-      </Link>
+      </button>
       <div className="px-6 py-3">
         <div className="font-bold text-xl mb-2">{pet?.pet_name}</div>
         <div className="text-gray-700 text-base">

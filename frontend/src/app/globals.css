@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 /* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Mukta:wght@200;300;400;500;600;700;800&display=swap');
 
@@ -9,6 +10,10 @@ html, body {
   font-family: 'Inter','Montserrat', sans-serif;
 } */
 
+/* Zego Cloud */
+.zego-main > div > div {
+  padding: 10px 0px !important;
+}
 
  /* home.css */
   .custom-box {
@@ -38,12 +43,7 @@ html, body {
   .card-custom {
     transition: 0.5 ease
   }
-
-  .card-custom:hover {
-    background-color: #f1f1f1 !important;
-    border: 1px solid #ccc !important;
   
-  }
 
 
 

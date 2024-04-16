@@ -80,8 +80,8 @@ function BookTraining() {
     if (!isLastStep) return next();
     async function postData() {
       try {
-        const response = await axios.post(
-          `${process.env.HOST}/trainingBooking/${trainingPlanId}`,
+        const response = await axiosInstance.post(
+          `/trainingBooking/${trainingPlanId}`,
           requestData
         );
         setBookingSuccess(true);

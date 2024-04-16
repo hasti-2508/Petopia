@@ -69,11 +69,11 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { getVetData, notifyVet } from "@/redux/vet/vetService";
+import { VetCard } from "../vet/VetCard";
 
 function AvailableVet() {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
-
 
   const [vet, setVet] = useState<Vet[]>([]);
 
@@ -135,20 +135,29 @@ function AvailableVet() {
   };
 
   return (
-    <div>
-      {vet.map((v, index) => (
-        <div key={index}>
-          <div className="border-5 w-1/3 m-8">
-            <p>{v.name}</p>
+    <div className="container text-center col-md-7 mt-10 ">
+      <h1
+        className="font-bold mb-5 mt-6"
+        style={{ fontFamily: "open-sans", fontSize: "35px" }}
+      >
+        Veterinarians Available for Call
+      </h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {vet.map((v, index) => (
+          <div className="flex flex-col">
+            <VetCard user={v} />
             <button
               onClick={() => makeCall(v._id)}
-              className="text-white flex items-center bg-red-600 py-2 px-3 rounded-pill fs-6"
+              className="mt-4 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline max-w-sm"
             >
-              call
+              Call
             </button>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+      <p className="text-gray-600 italic mt-8">
+        Please allow a moment for a veterinarian to join after you've entered.
+      </p>
     </div>
   );
 }

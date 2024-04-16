@@ -101,7 +101,7 @@ export const trainingRating = createAsyncThunk(
   async ({ trainingPlanId, rating }: { trainingPlanId: string; rating: number }) => {
     try {
       const response = await axiosInstance.post(
-        `/serviceBooking/${trainingPlanId}/rate`, { rating }
+        `/trainingBooking/${trainingPlanId}/rate`, { rating }
       );
       const data = response.data;
       return data;

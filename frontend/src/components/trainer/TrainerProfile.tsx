@@ -14,7 +14,7 @@ import {
   setTrainingsImages,
 } from "@/redux/trainer/trainerSlice";
 import toast from "react-hot-toast";
-import { TrainerCard, TrainerUpdateCard } from "./TrainerCard";
+import { TrainerCard } from "./TrainerCard";
 
 const images = [
   "http://localhost:3000/assets/training1.jpeg",
@@ -37,8 +37,6 @@ function TrainerProfile() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        // const response = await axiosInstance.get("/currentUser");
-        // setTrainer(response.data);
         const result = await dispatch(getTrainerData());
         const bookingDetailsPromises = result.payload.bookings.map(
           async (bookingId: string) => {
@@ -49,7 +47,6 @@ function TrainerProfile() {
           }
         );
         const bookingDetails = await Promise.all(bookingDetailsPromises);
-        // setBookings(bookingDetails);
         dispatch(setTrainings(bookingDetails));
       } catch (error) {
         toast.error(error.payload);
@@ -68,20 +65,9 @@ function TrainerProfile() {
 
   const handleComplete = async (bookingId) => {
     try {
-      // await axios.patch(
-      //   `${process.env.HOST}/trainingBooking/${bookingId}/complete`,
-      //   {
-      //     isComplete: true,
-      //   }
-      // );
       const response = await dispatch(
         setTrainingComplete({ bookingId, isComplete: true })
       );
-
-      // setBookings((prevBookings) =>
-      //   prevBookings.filter((booking) => booking._id !== bookingId)
-      // );
-
       const bookingDetailsPromises = trainings.map(
         async (booking: Training) => {
           const bookingResponse = await dispatch(
@@ -94,12 +80,9 @@ function TrainerProfile() {
       const bookingDetails = await Promise.all(bookingDetailsPromises);
       dispatch(setTrainings(bookingDetails));
     } catch (error) {
-      // console.error("Error completing booking:", error.response.data.message);
       toast.error(error.payload);
     }
   };
-
-  // console.log(trainings.length)
 
   const renderTabContent = () => {
     switch (activeTrainerTab) {
@@ -107,45 +90,9 @@ function TrainerProfile() {
         return (
           <div>
             <div>
-              {/* {
-              isEditing ? (
-                <>
-                  <TrainerUpdateCard
-                    editedUser={editedVet}
-                    handleChange={handleChange}
-                  />
-                  <div className="flex mt-8 mx-6 ">
-                    <button
-                      className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
-                      onClick={handleSaveEdit}
-                    >
-                      Save
-                    </button>
-                    <button
-                      className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline mx-3"
-                      onClick={handleCancelEdit}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </>
-              ) :
-               (
-                <> */}
               <div className="flex justify-between relative">
                 <TrainerCard user={trainer} />
               </div>
-              {/* 
-                  <div className="flex mt-12 mx-6">
-                    <button
-                      onClick={handleEditClick}
-                      className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
-                    >
-                      Edit Profile
-                    </button>
-                  </div> */}
-              {/* </>
-              )} */}
             </div>
           </div>
         );
@@ -170,10 +117,10 @@ function TrainerProfile() {
                         src={trainingImages[index]}
                         alt={`Service ${index}`}
                         className="w-full h-48 mb-4 border-2"
+                        style={{width: "350px"}}
                       />
                       <div>
                         <p>
-                          {" "}
                           <label
                             htmlFor="species"
                             className="font-bold text-dark-blue mx-2 "
@@ -183,7 +130,6 @@ function TrainerProfile() {
                           {booking.user_name}
                         </p>
                         <p>
-                          {" "}
                           <label
                             htmlFor="species"
                             className="font-bold text-dark-blue mx-2 "
@@ -291,7 +237,7 @@ function TrainerProfile() {
         );
       case "bookingHistory":
         return (
-          <div>
+          <div className="row justify-content-between">
             {trainings.length > 0 &&
             trainings.filter((booking) => booking.isCompleted).length > 0 ? (
               trainings
@@ -302,10 +248,10 @@ function TrainerProfile() {
                       height: "630px",
                       width: "400px",
                     }}
-                    className="col-md-4 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
+                    className="col-md-4 col-sm-12 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom py-4 mx-auto"
                     key={index}
                   >
-                    <div>
+                    <div className="mx-auto">
                       <img
                         src={trainingImages[index]}
                         alt={`Service ${index}`}

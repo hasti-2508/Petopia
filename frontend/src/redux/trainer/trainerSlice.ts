@@ -88,11 +88,9 @@ const trainerSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getTrainerData.fulfilled, (state, action) => {
       state.trainer = action.payload;
-      // state.editedVet = action.payload;
     });
     builder.addCase(getTrainingBookingData.fulfilled, (state, action) => {
       state.trainings = action.payload;
-      // state.editedVet = action.payload;
     });
   },
 });

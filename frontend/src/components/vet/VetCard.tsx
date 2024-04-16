@@ -2,7 +2,7 @@
 import Link from "next/link";
 const VetCard = ({ user }) => {
   return (
-    <div className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom w-1/3">
+    <div className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom" style={{width: "375px"}}>
       <img
         style={{ height: "320px" }}
         className="w-full p-4 img-responsive"

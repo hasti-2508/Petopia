@@ -171,7 +171,7 @@ function VetProfile() {
 
   //   return <div style={divStyle} />;
   // }
-console.log(bookings)
+  console.log(bookings);
   const renderTabContent = () => {
     switch (activeVetTab) {
       case "Profile":
@@ -227,15 +227,6 @@ console.log(bookings)
                       </label>
                     </div>
                   </div>
-                  {/* 
-                  <div className="flex mt-12 mx-6">
-                    <button
-                      onClick={handleEditClick}
-                      className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
-                    >
-                      Edit Profile
-                    </button>
-                  </div> */}
                 </>
               )}
             </div>
@@ -362,9 +353,10 @@ console.log(bookings)
                   </div>
                 ))
             ) : (
-              <div style={
-                {height: "80vh"}
-              } className="flex flex-col mb-3 items-center justify-center">
+              <div
+                style={{ height: "80vh" }}
+                className="flex flex-col mb-3 items-center justify-center"
+              >
                 <img
                   src="http://localhost:3000/assets/NoTraining.jpg"
                   className="w-1/3 items-center"
@@ -382,143 +374,147 @@ console.log(bookings)
         );
       case "bookingHistory":
         return (
-          <div>
-            {bookings.length > 0 &&
-            bookings.filter((booking) => booking.isCompleted).length > 0 ? (
-              bookings
-                .filter((booking) => booking.isCompleted)
-                .map((booking, index) => (
-                  <div
-                    style={{
-                      height: "630px",
-                      width: "400px",
-                    }}
-                    className="col-md-4 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
-                    key={index}
-                  >
-                    <div>
-                      <img
-                        src={bookingImages[index]}
-                        alt={`Service ${index}`}
-                        className="w-full h-48 mb-4 border-2"
-                      />
+            <div className="row justify-content-between">
+              {bookings.length > 0 &&
+              bookings.filter((booking) => booking.isCompleted).length > 0 ? (
+                bookings
+                  .filter((booking) => booking.isCompleted)
+                  .map((booking, index) => (
+                    <div
+                      style={{
+                        height: "630px",
+                        width: "400px",
+                      }}
+                      className="col-md-4 col-sm-12 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom py-4 mx-auto"
+                      key={index}
+                    >
                       <div>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2 "
-                          >
-                            Name:
-                          </label>
-                          {booking.user_name}
-                        </p>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2 "
-                          >
-                            Email:
-                          </label>
-                          {booking.email}
-                        </p>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2 "
-                          >
-                            City:
-                          </label>
-                          {booking.city}
-                        </p>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2 "
-                          >
-                            Pet Species:
-                          </label>
-                          {booking.pet_species}
-                        </p>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2  "
-                          >
-                            Booking Date:
-                          </label>
-                          {booking.booking_date}
-                        </p>
-                        <p>
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2  "
-                          >
-                            Booking Time:
-                          </label>
-                          {booking.booking_time}
-                        </p>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2  "
-                          >
-                            Payment Status:
-                          </label>
-                          {booking.isConfirmed ? `Done` : `Pending`}
-                        </p>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2  "
-                          >
-                            Booking Status:
-                          </label>
-                          {booking.isCompleted ? `Completed` : `Not Completed`}
-                        </p>
-
-                        <div className="my-4 ">
-                          {booking.isCompleted ? (
-                            <span className="bg-green-600 text-white px-3 py-2 rounded-md mr-2 no-underline my-3">
-                              Completed
-                            </span>
-                          ) : (
-                            <button
-                              className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline"
-                              onClick={() => handleComplete(booking._id)}
+                        <img
+                          src={bookingImages[index]}
+                          alt={`Service ${index}`}
+                          className="w-full h-48 mb-4 border-2"
+                          style={{width: "350px"}}
+                        />
+                        <div>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2 "
                             >
-                              Complete
-                            </button>
-                          )}
+                              Name:
+                            </label>
+                            {booking.user_name}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2 "
+                            >
+                              Email:
+                            </label>
+                            {booking.email}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2 "
+                            >
+                              City:
+                            </label>
+                            {booking.city}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2 "
+                            >
+                              Pet Species:
+                            </label>
+                            {booking.pet_species}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Booking Date:
+                            </label>
+                            {booking.booking_date}
+                          </p>
+                          <p>
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Booking Time:
+                            </label>
+                            {booking.booking_time}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Payment Status:
+                            </label>
+                            {booking.isConfirmed ? `Done` : `Pending`}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Booking Status:
+                            </label>
+                            {booking.isCompleted
+                              ? `Completed`
+                              : `Not Completed`}
+                          </p>
+
+                          <div className="my-4 ">
+                            {booking.isCompleted ? (
+                              <span className="bg-green-600 text-white px-3 py-2 rounded-md mr-2 no-underline my-3">
+                                Completed
+                              </span>
+                            ) : (
+                              <button
+                                className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline"
+                                onClick={() => handleComplete(booking._id)}
+                              >
+                                Complete
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))
-            ) : (
-              <div style={
-                {height: "80vh"}
-              } className="flex flex-col mb-3 items-center justify-center">
-                <img
-                  src="http://localhost:3000/assets/NoTraining.jpg"
-                  className="w-1/3 items-center"
-                  alt=""
-                />
-                <p
-                  style={{ fontSize: "18px" }}
-                  className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl"
+                  ))
+              ) : (
+                <div
+                  style={{ height: "80vh" }}
+                  className="flex flex-col mb-3 items-center justify-center"
                 >
-                  You have no completed bookings!
-                </p>
-              </div>
-            )}
-          </div>
+                  <img
+                    src="http://localhost:3000/assets/NoTraining.jpg"
+                    className="w-1/3 items-center"
+                    alt=""
+                  />
+                  <p
+                    style={{ fontSize: "18px" }}
+                    className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl"
+                  >
+                    You have no completed bookings!
+                  </p>
+                </div>
+              )}
+            </div>
         );
       default:
         return null;

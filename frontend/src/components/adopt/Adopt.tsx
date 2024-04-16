@@ -1,16 +1,24 @@
 "use client";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Pet } from "../../interfaces/pet";
+import React, { useEffect } from "react";
 import { PetAdoptCard } from "../pet/PetCard";
 import Pagination from "../pagination/Pagination";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/redux/store";
+import { getPets } from "@/redux/pet/petService";
+import {
+  setPetData,
+  setOriginalPetData,
+  setCurrentPage,
+  setSearchTerm,
+  setLoading,
+} from "@/redux/pet/petSlice";
+import toast from "react-hot-toast";
 
 function Adopt() {
-  const [petData, setPetData] = useState<Pet[]>([]);
-  const [originalPetData, setOriginalPetData] = useState<Pet[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
+  const dispatch: AppDispatch = useDispatch();
+  const {
+    petData, originalPetData, currentPage,searchTerm, loading
+  } = useSelector((state: RootState) => state.pet);
   const searchFilter = () => {
     const filterData = originalPetData.filter((data) => {
       const ageString = String(data.age);
@@ -24,38 +32,37 @@ function Adopt() {
       }
       return false;
     });
-
-    setPetData(filterData);
+dispatch(setPetData(filterData));
   };
   useEffect(() => {
-    setPetData(originalPetData);
+    dispatch(setPetData(originalPetData));
   }, [originalPetData]);
 
   useEffect(() => {
     async function fetchPets() {
       try {
-        const response = await axios.get<Pet[]>(
-          `${process.env.HOST}/pet?page=${currentPage}`
-        );
-
-        // setPetData(response.data);
-        setOriginalPetData(response.data);
-        setLoading(false);
+        const response = await dispatch(getPets(currentPage));
+        if (response.type === "getPets/rejected") {
+          throw response;
+        } else {
+          dispatch(setOriginalPetData(response.payload));
+          dispatch(setLoading(false));
+        }
       } catch (error) {
-        console.error("Error fetching pets:", error);
+        toast.error(error.payload);
       }
     }
-    setLoading(true);
+    dispatch(setLoading(true));
     fetchPets();
   }, [currentPage]);
 
   const handleNextPage = () => {
-    setCurrentPage(currentPage + 1);
+    dispatch(setCurrentPage(currentPage + 1))
   };
 
   const handlePreviousPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      dispatch(setCurrentPage(currentPage - 1))
     }
   };
 

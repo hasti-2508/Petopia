@@ -1,10 +1,11 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
+  import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { useSearchParams } from "next/navigation";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 function Room() {
+  const router = useRouter();
   const searchResult = useSearchParams();
   const roomId = searchResult.get("roomId");
 
@@ -46,8 +47,10 @@ function Room() {
         },
         showScreenSharingButton: true,
         showRoomTimer: true,
-        // showPreJoinView: false
-        // onReturnToHomeScreenClicked?: () => void; // When the "Return to home screen" button is clicked, this callback is triggered. After setting up this callback, clicking the button will not navigate to the home screen; instead, you can add your own page navigation logic here.
+        showPreJoinView: true,
+        onReturnToHomeScreenClicked: () => {
+          router.push("/home");
+        },
       });
     };
 
@@ -55,8 +58,18 @@ function Room() {
   }, [roomId]);
 
   return (
-    <div>
-      <div ref={elementRef}></div>
+    <div
+      style={{
+        marginBottom: "120px",
+        marginTop: "5px",
+        marginLeft: "120px",
+        marginRight: "120px",
+      }}
+    >
+      <div className="zego-main" ref={elementRef}></div>
+      <p className="text-gray-600 italic mt-10 container text-center">
+        Please allow a moment for a veterinarian to join after you've entered.
+      </p>
     </div>
   );
 }

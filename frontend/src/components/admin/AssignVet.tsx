@@ -73,6 +73,7 @@ function AssignVet() {
         }/serviceBooking/assign/${servicePlanId?.toString()}`,
         { vetId: selectedVet }
       );
+      toast.success("Vet assigned Successfully!");
       router.push("/admin/profile");
     } catch (error) {
       if (
@@ -80,7 +81,7 @@ function AssignVet() {
         error.response &&
         error.response.status === 409
       ) {
-        toast.error("The booking is not confirmed Yet!")
+        toast.error("The booking is not confirmed Yet!");
       } else if (
         axios.isAxiosError(error) &&
         error.response &&
@@ -88,33 +89,84 @@ function AssignVet() {
       ) {
         toast.error("Booking or Vet Not Found!");
       } else {
-        toast.error("Error assigning vet")
+        toast.error("Error assigning vet");
         console.error(error.response.data.message);
       }
     }
   };
 
   return (
-    <div>
-      <h1>Assign Vet</h1>
-      <label htmlFor="search">Search Vets in City:</label>
-      <input
-        placeholder="Search vet by city"
-        type="text"
-        id="search"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      <label htmlFor="vet">Select Vet:</label>
-      <select id="vet" onChange={handleVetSelection}>
-        <option value="">Select a Vet</option>
-        {filteredVetList.map((vet) => (
-          <option key={Math.random()} value={vet._id.toString()}>
-            {vet.name}
-          </option>
-        ))}
-      </select>
-      <button onClick={handleAssignVet}>Assign Vet</button>
+    <div className="w-full max-w-md mx-auto">
+      <h1
+        className="text-3xl font-bold mb-4 mt-6"
+        style={{ fontFamily: "open-sans", fontSize: "40px" }}
+      >
+        Assign Vet
+      </h1>
+
+      <div className="space-y-4">
+        <div className="flex flex-col">
+          <label htmlFor="name" className="mb-1">
+            Search Vets in City:
+          </label>
+          <input
+            placeholder="Search vet by city"
+            type="text"
+            id="search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border border-gray-300 rounded-md px-4 py-2"
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="name" className="mb-1">
+            Select Vet:
+          </label>
+          <select
+            className="border border-gray-300 rounded-md px-4 py-2"
+            id="vet"
+            onChange={handleVetSelection}
+          >
+            {filteredVetList.length <= 0 ? (
+              <option
+                className="border border-gray-300 rounded-md px-4 py-2"
+                value=""
+                disabled
+              >
+                No vets found
+              </option>
+            ) : (
+              <>
+                <option
+                  className="border border-gray-300 rounded-md px-4 py-2"
+                  value=""
+                >
+                  Select a Vet
+                </option>
+                {filteredVetList.map((vet) => (
+                  <option
+                    className="border border-gray-300 rounded-md px-4 py-2"
+                    key={Math.random()}
+                    value={vet._id.toString()}
+                  >
+                    {vet.name}
+                  </option>
+                ))}
+              </>
+            )}
+          </select>
+        </div>
+        <div className="w-full max-w-md mx-auto">
+          <button
+            onClick={handleAssignVet}
+            className="bg-dark-blue text-white py-2 px-4 rounded-md mt-4 hover:bg-blue-700"
+            style={{ marginBottom: "50px" }}
+          >
+            Assign Vet
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

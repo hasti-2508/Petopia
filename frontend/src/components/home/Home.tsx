@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React from "react";
 
 
@@ -31,7 +32,7 @@ function Home() {
                 style={{ width: "450px", marginLeft: "70px" }}
               >
                 <div className="bg-white hover:bg-saddle-brown"></div>
-                <div className="card-body text-gray-600 custom-border rounded-xl flex flex-col items-center justify-center">
+                <Link href="/adopt" className="card-body no-underline text-gray-600 custom-border rounded-xl flex flex-col items-center justify-center">
                   <img
                     style={{ height: "10vh", width: "12vh" }}
                     className="h-20 "
@@ -46,7 +47,7 @@ function Home() {
                   <p className="card-text ">
                     Adopt, Don't Shop: Save a Life Today
                   </p>
-                </div>
+                </Link>
               </div>
             </div>
 
@@ -56,7 +57,7 @@ function Home() {
                 style={{ width: "450px" }}
               >
                 <div className="bg-white hover:bg-saddle-brown"></div>
-                <div className="card-body text-gray-600 custom-border rounded-xl flex flex-col items-center justify-center">
+                <Link href="/servicePlan" className="card-body no-underline text-gray-600 custom-border rounded-xl flex flex-col items-center justify-center">
                   <img
                     style={{ height: "10vh", width: "10vh" }}
                     className="h-20 "
@@ -71,7 +72,7 @@ function Home() {
                   <p className="card-text">
                     Book In-Home Grooming Session For Your Pet
                   </p>
-                </div>
+                </Link>
               </div>
             </div>
           </div>
@@ -83,7 +84,7 @@ function Home() {
                 style={{ width: "450px", marginLeft: "70px" }}
               >
                 <div className="bg-white hover:bg-saddle-brown"></div>
-                <div className="card-body text-gray-600 custom-border rounded-xl flex flex-col items-center justify-center">
+                <Link href="/availableVet" className="card-body no-underline text-gray-600 custom-border rounded-xl flex flex-col items-center justify-center">
                   <img
                     style={{ height: "11vh", width: "15vh" }}
                     className="h-20 "
@@ -98,7 +99,7 @@ function Home() {
                   <p className="card-text">
                     Expert Veterinary Care Service At Your Home
                   </p>
-                </div>
+                </Link>
               </div>
             </div>
 
@@ -108,7 +109,7 @@ function Home() {
                 style={{ width: "450px" }}
               >
                 <div className="bg-white hover:bg-saddle-brown"></div>
-                <div className="card-body text-gray-600 custom-border rounded-xl flex flex-col items-center justify-center">
+                <Link href="/trainingPlan" className=" no-underline card-body text-gray-600 custom-border rounded-xl flex flex-col items-center justify-center">
                   <img
                     style={{ height: "11vh", width: "15vh" }}
                     className="h-20 "
@@ -121,7 +122,7 @@ function Home() {
                     Pet Training
                   </h5>
                   <p className="card-text">Join Our Dog Training Programs</p>
-                </div>
+                </Link>
               </div>
             </div>
           </div>
