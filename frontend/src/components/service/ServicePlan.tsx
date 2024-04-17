@@ -1,6 +1,6 @@
 "use client";
 
-import { ServicePlan } from "@/interfaces/serviceplan";
+import { ServicePlanType } from "@/interfaces/serviceplan";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -12,12 +12,12 @@ function ServicePlan() {
     const bookingPageUrl = `/servicePlan/bookService?servicePlanId=${servicePlanId}`;
     router.push(bookingPageUrl);
   };
-  const [servicePlans, setServicePlans] = useState<ServicePlan[]>([]);
+  const [servicePlans, setServicePlans] = useState<ServicePlanType[]>([]);
 
   useEffect(() => {
     async function fetchServicePlans() {
       try {
-        const response = await axios.get<ServicePlan[]>(
+        const response = await axios.get<ServicePlanType[]>(
           `${process.env.HOST}/service-plan`
         );
         setServicePlans(response.data);
@@ -38,13 +38,13 @@ function ServicePlan() {
         />
         <div className=" bg-white position-absolute custom-box border-gray-300 border-2 p-4 ml-8 rounded-xl shadow-md w-4/5 flex-col items-center">
           <h1
-            className="text-center text-gray-600 font-bold text-2xl pt-4"
+            className="text-center text-dark-blue font-bold text-2xl pt-4"
             style={{ fontFamily: "open-sans", fontSize: "40px" }}
           >
             Pet Grooming service that comes to your home
           </h1>
           <p
-            className="text-center text-gray-600  text-xl mt-3"
+            className="text-center text-dark-blue  text-xl mt-3"
             style={{ fontFamily: "open-sans", fontSize: "20px" }}
           >
             Instantly Book a Professional Pet Groomer Online, Whenever you need
@@ -60,10 +60,10 @@ function ServicePlan() {
       </div>
 
       <section id="section" className="pt-48">
-        <div className="p-6 bg-gray-200">
+        <div className="p-4">
           <h1
-            className="text-center text-gray-600 font-semibold text-2xl pt-4"
-            style={{ fontFamily: "open-sans", fontSize: "30px" }}
+            className="text-center text-dark-blue font-semibold text-2xl pt-4 mb-12"
+            style={{ fontFamily: "open-sans", fontSize: "35px" }}
           >
             How Pet Grooming works at your home?
           </h1>

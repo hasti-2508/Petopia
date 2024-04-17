@@ -1,7 +1,7 @@
 "use client";
 
 import axios from "axios";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,6 +18,14 @@ import {
 
 
 function UserRegister() {
+
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.classList.add("animate__animated", "animate__zoomIn");
+    }
+  }, []);
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const {
@@ -142,7 +150,7 @@ function UserRegister() {
       >
         User Registration
       </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
         <div className="flex flex-col">
           <label htmlFor="name" className="mb-1">
             Name:

@@ -19,30 +19,33 @@ function Footer() {
           </div>
           <div className="grid grid-cols-2 gap-8 sm:gap-3 sm:grid-cols-4">
             <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white ml-10">
+              <h2 className="mb-6 text-sm font-bold text-saddle-brown  uppercase ml-16">
                 Petopia
               </h2>
-              <ul className="text-gray-400 font-medium ml-10">
+              <ul className="text-gray-400 font-medium ml-8 no-underline">
                 <li className="mb-4">
-                  <a href="https://Petopia.com/" className="hover:underline">
+                  <a
+                    href="https://Petopia.com/"
+                    className="hover:underline no-underline text-white"
+                  >
                     About us
                   </a>
                 </li>
                 <li>
                   <a
                     href="https://tailwindcss.com/"
-                    className="hover:underline"
+                    className="hover:underline no-underline text-white"
                   >
                     Blog
                   </a>
                 </li>
               </ul>
             </div>
-            <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+            <div className="flex flex-col">
+              <h2 className="mb-6 text-sm font-semibold text-saddle-brown uppercase">
                 Home Services
               </h2>
-              <ul className="text-gray-500 dark:text-gray-400 font-medium">
+              <ul className="text-gray-500 dark:text-gray-400 font-medium ps-0">
                 <li className="mb-4">
                   <a
                     href="https://github.com/themesberg/Petopia"
@@ -81,7 +84,7 @@ function Footer() {
               <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white ml-8">
                 Partner
               </h2>
-              <ul className="text-gray-500 dark:text-gray-400 font-medium ml-8">
+              <ul className="text-gray-500 dark:text-gray-400 font-medium ml-8 ps-0">
                 <li className="mb-4">
                   <a href="#" className="hover:underline">
                     Become a Vet
@@ -98,7 +101,7 @@ function Footer() {
               <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white ml-8">
                 Policy
               </h2>
-              <ul className="text-gray-500 dark:text-gray-400 font-medium ml-8">
+              <ul className="text-gray-500 dark:text-gray-400 font-medium ml-8 ps-0">
                 <li className="mb-4">
                   <a href="#" className="hover:underline">
                     Privacy Policy

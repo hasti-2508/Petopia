@@ -123,15 +123,16 @@ function BookService() {
     <div>
       <Notifications />
       <div
-        style={{
-          position: "relative",
-          background: "white",
-          padding: "2rem",
-          margin: "1rem",
-          borderRadius: ".5rem",
-          fontFamily: "Arial",
-          maxWidth: "max-content",
-        }}
+       className="w-full max-w-md mx-auto"
+        // style={{
+        //   position: "relative",
+        //   background: "white",
+        //   padding: "2rem",
+        //   margin: "1rem",
+        //   borderRadius: ".5rem",
+        //   fontFamily: "Arial",
+        //   maxWidth: "max-content",
+        // }}
       >
         <form onSubmit={onSubmit}>
           {step}
@@ -145,30 +146,34 @@ function BookService() {
             }}
           >
             {!isFirstStep && (
-              <button
-                type="button"
-                className="text-gray-700 font-bold flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
-                onClick={back}
-              >
-                Back
-              </button>
+              // <button
+              //   type="button"
+              //   className="text-gray-700 font-bold flex mx-auto mb-4 items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
+              //   onClick={back}
+              // >
+              //   Back
+              // </button>
+              <button><img src="http://localhost:3000/assets/left.svg" alt="" /></button>
+
             )}
             {/* <button type="submit">{isLastStep ? "Pay" : "Next"}</button> */}
 
             {isLastStep ? (
               <button
                 type="submit"
-                className="text-white flex items-center bg-dark-blue py-2 px-3 rounded-pill fs-6 no-underline"
+                className="text-white flex items-center mx-auto mb-4 bg-dark-blue py-2 px-3 rounded-pill fs-6 no-underline"
               >
                 Pay
               </button>
             ) : (
-              <button
-                type="submit"
-                className="text-gray-700   flex items-center font-bold bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
-              >
-                Next
-              </button>
+              // <button
+              //   type="submit"
+              //   // className="text-gray-700 mx-auto   flex items-center mb-4 font-bold bg-saddle-brown p-3 rounded no-underline"
+              //   className=" bg-saddle-brown mb-4 mx-auto mt-4 text-white rounded-xl px-4 py-2 focus:outline-none "
+              // >
+              //   Next
+              // </button>
+              <button className=""><img src="http://localhost:3000/assets/right.svg" alt="" /></button>
             )}
           </div>
         </form>

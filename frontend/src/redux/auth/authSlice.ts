@@ -9,7 +9,6 @@ interface AuthState {
   formData: {
     email: string;
     password: string;
-    role: string;
   };
   showPassword: boolean;
   forgetPasswordData : {
@@ -22,7 +21,6 @@ interface AuthState {
 const initialFormData = {
     email: "",
     password: "",
-    role: "",
   };
 
 const initialForgetPasswordData = {

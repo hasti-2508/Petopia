@@ -5,7 +5,6 @@ import axios from "axios";
 interface LoginFormData {
   email: string;
   password: string;
-  role: string;
 }
 
 interface ForgetPasswordData {

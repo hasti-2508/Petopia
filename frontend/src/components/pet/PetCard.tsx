@@ -155,19 +155,21 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
         }
       }
     }
-
     fetchOwnerName();
   }, []);
 
   const handlePetDetails = () => {
     router.push(`adopt/petData/${pet._id}`);
-  }
+  };
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom">
-      {/* <Link  href={`/adopt/petData/${pet._id}`}> */}'
+    <div
+      style={{ height: "100%" }}
+      className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom position-relative pb-10 fade-in-up"
+    >
+      {/* <Link  href={`/adopt/petData/${pet._id}`}> */}
       <button onClick={handlePetDetails}>
         <img
-          style={{ height: "280px", width:"500px" }}
+          style={{ height: "280px", width: "500px" }}
           className="w-full p-3 img-responsive rounded-lg"
           src={pet.imageUrl}
           alt={pet.pet_name}
@@ -211,12 +213,12 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
         </div>
       </div>
 
-      <ul className="list-group p-2 border-top" key={Math.random()}>
+      {/* <ul className="list-group p-2 border-top" key={Math.random()}>
         <li
           className="list-group-item border-0 d-flex justify-content-between align-items-start"
           key={Math.random()}
         >
-          <div className="ms-2 me-auto">
+          <div className="ms-2">
             <p className="fw-semibold text-secondary">Owner:</p>
             <div className="fw-bold d-flex gap-4">
               <div>
@@ -243,23 +245,24 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
             </div>
           </div>
         </li>
-      </ul>
-      <div className="border-1 border-gray-200"></div>
-      <Link
-        href={`/adopt/petData/${pet._id}`}
-        className="no-underline flex justify-center items-center"
-      >
-        <button
-          type="button"
-          className="text-white bg-primary py-1.5 px-6 my-2 rounded-xl fs-6"
+      </ul> */}
+      <div className="position-absolute bottom-0 w-100">
+        <div className="border-1 border-gray-200"></div>
+        <Link
+          href={`/adopt/petData/${pet._id}`}
+          className="no-underline flex justify-center items-center"
         >
-          Adopt
-        </button>
-      </Link>
+          <button
+            type="button"
+            className="text-white bg-primary py-1.5 px-6 my-2 rounded-xl fs-6 "
+          >
+            Adopt
+          </button>
+        </Link>
+      </div>
     </div>
   );
 };
-
 const PetProfileCard: React.FC<PetCardProps> = ({ pet }) => {
   const [owner, setOwner] = useState<UserData>();
   const router = useRouter();
@@ -294,15 +297,14 @@ const PetProfileCard: React.FC<PetCardProps> = ({ pet }) => {
     fetchOwnerName();
   }, []);
   const handlePetDetails = () => {
-    router.push(`/adopt/petData/${pet._id}`)
-  }
-
+    router.push(`/adopt/petData/${pet._id}`);
+  };
 
   return (
     <div className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom">
-       <button onClick={handlePetDetails}>
+      <button onClick={handlePetDetails}>
         <img
-          style={{ height: "250px", width:"380px" }}
+          style={{ height: "250px", width: "380px" }}
           className="w-full p-4 img-responsive"
           src={pet.imageUrl}
           alt={pet.pet_name}

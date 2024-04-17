@@ -2,8 +2,8 @@ import React from "react";
 
 const PlanCard = ({ plan, handleBookService }) => {
   return (
-    <div className="w-full p-4 max-w-sm bg-gray-100 border border-gray-200 rounded-lg shadow d-flex flex-column">
-      <h3 className="text-center font-semibold text-gray-600 mb-4">
+    <div className="w-full p-4 max-w-sm bg-gray-100 border border-gray-200 rounded-lg shadow-xl d-flex flex-column">
+      <h3 className="text-center font-semibold text-dark-blue mb-4">
         {plan.serviceName}
       </h3>
       <div className="border-2 gray-600"></div>
@@ -17,7 +17,7 @@ const PlanCard = ({ plan, handleBookService }) => {
                   className="w-5 h-5"
                   alt="bullet"
                 />
-                <li className="font-medium text-gray-600">{service}</li>
+                <li className="font-medium text-dark-blue">{service}</li>
               </div>
             ))}
           </ul>

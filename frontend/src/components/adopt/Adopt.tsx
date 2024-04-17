@@ -17,8 +17,13 @@ import toast from "react-hot-toast";
 function Adopt() {
   const dispatch: AppDispatch = useDispatch();
   const {
-    petData, originalPetData, currentPage,searchTerm, loading
+    petData,
+    originalPetData,
+    currentPage,
+    searchTerm,
+    loading,
   } = useSelector((state: RootState) => state.pet);
+
   const searchFilter = () => {
     const filterData = originalPetData.filter((data) => {
       const ageString = String(data.age);
@@ -26,17 +31,20 @@ function Adopt() {
         data.color.toLowerCase().includes(searchTerm.toLowerCase()) ||
         data.species.toLowerCase().includes(searchTerm.toLowerCase()) ||
         data.pet_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        data.gender.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        data.breed.toLowerCase().includes(searchTerm.toLowerCase()) ||
         ageString.includes(searchTerm.toLowerCase())
       ) {
         return true;
       }
       return false;
     });
-dispatch(setPetData(filterData));
+    dispatch(setPetData(filterData));
   };
+
   useEffect(() => {
     dispatch(setPetData(originalPetData));
-  }, [originalPetData]);
+  }, [searchTerm]);
 
   useEffect(() => {
     async function fetchPets() {
@@ -45,6 +53,7 @@ dispatch(setPetData(filterData));
         if (response.type === "getPets/rejected") {
           throw response;
         } else {
+          dispatch(setPetData(response.payload));
           dispatch(setOriginalPetData(response.payload));
           dispatch(setLoading(false));
         }
@@ -57,12 +66,12 @@ dispatch(setPetData(filterData));
   }, [currentPage]);
 
   const handleNextPage = () => {
-    dispatch(setCurrentPage(currentPage + 1))
+    dispatch(setCurrentPage(currentPage + 1));
   };
 
   const handlePreviousPage = () => {
     if (currentPage > 1) {
-      dispatch(setCurrentPage(currentPage - 1))
+      dispatch(setCurrentPage(currentPage - 1));
     }
   };
 
@@ -88,8 +97,8 @@ dispatch(setPetData(filterData));
           />
         </div>
       ) : (
-        <div>
-          <div className="flex justify-center items-center w-full h-full mb-4">
+        <div className="fade-in-up">
+          <div className="flex justify-center items-center w-full h-full mb-4 fade-in-up">
             <img
               src="http://localhost:3000/assets/adoption.png"
               alt="Background"
@@ -97,13 +106,7 @@ dispatch(setPetData(filterData));
             />
           </div>
 
-          <form className=" max-w-xl mx-auto mt-6">
-            {/* <label
-              htmlFor="default-search"
-              className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-            >
-              Search
-            </label> */}
+          <form className=" max-w-xl mx-auto mt-6 fade-in-up">
             <div className="relative">
               <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <svg
@@ -129,7 +132,7 @@ dispatch(setPetData(filterData));
                   id="default-search"
                   className="block w-full ml-2 p-4 ps-10 text-sm text-gray-700 border border-dark-blue rounded-lg bg-white  focus:ring-black focus:border-black "
                   placeholder="Search by color, species, name, city..."
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => dispatch(setSearchTerm(e.target.value))}
                 />
               </div>
               <button
@@ -152,24 +155,13 @@ dispatch(setPetData(filterData));
             Pets available for Adoption
           </h1>
           <div className="container-fluid mt-3">
-            <div className="row">
+            <div className="row align-items-stretch">
               {petData.map((pet) => (
                 <div
-                  className="col-md-3 mb-6 flex-col justify-center"
+                  className="col-md-4 mb-6 d-flex flex-column align-items-center"
                   key={pet._id}
                 >
                   <PetAdoptCard key={pet._id} pet={pet} />
-                  {/* <Link
-                    href="/PetData"
-                    className="no-underline flex justify-center items-center"
-                  >
-                    <button
-                      type="button"
-                      className="text-gray-700 font-bold items-center bg-saddle-brown py-2 px-8 mr-20 shadow mt-4 rounded-xl fs-6 no-underline"
-                    >
-                      Adopt
-                    </button>
-                  </Link> */}
                 </div>
               ))}
             </div>

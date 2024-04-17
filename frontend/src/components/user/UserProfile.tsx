@@ -403,7 +403,22 @@ function UserProfile() {
                     </div>
                   ))
                 ) : (
-                  <p>You Have no service booked yet!</p>
+                  <div
+                  style={{ height: "55vh" }}
+                  className="flex flex-col items-center justify-center"
+                >
+                  <img
+                    src="http://localhost:3000/assets/NoTraining.jpg"
+                    className="w-1/3 items-center"
+                    alt=""
+                  />
+                  <p
+                    style={{ fontSize: "18px" }}
+                    className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl"
+                  >
+                    You have no Service booked yet!
+                  </p>
+                </div>
                 )}
               </div>
             </div>
