@@ -4,13 +4,14 @@ import { TrainingPlanData } from "@/interfaces/trainingPlan";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 function TrainingPlan() {
+  const router = useRouter();
   const handleBookTraining = (trainingPlanId: string) => {
     setLoading(true);
     const bookingPageUrl = `/trainingPlan/bookTraining?trainingPlanId=${trainingPlanId}`;
-    window.location.href = bookingPageUrl;
-    setLoading(false);
+   router.push(bookingPageUrl);
   };
   const [trainingPlans, setTrainingPlans] = useState<TrainingPlanData[]>([]);
   const [loading , setLoading] = useState<boolean>(true);

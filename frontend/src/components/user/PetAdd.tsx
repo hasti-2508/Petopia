@@ -12,9 +12,7 @@ import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
 function PetAdd() {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
-  const { petDataForm, imageFile } = useSelector(
-    (state: RootState) => state.user
-  );
+  const { petDataForm } = useSelector((state: RootState) => state.user);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -26,17 +24,15 @@ function PetAdd() {
     dispatch(setPetDataForm({ ...petDataForm, isAdopted: value }));
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      dispatch(setImageFile(event.target.files[0]));
-    }
-  };
-
   const handleInputPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files[0];
-
-    const { url } = await uploadImageToCloudinary(file);
-    dispatch(setPetDataForm({ ...petDataForm, imageUrl: url }));
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (file && allowedTypes.includes(file.type)) {
+      const { url } = await uploadImageToCloudinary(file);
+      dispatch(setPetDataForm({ ...petDataForm, imageUrl: url }));
+    } else {
+      toast.error("Invalid file type. Please select a JPG, JPEG, or PNG file.");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,6 +55,7 @@ function PetAdd() {
       //     router.push("user/profile");
       //   }
       // }
+      toast.success("Pet Added!");
       router.push("/user/profile");
     } catch (error) {
       toast.error(error.payload);

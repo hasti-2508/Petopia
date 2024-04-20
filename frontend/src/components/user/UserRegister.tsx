@@ -1,7 +1,5 @@
 "use client";
-
-import axios from "axios";
-import React, { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useRef } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,14 +9,10 @@ import {
   setPasswordError,
   setShowPassword,
   setUserDataForm,
-  setUserImageFile,
 } from "@/redux/user/userSlice";
-
-
-
+import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
 
 function UserRegister() {
-
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
@@ -28,17 +22,11 @@ function UserRegister() {
   }, []);
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
-  const {
-    userDataForm,
-    showPassword,
-    passwordError,
-    userImageFile,
-  } = useSelector((state: RootState) => state.user);
-  
-
+  const { userDataForm, showPassword, passwordError } = useSelector(
+    (state: RootState) => state.user
+  );
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
     if (!validateEmail(userDataForm.email)) {
       toast.error("Invalid email format");
       return;
@@ -48,20 +36,11 @@ function UserRegister() {
       if (result.type === "userAdd/rejected") {
         throw result;
       } else {
-        const useId = result.payload._id;
-        if (userImageFile) {
-          const formData = new FormData();
-          formData.append("image", userImageFile);
-          const res = await axios.post(
-            `${process.env.HOST}/user/${useId}/uploadImage`,
-            formData
-          );
-          toast.success("You have Registered Successfully!");
-          router.push("/login");
-        }
+        toast.success("You have Registered Successfully!");
+        router.push("/login");
       }
     } catch (error) {
-      toast.error("Email Already exist!")
+      toast.error("Email Already exist!");
     }
   };
 
@@ -73,9 +52,14 @@ function UserRegister() {
     dispatch(setUserDataForm({ [name]: value }));
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      dispatch(setUserImageFile(event.target.files[0]));
+  const handleInputPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files[0];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (file && allowedTypes.includes(file.type)) {
+      const { url } = await uploadImageToCloudinary(file);
+      dispatch(setUserDataForm({ ...userDataForm, imageUrl: url }));
+    } else {
+      toast.error("Invalid file type. Please select a JPG, JPEG, or PNG file.");
     }
   };
 
@@ -209,10 +193,12 @@ function UserRegister() {
           </label>
           <input
             type="tel"
-            id="phoneNo"
-            name="phoneNo"
+            placeholder="eg. 7990529537"
             pattern="[0-9]{10}"
             maxLength={10}
+            title="Number should be of 10 digits"
+            id="phoneNo"
+            name="phoneNo"
             onChange={handleDataChange}
             value={userDataForm.phoneNo}
             required
@@ -267,11 +253,10 @@ function UserRegister() {
           </label>
           <input
             type="file"
-            id="petImage"
             accept="image/*"
-            onChange={handleFileChange}
-            required
+            onChange={handleInputPhoto}
             className="border border-gray-300 rounded-md px-4 py-2"
+            required
           />
         </div>
         <div className="w-full max-w-md mx-auto">
@@ -279,7 +264,7 @@ function UserRegister() {
             type="submit"
             value="Submit"
             className="bg-dark-blue text-white py-2 px-4 rounded-md mt-4"
-            style={{ marginBottom: "20px" }} 
+            style={{ marginBottom: "20px" }}
           >
             Register
           </button>

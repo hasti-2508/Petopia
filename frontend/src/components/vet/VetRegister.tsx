@@ -1,6 +1,12 @@
 "use client";
 import axios from "axios";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import {
@@ -13,8 +19,16 @@ import {
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { vetRegister } from "@/redux/vet/vetService";
+import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
 
 function VetRegister() {
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.classList.add("animate__animated", "animate__zoomIn");
+    }
+  }, []);
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const {
@@ -45,26 +59,21 @@ function VetRegister() {
       const vetResult = await dispatch(vetRegister(reqData));
       if (vetResult.type === "vetRegister/rejected") {
         throw vetResult;
-      } else {
-        const vetId = vetResult.payload._id;
-        if (vetImageFile) {
-          const formData = new FormData();
-          formData.append("image", vetImageFile);
-          toast.success("You have Registered Successfully!");
-          router.push("/login");
-          const res = await axios.post(
-            `${process.env.HOST}/vet/${vetId}/uploadImage`,
-            formData
-          );
-        }
       }
+      toast.success("You have Registered Successfully!");
+      router.push("/login");
     } catch (error) {
       toast.error("Email Already exist!");
     }
   };
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      dispatch(setVetImageFile(event.target.files[0]));
+  const handleInputPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files[0];
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+    if (file && allowedTypes.includes(file.type)) {
+      const { url } = await uploadImageToCloudinary(file);
+      dispatch(setVetDataForm({ ...vetDataForm, imageUrl: url }));
+    } else {
+      toast.error("Invalid file type. Please select a JPG, JPEG, or PNG file.");
     }
   };
   const handleDataChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -126,7 +135,7 @@ function VetRegister() {
       >
         Vet Registration
       </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
         <div className="flex flex-col">
           <label htmlFor="name" className="mb-1">
             Name:
@@ -187,10 +196,12 @@ function VetRegister() {
           </label>
           <input
             type="tel"
-            id="phoneNo"
-            name="phoneNo"
+            placeholder="eg. 7990529537"
             pattern="[0-9]{10}"
             maxLength={10}
+            title="Number should be of 10 digits"
+            id="phoneNo"
+            name="phoneNo"
             onChange={handleDataChange}
             value={vetDataForm.phoneNo}
             required
@@ -245,11 +256,10 @@ function VetRegister() {
           </label>
           <input
             type="file"
-            id="petImage"
             accept="image/*"
-            onChange={handleFileChange}
-            required
+            onChange={handleInputPhoto}
             className="border border-gray-300 rounded-md px-4 py-2"
+            required
           />
         </div>
         <div className="flex flex-col">

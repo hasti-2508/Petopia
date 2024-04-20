@@ -161,9 +161,11 @@
 
 // export default SignUp;
 "use client"
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 function SignUp() {
+  const router = useRouter();
   const [role, setRole] = useState(""); 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -176,13 +178,13 @@ function SignUp() {
     setIsLoading(true);
     switch (role) {
       case "vet":
-        window.location.href = "/vet/register";
+        router.push("/vet/register");
         break;
       case "trainer":
-        window.location.href = "/trainer/register";
+        router.push("/trainer/register");
         break;
       case "user":
-        window.location.href = "/user/register";
+        router.push("/user/register");
         break;
       default:
         break;

@@ -103,6 +103,7 @@ const userSlice = createSlice({
       state,
       action: PayloadAction<Partial<UserState["userDataForm"]>>
     ) => {
+      console.log(action.payload)
       state.userDataForm = { ...state.userDataForm, ...action.payload };
     },
     setShowPassword: (state, action: PayloadAction<boolean>) => {
