@@ -1,8 +1,7 @@
 "use client";
-import Link from "next/link";
 const TrainerCard = ({ user }) => {
   return (
-    <div className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom w-1/3 ">
+    <div className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom">
       <img
         style={{ height: "320px" }}
         className="w-full p-4 img-responsive"
@@ -13,7 +12,6 @@ const TrainerCard = ({ user }) => {
         }
         alt={user?.name}
       />
-
       <div className="px-6 py-3">
         <div className="font-bold text-xl mb-2">{user?.name}</div>
         <div className="text-gray-700 text-base">
@@ -54,6 +52,16 @@ const TrainerCard = ({ user }) => {
               </label>{" "}
               <div className="fw-medium">{user?.NumberOfPetsTrained}</div>
             </div>
+            <div className="mt-1">
+              <label htmlFor="species" className="font-bold text-dark-blue  ">
+                Training:
+              </label>
+              <div className="fw-medium">
+                {user?.trainings.map((training, index) => (
+                  <p key={index}>{training}</p>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -62,115 +70,115 @@ const TrainerCard = ({ user }) => {
 };
 
 const TrainerUpdateCard = ({ editedUser, handleChange }) => {
-    return (
-      <div className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom w-1/3">
-        <img
-          style={{ height: "320px" }}
-          className="w-full p-4 img-responsive"
-          src={
-            editedUser?.imageUrl
-              ? editedUser.imageUrl
-              : "http://localhost:3000/assets/user.png"
-          }
-          alt={editedUser?.name}
-        />
-        <div className="px-6 py-3">
-          <div className="font-bold text-xl mb-2">
-            {" "}
-            <input
-              className="border-2 border-gray-300 p-1"
-              type="text"
-              name="name"
-              value={editedUser.name}
-              onChange={handleChange}
-              // style={{ width: `${editedUser?.name.length * 13}px` }}
-            />
-          </div>
-          <div className="text-gray-700 text-base">
-            <div className="row justify-content-between">
-              <div className="col-md-6 mb-2">
-                <label htmlFor="species" className="font-bold text-dark-blue  ">
-                  Email:
-                </label>{" "}
-                <div className="fw-medium">
-                  <input
-                    className="border-2 border-gray-200"
-                    type="text"
-                    name="email"
-                    value={editedUser.email}
-                    onChange={handleChange}
-                    // style={{ width: `${editedUser.name.length * 30}px` }}
-                  />
-                </div>
+  return (
+    <div className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom w-1/3">
+      <img
+        style={{ height: "320px" }}
+        className="w-full p-4 img-responsive"
+        src={
+          editedUser?.imageUrl
+            ? editedUser.imageUrl
+            : "http://localhost:3000/assets/user.png"
+        }
+        alt={editedUser?.name}
+      />
+      <div className="px-6 py-3">
+        <div className="font-bold text-xl mb-2">
+          {" "}
+          <input
+            className="border-2 border-gray-300 p-1"
+            type="text"
+            name="name"
+            value={editedUser.name}
+            onChange={handleChange}
+            // style={{ width: `${editedUser?.name.length * 13}px` }}
+          />
+        </div>
+        <div className="text-gray-700 text-base">
+          <div className="row justify-content-between">
+            <div className="col-md-6 mb-2">
+              <label htmlFor="species" className="font-bold text-dark-blue  ">
+                Email:
+              </label>{" "}
+              <div className="fw-medium">
+                <input
+                  className="border-2 border-gray-200"
+                  type="text"
+                  name="email"
+                  value={editedUser.email}
+                  onChange={handleChange}
+                  // style={{ width: `${editedUser.name.length * 30}px` }}
+                />
               </div>
-              <div className="col-md-6">
-                <label htmlFor="species" className="font-bold text-dark-blue  ">
-                  Address:
-                </label>{" "}
-                <div className="fw-medium">
-                  {" "}
-                  <input
-                    className="border-2 border-gray-200"
-                    type="text"
-                    name="address"
-                    value={editedUser.address}
-                    onChange={handleChange}
-                    // style={{ width: `${editedUser.name.length * 30}px` }}
-                  />
-                </div>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="species" className="font-bold text-dark-blue  ">
+                Address:
+              </label>{" "}
+              <div className="fw-medium">
+                {" "}
+                <input
+                  className="border-2 border-gray-200"
+                  type="text"
+                  name="address"
+                  value={editedUser.address}
+                  onChange={handleChange}
+                  // style={{ width: `${editedUser.name.length * 30}px` }}
+                />
               </div>
-              <div className="col-md-6">
-                <label htmlFor="species" className="font-bold text-dark-blue  ">
-                  Phone No:
-                </label>{" "}
-                <div className="fw-medium">
-                  {" "}
-                  <input
-                    className="border-2 border-gray-200"
-                    type="text"
-                    name="phoneNo"
-                    value={editedUser.phoneNo}
-                    onChange={handleChange}
-                    // style={{ width: `${editedUser.name.length * 30}px` }}
-                  />
-                </div>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="species" className="font-bold text-dark-blue  ">
+                Phone No:
+              </label>{" "}
+              <div className="fw-medium">
+                {" "}
+                <input
+                  className="border-2 border-gray-200"
+                  type="text"
+                  name="phoneNo"
+                  value={editedUser.phoneNo}
+                  onChange={handleChange}
+                  // style={{ width: `${editedUser.name.length * 30}px` }}
+                />
               </div>
-              <div className="col-md-6">
-                <label htmlFor="species" className="font-bold text-dark-blue  ">
-                  City:
-                </label>{" "}
-                <div className="fw-medium">
-                  {" "}
-                  <input
-                    className="border-2 border-gray-200"
-                    type="text"
-                    name="city"
-                    value={editedUser.city}
-                    onChange={handleChange}
-                    // style={{ width: `${editedUser.name.length * 30}px` }}
-                  />
-                </div>
+            </div>
+            <div className="col-md-6">
+              <label htmlFor="species" className="font-bold text-dark-blue  ">
+                City:
+              </label>{" "}
+              <div className="fw-medium">
+                {" "}
+                <input
+                  className="border-2 border-gray-200"
+                  type="text"
+                  name="city"
+                  value={editedUser.city}
+                  onChange={handleChange}
+                  // style={{ width: `${editedUser.name.length * 30}px` }}
+                />
               </div>
-              <div className="mt-1">
-                <label htmlFor="species" className="font-bold text-dark-blue  ">
-                  year Of Experience:
-                </label>{" "}
-                <div className="fw-medium">
-                  <input
-                    className="border-2 border-gray-200"
-                    type="text"
-                    name="YearsOfExperience"
-                    value={editedUser.YearsOfExperience}
-                    onChange={handleChange}
-                    // style={{ width: `${editedUser.name.length * 30}px` }}
-                  />
-                </div>
+            </div>
+            <div className="mt-1">
+              <label htmlFor="species" className="font-bold text-dark-blue  ">
+                year Of Experience:
+              </label>{" "}
+              <div className="fw-medium">
+                <input
+                  className="border-2 border-gray-200"
+                  type="text"
+                  name="YearsOfExperience"
+                  value={editedUser.YearsOfExperience}
+                  onChange={handleChange}
+                  // style={{ width: `${editedUser.name.length * 30}px` }}
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
-  export { TrainerUpdateCard, TrainerCard };
+export { TrainerUpdateCard, TrainerCard };

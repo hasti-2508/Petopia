@@ -524,7 +524,6 @@
 
 // export default AdminProfile;
 
-
 "use client";
 import { Service } from "@/interfaces/service";
 import { Training } from "@/interfaces/training";
@@ -541,6 +540,7 @@ import toast from "react-hot-toast";
 import { TrainerCard } from "../trainer/TrainerCard";
 import { UserCard } from "../user/UserCard";
 import { VetCard } from "../vet/VetCard";
+import Pagination from "../pagination/Pagination";
 
 function AdminProfile() {
   const [activeTab, setActiveTab] = useState("ServicesBookings");
@@ -556,9 +556,16 @@ function AdminProfile() {
   const [originalServiceData, setOriginalServiceData] = useState<Service[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [services, setServices] = useState<Service[]>([]);
-  const [originalTrainingData, setOriginalTrainingData] = useState<Training[]>([]);
+  const [userCurrentPage, setUserCurrentPage] = useState(1);
+  const [vetCurrentPage, setVetCurrentPage] = useState(1);
+  const [trainerCurrentPage, setTrainerCurrentPage] = useState(1);
+  const [petCurrentPage, setPetCurrentPage] = useState(1);
+  const [serviceCurrentPage, setServiceCurrentPage] = useState(1);
+  const [trainingCurrentPage, setTrainingCurrentPage] = useState(1);
+  const [originalTrainingData, setOriginalTrainingData] = useState<Training[]>(
+    []
+  );
   const [trainings, setTrainings] = useState<Training[]>([]);
-
   const searchFilter = () => {
     const filterData = originalServiceData.filter((data) => {
       const priceString = String(data.totalPrice);
@@ -602,7 +609,6 @@ function AdminProfile() {
   useEffect(() => {
     return setTrainings(originalTrainingData);
   }, [searchTerm]);
-
 
   const handleUserDelete = async (userId: string) => {
     const isConfirmed = window.confirm(
@@ -678,27 +684,35 @@ function AdminProfile() {
         const response = await axiosInstance.get("/currentUser");
         setAdmin(response.data);
         const serviceResponse = await axios.get(
-          `${process.env.HOST}/serviceBooking`
+          `${process.env.HOST}/serviceBooking?page=${serviceCurrentPage}`
         );
         setOriginalServiceData(serviceResponse.data);
         setServices(serviceResponse.data);
 
         const trainingResponse = await axios.get(
-          `${process.env.HOST}/trainingBooking`
+          `${process.env.HOST}/trainingBooking?page=${trainingCurrentPage}`
         );
         setOriginalTrainingData(trainingResponse.data);
         setTrainings(trainingResponse.data);
 
-        const userResponse = await axios.get(`${process.env.HOST}/user`);
+        const userResponse = await axios.get(
+          `${process.env.HOST}/user?page=${userCurrentPage}`
+        );
         setUsers(userResponse.data);
 
-        const vetResponse = await axios.get(`${process.env.HOST}/vet`);
+        const vetResponse = await axios.get(
+          `${process.env.HOST}/vet?page=${vetCurrentPage}`
+        );
         setVets(vetResponse.data);
 
-        const trainerResponse = await axios.get(`${process.env.HOST}/trainer`);
+        const trainerResponse = await axios.get(
+          `${process.env.HOST}/trainer?page=${trainerCurrentPage}`
+        );
         setTrainers(trainerResponse.data);
 
-        const petResponse = await axios.get(`${process.env.HOST}/pet`);
+        const petResponse = await axios.get(
+          `${process.env.HOST}/pet?page=${petCurrentPage}`
+        );
         setPets(petResponse.data);
       } catch (error) {
         console.error(error);
@@ -706,55 +720,114 @@ function AdminProfile() {
     };
 
     getUser();
-  }, []);
+  }, [userCurrentPage, vetCurrentPage, trainerCurrentPage, petCurrentPage,serviceCurrentPage, trainingCurrentPage]);
+
+  function handleUserPreviousPage() {
+    if (userCurrentPage > 1) {
+      setUserCurrentPage(userCurrentPage - 1);
+    }
+  }
+
+  function handleUserNextPage() {
+    setUserCurrentPage(userCurrentPage + 1);
+  }
+
+  function handleVetPreviousPage() {
+    if (vetCurrentPage > 1) {
+      setVetCurrentPage(vetCurrentPage - 1);
+    }
+  }
+
+  function handleVetNextPage() {
+    setVetCurrentPage(vetCurrentPage + 1);
+  }
+
+  function handleTrainerPreviousPage() {
+    if (trainerCurrentPage > 1) {
+      setTrainerCurrentPage(trainerCurrentPage - 1);
+    }
+  }
+
+  function handleTrainerNextPage() {
+    setTrainerCurrentPage(trainerCurrentPage + 1);
+  }
+
+  function handlePetPreviousPage() {
+    if (petCurrentPage > 1) {
+      setPetCurrentPage(petCurrentPage - 1);
+    }
+  }
+
+  function handlePetNextPage() {
+    setPetCurrentPage(petCurrentPage + 1);
+  }
+
+  function handleServicePreviousPage() {
+    if (serviceCurrentPage > 1) {
+      setServiceCurrentPage(serviceCurrentPage - 1);
+    }
+  }
+
+  function handleServiceNextPage() {
+    setServiceCurrentPage(serviceCurrentPage + 1);
+  }
+
+  function handleTrainingPreviousPage() {
+    if (trainingCurrentPage > 1) {
+      setTrainingCurrentPage(trainingCurrentPage - 1);
+    }
+  }
+
+  function handleTrainingNextPage() {
+    setTrainingCurrentPage(trainingCurrentPage + 1);
+  }
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "ServicesBookings":
         return (
-          <div>
-
-          <form className=" max-w-xl mx-auto mt-6 mb-5">
-            <div className="relative">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <svg
-                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+          <div className="fade-in-up">
+            <form className=" max-w-xl mx-auto mt-6 mb-5">
+              <div className="relative">
+                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                  <svg
+                    className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                    />
+                  </svg>
+                </div>
+                <div className="">
+                  {" "}
+                  <input
+                    type="search"
+                    id="default-search"
+                    className="block w-full ml-2 p-4 ps-10 text-sm text-gray-700 border border-dark-blue rounded-lg bg-white  focus:ring-black focus:border-black "
+                    placeholder="Search by city, price, booking date & time ...."
+                    onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                </svg>
+                </div>
+                <button
+                  type="submit"
+                  className="text-white absolute my-2 end-2.5 bottom-2.5 bg-dark-blue hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 "
+                  onClick={(e) => {
+                    e.preventDefault();
+                    searchFilter();
+                  }}
+                >
+                  Search
+                </button>
               </div>
-              <div className="">
-                {" "}
-                <input
-                  type="search"
-                  id="default-search"
-                  className="block w-full ml-2 p-4 ps-10 text-sm text-gray-700 border border-dark-blue rounded-lg bg-white  focus:ring-black focus:border-black "
-                  placeholder="Search by city, price, booking date & time ...."
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <button
-                type="submit"
-                className="text-white absolute my-2 end-2.5 bottom-2.5 bg-dark-blue hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 "
-                onClick={(e) => {
-                  e.preventDefault();
-                  searchFilter();
-                }}
-              >
-                Search
-              </button>
-            </div>
-          </form>
+            </form>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
               <table className="w-full text-dark-blue ">
                 <thead
@@ -836,53 +909,56 @@ function AdminProfile() {
                 </tbody>
               </table>
             </div>
+            <Pagination
+              Previous={handleServicePreviousPage}
+              Next={handleServiceNextPage}
+            />
           </div>
         );
       case "TrainingBookings":
         return (
-          <div>
-
-<form className=" max-w-xl mx-auto mt-6 mb-5">
-            <div className="relative">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <svg
-                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+          <div className="fade-in-up">
+            <form className=" max-w-xl mx-auto mt-6 mb-5 fade-in-up">
+              <div className="relative">
+                <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                  <svg
+                    className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                    />
+                  </svg>
+                </div>
+                <div className="">
+                  {" "}
+                  <input
+                    type="search"
+                    id="default-search"
+                    className="block w-full ml-2 p-4 ps-10 text-sm text-gray-700 border border-dark-blue rounded-lg bg-white  focus:ring-black focus:border-black "
+                    placeholder="Search by city, price, booking date & time ...."
+                    onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                </svg>
+                </div>
+                <button
+                  type="submit"
+                  className="text-white absolute my-2 end-2.5 bottom-2.5 bg-dark-blue hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 "
+                  onClick={(e) => {
+                    e.preventDefault();
+                    searchTrainingFilter();
+                  }}
+                >
+                  Search
+                </button>
               </div>
-              <div className="">
-                {" "}
-                <input
-                  type="search"
-                  id="default-search"
-                  className="block w-full ml-2 p-4 ps-10 text-sm text-gray-700 border border-dark-blue rounded-lg bg-white  focus:ring-black focus:border-black "
-                  placeholder="Search by city, price, booking date & time ...."
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <button
-                type="submit"
-                className="text-white absolute my-2 end-2.5 bottom-2.5 bg-dark-blue hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 "
-                onClick={(e) => {
-                  e.preventDefault();
-                  searchTrainingFilter();
-                }}
-              >
-                Search
-              </button>
-            </div>
-          </form>
+            </form>
             <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
               <table className="w-full text-dark-blue  ">
                 <thead
@@ -964,63 +1040,101 @@ function AdminProfile() {
                 </tbody>
               </table>
             </div>
+            <Pagination
+              Previous={handleTrainingPreviousPage}
+              Next={handleTrainingNextPage}
+            />
           </div>
         );
 
       case "Users":
         return (
-          <div className="row ">
-            {users.map((user) => (
-              <div className="col-md-4">
-                <div key={Math.random()}>
-                  <div key={user._id}>
-                    <UserCard user={user} />
+          <div>
+            <div className="container-fluid mt-3 gap-3 fade-in-up">
+              <div className="row ">
+                {users.map((user) => (
+                  <div className="col-md-4 mx-auto">
+                    <div key={Math.random()}>
+                      <div key={user._id}>
+                        <UserCard user={user} />
+                      </div>
+                      <div className="flex justify-center">
+                        <button
+                          onClick={() => handleUserDelete(user._id)}
+                          className="mt-2 mb-3 px-4 py-2 bg-red-500 text-white rounded-md"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => handleUserDelete(user._id)}
-                    className="mt-2  px-4 py-2 bg-red-500 text-white rounded-md"
-                  >
-                    Delete
-                  </button>
-                </div>
+                ))}
+                <Pagination
+                  Previous={handleUserPreviousPage}
+                  Next={handleUserNextPage}
+                />
               </div>
-            ))}
+            </div>
           </div>
         );
       case "Vets":
         return (
-          <div className="container-fluid mt-3">
-            <div className="row">
-              {vets.map((vet) => (
-                <div key={Math.random()}>
-                  <VetCard user={vet} />
-                  <button
-                    onClick={() => handleVetDelete(vet._id)}
-                    className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md"
-                  >
-                    Delete
-                  </button>
-                </div>
-              ))}
+          <div>
+            <div className="container-fluid mt-3 gap-3 fade-in-up">
+              <div className="row">
+                {vets.map((vet) => (
+                  <div className="col-md-4 mx-auto">
+                    <div key={Math.random()}>
+                      <VetCard user={vet} />
+                      <div
+                        className="flex justify-evenly"
+                        style={{ width: "85%" }}
+                      >
+                        <button
+                          onClick={() => handleVetDelete(vet._id)}
+                          className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Pagination
+                Previous={handleVetPreviousPage}
+                Next={handleVetNextPage}
+              />
             </div>
           </div>
         );
 
       case "Trainers":
         return (
-          <div className="container-fluid mt-3">
-            <div className="row">
+          <div>
+            <div className="container-fluid mt-3 fade-in-up">
+              <div className="row">
                 {trainers.map((trainer) => (
-                  <div key={Math.random()}>
-                    <TrainerCard user={trainer} />
-                    <button
-                      onClick={() => handleTrainerDelete(trainer._id)}
-                      className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md"
-                    >
-                      Delete
-                    </button>
+                  <div className="col-md-4 mx-auto">
+                    <div key={Math.random()}>
+                      <TrainerCard user={trainer} />
+                      <div className="flex justify-center">
+                        {" "}
+                        <button
+                          onClick={() => handleTrainerDelete(trainer._id)}
+                          className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 ))}
+                <Pagination
+                  Previous={handleTrainerPreviousPage}
+                  Next={handleTrainerNextPage}
+                />
+              </div>
             </div>
           </div>
         );
@@ -1028,20 +1142,31 @@ function AdminProfile() {
       case "Pets":
         return (
           <div>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {pets.map((pet) => (
-                <div key={Math.random()}>
-                  <PetCard pet={pet} />
-                  <div className="mx-6">
-                    <button
-                      onClick={() => handlePetDelete(pet._id)}
-                      className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md"
-                    >
-                      Delete
-                    </button>
+            <div className="container-fluid mt-3 fade-in-up">
+              <div className="row">
+                {pets.map((pet) => (
+                  <div className="col-md-4 mx-auto">
+                    <div key={Math.random()}>
+                      <PetCard pet={pet} />
+                      <div
+                        className="flex justify-evenly"
+                        style={{ width: "85%" }}
+                      >
+                        <button
+                          onClick={() => handlePetDelete(pet._id)}
+                          className="mt-2 px-4 py-2 bg-red-500 text-white rounded-md mb-4"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+                <Pagination
+                  Previous={handlePetPreviousPage}
+                  Next={handlePetNextPage}
+                />
+              </div>
             </div>
           </div>
         );
@@ -1053,7 +1178,7 @@ function AdminProfile() {
   return (
     <div>
       <div className=" p-9 ">
-        <div className="text-sm font-medium text-center text-gray-500 ">
+        <div className="text-sm font-medium text-center text-gray-500 fade-in-up ">
           <ul className="flex flex-wrap -mb-px">
             <li className="me-2">
               <button
@@ -1142,4 +1267,3 @@ function AdminProfile() {
 }
 
 export default AdminProfile;
-

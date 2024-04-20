@@ -5,22 +5,27 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import PlanCard from "../booking/PlanCard";
+import toast from "react-hot-toast";
 
 function ServicePlan() {
   const router = useRouter();
   const handleBookService = (servicePlanId: string) => {
+    setLoading(true);
     const bookingPageUrl = `/servicePlan/bookService?servicePlanId=${servicePlanId}`;
     router.push(bookingPageUrl);
   };
   const [servicePlans, setServicePlans] = useState<ServicePlanType[]>([]);
+  const [loading , setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchServicePlans() {
       try {
+        setLoading(true);
         const response = await axios.get<ServicePlanType[]>(
           `${process.env.HOST}/service-plan`
         );
         setServicePlans(response.data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching service plans:", error);
       }
@@ -29,14 +34,23 @@ function ServicePlan() {
     fetchServicePlans();
   }, []);
   return (
+
     <div>
+    {loading ? <div className="flex justify-center items-center my-52">
+          <img
+            style={{ width: "250px", height: "250px" }}
+            src="http://localhost:3000/assets/AdoptLoading.gif"
+            alt="Loading..."
+          />
+        </div> : (
+      <div className="fade-in-up">
       <div className="position-relative ">
         <img
           src="http://localhost:3000/assets/petGrooming.jpg"
           alt="Background"
           className="inset-0 w-full h-full object-cover"
         />
-        <div className=" bg-white position-absolute custom-box border-gray-300 border-2 p-4 ml-8 rounded-xl shadow-md w-4/5 flex-col items-center">
+        <div className=" bg-white position-absolute  custom-box border-gray-300 border-2 p-4 ml-8 rounded-xl shadow-md w-4/5 flex-col items-center">
           <h1
             className="text-center text-dark-blue font-bold text-2xl pt-4"
             style={{ fontFamily: "open-sans", fontSize: "40px" }}
@@ -51,6 +65,15 @@ function ServicePlan() {
             one.
           </p>
           <button
+          onClick={() => {
+            toast("Select Plan first!",{
+              style: {
+                borderRadius: '10px',
+                background: '#FBA834',
+                color: '#242d62',
+              },
+            })
+          }}
             className="text-gray-700 flex justify-center bg-saddle-brown py-2 px-3 mt-4 font-semibold rounded-lg fs-6"
             style={{ margin: "auto" }}
           >
@@ -59,7 +82,7 @@ function ServicePlan() {
         </div>
       </div>
 
-      <section id="section" className="pt-48">
+      <section id="section" className="pt-40">
         <div className="p-4">
           <h1
             className="text-center text-dark-blue font-semibold text-2xl pt-4 mb-12"
@@ -68,16 +91,16 @@ function ServicePlan() {
             How Pet Grooming works at your home?
           </h1>
           <div
-            className="flex gap-3 mt-8"
+            className="flex gap-5 mt-8 mb-4"
             style={{ width: "117.5rem", marginLeft: "250px" }}
           >
             <img
               src="http://localhost:3000/assets/grooming.jpg"
-              className="w-1/4 h-2/6 rounded-r-lg"
+              className="w-1/4  rounded-2xl  shadow-2xl"
             />
             <div>
               <div>
-                <div className=" m-10 flex gap-9">
+                <div className=" flex gap-9 card-container p-4 hover:bg-saddle-brown">
                   <div className="mt-2">
                     <svg
                       width="32"
@@ -100,7 +123,7 @@ function ServicePlan() {
                     </div>
                   </div>
                 </div>
-                <div className=" m-10 flex gap-9">
+                <div className=" mt-3 card-container p-4 flex gap-9 hover:bg-saddle-brown">
                   <div className="mt-2">
                     <svg
                       width="32"
@@ -127,7 +150,7 @@ function ServicePlan() {
                     </div>
                   </div>
                 </div>
-                <div className=" m-10 flex gap-9">
+                <div className=" mt-3 card-container p-4 flex gap-9 hover:bg-saddle-brown">
                   <div className="mt-2">
                     <svg
                       width="32"
@@ -150,7 +173,7 @@ function ServicePlan() {
                     </div>
                   </div>
                 </div>
-                <div className=" m-10 flex gap-9">
+                <div className=" mt-3 card-container p-4 flex gap-9 hover:bg-saddle-brown">
                   <div className="mt-2">
                     <svg
                       width="32"
@@ -182,13 +205,13 @@ function ServicePlan() {
       <div>
         <div className="bg-white">
           <h1
-            className="font-bold text-center py-4 text-gray-600"
-            style={{ fontFamily: "open-sans", fontSize: "40px" }}
+            className="text-center text-dark-blue font-semibold text-2xl pt-4 mb-12"
+            style={{ fontFamily: "open-sans", fontSize: "35px" }}
           >
             Dog Grooming packages
           </h1>
-          <div className="border-2 border-gray-200 mb-5"></div>
-          <div className="flex flex-wrap justify-center gap-8">
+     
+          <div className="flex flex-wrap justify-center gap-8 ">
             {servicePlans
               .filter((plan) => plan.species === "dog")
               .map((plan, index) => (
@@ -203,13 +226,12 @@ function ServicePlan() {
 
         <div className="bg-white mt-5 mb-5">
           <h1
-            className="font-bold text-center py-4 text-gray-600"
-            style={{ fontFamily: "open-sans", fontSize: "40px" }}
+            className="text-center text-dark-blue font-semibold text-2xl pt-4 mb-12"
+            style={{ fontFamily: "open-sans", fontSize: "35px" }}
           >
             Cat Grooming packages
           </h1>
-          <div className="border-2 border-gray-200 mb-5"></div>
-          <div className="flex flex-wrap justify-center gap-8">
+          <div className="flex flex-wrap justify-center gap-8 ">
             {servicePlans
               .filter((plan) => plan.species === "cat")
               .map((plan, index) => (
@@ -223,7 +245,13 @@ function ServicePlan() {
         </div>
       </div>
     </div>
+    )}
+  </div>
+
+
   );
 }
+
+  
 
 export default ServicePlan;

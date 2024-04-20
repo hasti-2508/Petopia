@@ -59,7 +59,16 @@ export default function DateAndTime({
     }
   };
 
+
   return (
+
+    <div className="w-full mx-auto mt-4">
+    <h1
+      className="text-center text-3xl font-bold mb-8"
+      style={{ fontFamily: "open-sans", fontSize: "40px" }}
+    >
+      Add Date and Time
+    </h1>
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <StaticDateTimePicker
         orientation="landscape"
@@ -71,5 +80,7 @@ export default function DateAndTime({
         }}
       />
     </LocalizationProvider>
+    </div>
+ 
   );
 }

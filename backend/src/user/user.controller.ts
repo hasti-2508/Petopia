@@ -10,6 +10,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   Req,
   Res,
   UploadedFile,
@@ -29,6 +30,8 @@ import { User } from './schemas/user.schema';
 import { UserService } from './user.service';
 import { JwtService } from '@nestjs/jwt';
 import { PetService } from 'src/pet/pet.service';
+import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
+import { Query as ExpressQuery } from 'express-serve-static-core';
 
 @Controller('user')
 export class UserController {
@@ -103,27 +106,25 @@ export class UserController {
   }
 
   @Get('/')
-  async getUsers() {
-    return this.userService.findUser();
+  async getUsers(@Query() query: ExpressQuery): Promise<User[]> {
+    return this.userService.findUser(query);
   }
 
   @Get('/:id')
   async getUserByID(@Param('id') userId: string) {
-
     try {
-      
       const user = await this.userService.findUserById(userId);
-      const getPetsPromises = user.pets.map((id:any) => this.petService.findPetById(id));
+      const getPetsPromises = user.pets.map((id: any) =>
+        this.petService.findPetById(id),
+      );
       const pets = await Promise.all(getPetsPromises);
-      if(!user){
-        throw new HttpException('User Not Found',404);
+      if (!user) {
+        throw new HttpException('User Not Found', 404);
       }
       return { user, pets };
     } catch (error) {
       console.error(error);
-      
     }
-
   }
 
   @Post(':id/uploadImage')
@@ -159,7 +160,7 @@ export class UserController {
         throw new NotFoundException('User Not Found!');
       }
 
-    await this.userService.uploadUserPictureUrl(
+      await this.userService.uploadUserPictureUrl(
         userId,
         cloudinaryResponse.url,
       );
@@ -168,7 +169,7 @@ export class UserController {
         success: true,
         data: file.path,
         cloudinaryResponse: cloudinaryResponse,
-      })
+      });
     } catch (error) {
       return res.json({
         success: false,
@@ -185,13 +186,9 @@ export class UserController {
   //   return this.userService.updateUser(userId, updateUserDto);
   // }
   @Patch('update/:id')
-async updateUser(
-  @Body() updateUserDto,
-  @Param('id') userId: string,
-) {
-  return this.userService.updateUser(userId, updateUserDto);
-}
-
+  async updateUser(@Body() updateUserDto, @Param('id') userId: string) {
+    return this.userService.updateUser(userId, updateUserDto);
+  }
 
   // @UseGuards(RolesGuard)
   // @Roles(Role.ADMIN)
@@ -206,14 +203,13 @@ async updateUser(
   }
 
   @Post('/:petId/adopt')
-  async isAdopted(@Param('petId') petId: string, @Req() req) {
-    const token = req.cookies.jwt;
-
-    if (!token) {
-      throw new NotFoundException('User Should be logged in');
+  @UseInterceptors(JwtInterceptor)
+  async isAdopted(@Param('petId') petId: string, @Req() request) {
+    const data = request.token;
+    if (!data) {
+      throw new NotFoundException('Please Login first!');
     }
-    const decodedToken = this.jwtService.decode(token);
-    const userId = decodedToken.userId;
+    const userId = data.userId;
     return await this.userService.isAdopted(petId, userId);
   }
 }

@@ -71,18 +71,12 @@ function BookTraining() {
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
-    const jwt = localStorage.getItem("jwt");
-    // const jwt2 = Cookies.get("jwt");
-    const requestData = {
-      ...data,
-      jwt: jwt,
-    };
     if (!isLastStep) return next();
     async function postData() {
       try {
         const response = await axiosInstance.post(
           `/trainingBooking/${trainingPlanId}`,
-          requestData
+          data
         );
         setBookingSuccess(true);
         setTimeout(async () => {
@@ -101,9 +95,10 @@ function BookTraining() {
           error.response &&
           error.response.status === 409
         ) {
-          // warningNotification();
           toast.error("Sorry, we are not providing training in this city");
-          // router.push("/Home");
+          setTimeout(() => {
+            router.push("/home");
+          }, 1000);
         } else if (
           axios.isAxiosError(error) &&
           error.response &&
@@ -121,10 +116,6 @@ function BookTraining() {
           toast.error("Please select Booking date and time!");
         } else {
           toast.error("Error Occurred!");
-          // console.error(
-          //   "Error posting booking data:",
-          //   error.response.data.message
-          // );
         }
       }
     }
@@ -133,51 +124,34 @@ function BookTraining() {
   }
   return (
     <div>
-      {/* <Notifications /> */}
-      <div
-        style={{
-          position: "relative",
-          background: "white",
-          padding: "2rem",
-          margin: "1rem",
-          borderRadius: ".5rem",
-          fontFamily: "Arial",
-          maxWidth: "max-content",
-        }}
-      >
+      <div className="w-full max-w-xl mx-auto">
         <form onSubmit={onSubmit}>
           {step}
           <div
             className=" text-white"
             style={{
-              marginTop: "1rem",
+              marginTop: "1.5rem",
+              marginBottom: "1.5rem",
               display: "flex",
               gap: ".5rem",
               justifyContent: "flex-end",
             }}
           >
             {!isFirstStep && (
-              <button
-                type="button"
-                className="text-gray-700 font-bold flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
-                onClick={back}
-              >
-                Back
+              <button>
+                <img src="http://localhost:3000/assets/left.svg" alt="" />
               </button>
             )}
             {isLastStep ? (
               <button
                 type="submit"
-                className="text-white flex items-center bg-dark-blue py-2 px-3 rounded-pill fs-6 no-underline"
+                className="text-dark-blue flex items-center bg-saddle-brown px-6 rounded-full font-bold no-underline"
               >
                 Pay
               </button>
             ) : (
-              <button
-                type="submit"
-                className="text-gray-700   flex items-center font-bold bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
-              >
-                Next
+              <button className="">
+                <img src="http://localhost:3000/assets/right.svg" alt="" />
               </button>
             )}
           </div>

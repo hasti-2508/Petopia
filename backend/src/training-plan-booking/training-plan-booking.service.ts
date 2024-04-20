@@ -16,7 +16,6 @@ import {
 } from './dto/training-plan-booking.dto';
 import * as nodemailer from 'nodemailer';
 import { Query } from 'express-serve-static-core';
-import { transcode } from 'buffer';
 
 @Injectable()
 export class TrainingPlanBookingService {
@@ -35,6 +34,7 @@ export class TrainingPlanBookingService {
     const skip = resPerPage * (currentPage - 1);
 
     return await this.TrainingPlanBookingModel.find()
+    .sort({createdAt: -1})
       .limit(resPerPage)
       .skip(skip)
       .exec();

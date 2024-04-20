@@ -8,6 +8,8 @@ import { PetCardProps } from "../../interfaces/pet";
 import { User, UserData } from "../../interfaces/user";
 import axiosInstance from "@/utils/axios";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { trusted } from "mongoose";
 
 const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const [owner, setOwner] = useState<User>();
@@ -41,11 +43,14 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   }, []);
 
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom">
-      <Link href={`/adopt/petData/${pet._id}`}>
+    <div
+      style={{ height: "610px" }}
+      className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom"
+    >
+      <Link href={`/adopt/petData/${pet._id}`} className="flex justify-center">
         <img
-          style={{ height: "250px" }}
-          className="p-4 img-responsive"
+          style={{ height: "250px", width: "370px" }}
+          className="p-4 img-responsive flex justify-center"
           src={pet.imageUrl}
           alt={pet.pet_name}
         />
@@ -83,12 +88,12 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             <label htmlFor="species" className="font-bold text-dark-blue  ">
               City:
             </label>{" "}
-            <span className="fw-medium">have to add city here</span>
+            <span className="fw-medium">{owner?.city}</span>
           </div>
         </div>
       </div>
 
-      <ul className="list-group p-2 border-top" key={Math.random()}>
+      <ul className="list-group p-2" key={Math.random()}>
         <li
           className="list-group-item border-0 d-flex justify-content-between align-items-start"
           key={Math.random()}
@@ -100,7 +105,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                 <img
                   src="http://localhost:3000/assets/user.png"
                   alt="Owner Image"
-                  className="rounded-circle w-16 border border-1"
+                  className="rounded-circle w-16 "
                 />
               </div>
               <div>
@@ -110,9 +115,9 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                   </span>
                   <span className="d-flex gap-2">
                     <CallIcon color="success" />{" "}
-                    <a className="text-gray-700 no-underline">
+                    <p className="text-gray-700 no-underline">
                       {owner?.phoneNo}
-                    </a>
+                    </p>
                   </span>
                 </div>
               </div>
@@ -120,7 +125,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
           </div>
         </li>
       </ul>
-      <div className="border-1 border-gray-200"></div>
     </div>
   );
 };
@@ -159,6 +163,7 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
   }, []);
 
   const handlePetDetails = () => {
+    toast("Loading.....");
     router.push(`adopt/petData/${pet._id}`);
   };
   return (
@@ -236,9 +241,9 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
                   </span>
                   <span className="d-flex gap-2">
                     <CallIcon color="success" />
-                    <a className="text-gray-700 no-underline">
+                    <p className="text-gray-700 no-underline">
                       {owner?.phoneNo}
-                    </a>
+                    </p>
                   </span>
                 </div>
               </div>
@@ -255,6 +260,16 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
           <button
             type="button"
             className="text-white bg-primary py-1.5 px-6 my-2 rounded-xl fs-6 "
+            onClick={() => {
+              toast("Loading...", {
+                duration: 500,
+                style: {
+                  borderRadius: "10px",
+                  background: "#FBA834",
+                  color: "#242d62",
+                },
+              });
+            }}
           >
             Adopt
           </button>
@@ -263,7 +278,7 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
     </div>
   );
 };
-const PetProfileCard: React.FC<PetCardProps> = ({ pet }) => {
+const PetProfileCard = ({ pet, handleDelete }) => {
   const [owner, setOwner] = useState<UserData>();
   const router = useRouter();
 
@@ -344,6 +359,15 @@ const PetProfileCard: React.FC<PetCardProps> = ({ pet }) => {
               City:
             </label>{" "}
             <span className="fw-medium">{owner?.city}</span>
+          </div>
+
+          <div className="flex justify-center">
+            <button
+              onClick={handleDelete}
+              className="text-white fs-6 my-3 bg-red-500 py-2 px-8 rounded-lg text-lg"
+            >
+              {pet.isAdopted=== true ? "Delete" : "Adopted?"}
+            </button>
           </div>
         </div>
       </div>

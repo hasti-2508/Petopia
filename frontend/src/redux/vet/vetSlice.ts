@@ -43,7 +43,7 @@ const initialVetDataForm = {
 
 const initialState: VetState = {
   vet: initialVet,
-  isLoading: false,
+  isLoading: true,
   error: null,
   bookings: initialService,
   isEditing: false,
@@ -105,6 +105,9 @@ const vetSlice = createSlice({
     setVetServiceError: (state, action: PayloadAction<string>) => {
       state.vetServiceError = action.payload;
     },
+    setIsLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
   },
   extraReducers: (builder) => {
     //getVetData
@@ -155,6 +158,7 @@ export const {
   setVetPasswordError,
   setSelectServices,
   setVetServiceError,
+  setIsLoading
   
 } = vetSlice.actions;
 

@@ -20,37 +20,34 @@ export class PetService {
     sortDto: PetSortDto,
     qu: Query,
   ): Promise<Pet[]> {
-    let query = this.petModel.find({ isActive: "true", isAdopted:"false" }); //isAdopted: false
-    const resPerPage = 2;
+    let query = this.petModel.find({isActive: "true", isAdopted: false}); //isAdopted: false
+    const resPerPage = 9;
     const currentPage = Number(qu.page) || 1;
     const skip = resPerPage * (currentPage - 1);
-
-    if (filterDto) {
-      if (filterDto.species) {
-        query = query.where('species').equals(filterDto.species);
-      }
-      if (filterDto.breed) {
-        query = query.where('breed').equals(filterDto.breed);
-      }
-      if (filterDto.age) {
-        query = query.where('age').equals(filterDto.age);
-      }
-      if (filterDto.gender) {
-        query = query.where('gender').equals(filterDto.gender);
-      }
-      if (filterDto.city) {
-        query = query.where('city').equals(filterDto.city);
-      }
-      if (filterDto.state) {
-        query = query.where('state').equals(filterDto.state);
-      }
-    }
-
-    if (sortDto && sortDto.sortBy) {
-      const sortOrder = sortDto.sortOrder === 'desc' ? -1 : 1;
-      query = query.sort({ [sortDto.sortBy]: sortOrder });
-    }
-
+    // if (filterDto) {
+    //   if (filterDto.species) {
+    //     query = query.where('species').equals(filterDto.species);
+    //   }
+    //   if (filterDto.breed) {
+    //     query = query.where('breed').equals(filterDto.breed);
+    //   }
+    //   if (filterDto.age) {
+    //     query = query.where('age').equals(filterDto.age);
+    //   }
+    //   if (filterDto.gender) {
+    //     query = query.where('gender').equals(filterDto.gender);
+    //   }
+    //   if (filterDto.city) {
+    //     query = query.where('city').equals(filterDto.city);
+    //   }
+    //   if (filterDto.state) {
+    //     query = query.where('state').equals(filterDto.state);
+    //   }
+    // }
+    // if (sortDto && sortDto.sortBy) {
+    //   const sortOrder = sortDto.sortOrder === 'desc' ? -1 : 1;
+    //   query = query.sort({ [sortDto.sortBy]: sortOrder });
+    // }
     return query.limit(resPerPage).skip(skip).exec();
   }
 
@@ -66,8 +63,8 @@ export class PetService {
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) {
       throw new HttpException('Invalid ID', 400);
-    }
-    const pet = await this.petModel.findOne({ _id: id, isActive: 'true' });
+    }  
+    const pet = await this.petModel.findOne({ _id: id, isActive: "true" });
     if (!pet) {
       throw new NotFoundException('Pet not found');
     }
@@ -96,8 +93,17 @@ export class PetService {
 
   async deletePet(id: string) {
     const pet = await this.findPetById(id);
+    const owner = await this.UserModel.findById(pet.owner[0]);
+    if (!owner) {
+      throw new NotFoundException('No Owner Found');
+    }
+    owner.petHistory.push(id);
+    owner.pets = owner.pets.filter((pet) => pet.toString() !== id);
     pet.isActive = 'false';
-    pet.save();
+    pet.isAdopted = true;
+    await pet.save();
+    await owner.save();
+    return;
   }
 
   async deletePictureUrl(id: string): Promise<Pet> {

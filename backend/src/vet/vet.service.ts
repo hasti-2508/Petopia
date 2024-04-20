@@ -5,6 +5,7 @@ import { ServicePlanBooking } from 'src/service-plan-booking/schemas/service-pla
 import { CreateVetDto } from 'src/vet/dto/vet.dto';
 import { Vet } from 'src/vet/schemas/vet.schema';
 import * as nodemailer from 'nodemailer';
+import { Query } from 'express-serve-static-core';
 
 @Injectable()
 export class VetService {
@@ -15,8 +16,12 @@ export class VetService {
     private servicePlanBookingModel: mongoose.Model<ServicePlanBooking>,
   ) {}
 
-  async findVet(): Promise<Vet[]> {
-    return await this.VetModel.find({ isActive: true }).exec();
+  async findVet(qu: Query): Promise<Vet[]> {
+    let query = this.VetModel.find({ isActive: true });
+    const resPerPage = 9;
+    const currentPage = Number(qu.page) || 1;
+    const skip = resPerPage * (currentPage - 1);
+    return query.limit(resPerPage).skip(skip).exec();
   }
 
   async findAvailableVet(): Promise<Vet[]>{
@@ -88,7 +93,7 @@ export class VetService {
   async uploadUserPictureUrl(id: string, imageUrl: string): Promise<Vet> {
     const vet = await this.VetModel.findById(id).exec();
     if (!vet) {
-      throw new Error('User not found');
+      throw new Error('Vet not found');
     }
     if (vet.imageUrl) {
       vet.imageHistory = [vet.imageUrl, ...(vet.imageHistory || [])];

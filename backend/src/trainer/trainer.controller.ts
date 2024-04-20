@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   Res,
   UploadedFile,
@@ -26,6 +27,8 @@ import { Roles } from 'src/role/role.decorator';
 import { Role } from 'src/role/role.enum';
 import { Trainer } from './schemas/trainer.schema';
 import { JwtService } from '@nestjs/jwt';
+import { Query as ExpressQuery } from 'express-serve-static-core';
+import { Vet } from 'src/vet/schemas/vet.schema';
 
 @Controller('trainer')
 export class TrainerController {
@@ -90,6 +93,9 @@ export class TrainerController {
     if (!YearsOfExperience) {
       throw new BadRequestException('Please add your years of Experience');
     }
+    if (!NumberOfPetsTrained) {
+      throw new BadRequestException('Please add number of pets you trained');
+    }
     if (!trainings) {
       throw new BadRequestException('Please add  the trainings you offer');
     }
@@ -119,8 +125,8 @@ export class TrainerController {
   // @UseGuards(RolesGuard)
   // @Roles(Role.ADMIN)
   @Get('/')
-  async getTrainers() {
-    return this.trainerService.findTrainer();
+  async getTrainers(@Query() query: ExpressQuery): Promise<Trainer[]> {
+    return this.trainerService.findTrainer(query);
   }
 
   @Get('/:id')
@@ -152,20 +158,16 @@ export class TrainerController {
       if (!file || !file.path) {
         throw new NotFoundException('No file uploaded or file path is missing');
       }
-
       const cloudinaryResponse =
         await this.cloudinaryService.uploadOnCloudinary(file.path);
       const trainer = await this.trainerService.findTrainerById(trainerId);
-
-      if (!trainer) {
+     if (!trainer) {
         throw new NotFoundException('Trainer Not Found!');
       }
-
       await this.trainerService.uploadUserPictureUrl(
         trainerId,
         cloudinaryResponse.url,
       );
-
       return cloudinaryResponse;
     } catch (error) {
       return res.json({
@@ -196,13 +198,13 @@ export class TrainerController {
   }
 
   @Post('/:bookingId/confirm')
-  async confirm(@Param('bookingId') bookingId: string,@Req() req) {
+  async confirm(@Param('bookingId') bookingId: string, @Req() req) {
     const token = req.cookies.jwt;
     if (!token) {
       throw new NotFoundException('Vet Should be logged in');
     }
     const decodedToken = this.jwtService.decode(token);
     const trainerId = decodedToken.userId;
-    return await this.trainerService.confirm(bookingId,trainerId);
+    return await this.trainerService.confirm(bookingId, trainerId);
   }
 }

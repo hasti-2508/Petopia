@@ -12,6 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "@/redux/auth/authSlice";
 import { currentUser, logout } from "@/redux/auth/authService";
 import { dividerClasses } from "@mui/material";
+import Link from "next/link";
 
 function Header() {
   const router = useRouter();
@@ -78,7 +79,7 @@ function Header() {
   }, [userRole]);
 
   return (
-    <nav className="border-gray-200 bg-dark-blue h-16 sticky top-0 z-10">
+    <nav className="border-gray-200 bg-dark-blue h-16 sticky top-0 z-10 shadow-sm">
       <div className="max-w-screen-xl mx-auto h-full flex justify-between align-items-center px-4">
         <div className="flex items-center">
           <img
@@ -93,37 +94,37 @@ function Header() {
 
         <ul className="flex flex-col font-medium md:p-0 m-0 md:space-x-8 rtl:space-x-reverse md:flex-row ">
           <li>
-            <a
+            <Link
               href="/home"
               className="block py-2 px-3 text-dark text-decoration-none text-white rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
               aria-current="page"
             >
               Home
-            </a>
+            </Link>
           </li>
           <li>
-            <a
+            <Link
               href="/adopt"
               className="block py-2 px-3 text-dark text-decoration-none text-white rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
             >
               Adopt
-            </a>
+            </Link>
           </li>
           <li>
-            <a
+            <Link
               href="/servicePlan"
               className="block py-2 px-3 text-dark text-decoration-none text-white rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
             >
               Services
-            </a>
+            </Link>
           </li>
           <li>
-            <a
+            <Link
               href="/trainingPlan"
               className="block py-2 px-3 text-dark text-decoration-none text-white rounded md:bg-transparent md:p-0 hover:text-saddle-brown"
             >
               Trainings
-            </a>
+            </Link>
           </li>
         </ul>
 
@@ -144,7 +145,7 @@ function Header() {
                     Need a vet Urgently?
                   </span>
                 </button>
-              </div>)} */}\
+              </div>)} */}
                    {(userRole === "vet" || userRole === "admin") ? (
             <div></div>
           ) : (
@@ -160,7 +161,7 @@ function Header() {
                   className="w-6"
                   alt="Emergency Consultation"
                 />
-                <span className={`ml-3 ${isHovered ? "" : "hidden"} ` }>
+                <span className={`ml-3 ${isHovered ? "" : "hidden"} fade-in-right` }>
                   Need a vet Urgently?
                 </span>
               </button>
@@ -195,7 +196,7 @@ function Header() {
                 <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <Menu.Item>
                     {({ active }) => (
-                      <a
+                      <Link
                         href="#"
                         onClick={redirectToProfile}
                         className={classNames(
@@ -206,12 +207,12 @@ function Header() {
                         )}
                       >
                         My Profile
-                      </a>
+                      </Link>
                     )}
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
-                      <a
+                      <Link
                         onClick={handleLogout}
                         href="#"
                         className={classNames(
@@ -222,7 +223,7 @@ function Header() {
                         )}
                       >
                         Sign out
-                      </a>
+                      </Link>
                     )}
                   </Menu.Item>
                 </Menu.Items>
@@ -231,12 +232,12 @@ function Header() {
           )}
           {!token && (
             <li>
-              <a
+              <Link
                 className="text-dark-blue flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
                 href="/login"
               >
                 Login 
-              </a>
+              </Link>
             </li>
           )}
         </div>

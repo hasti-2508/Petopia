@@ -39,7 +39,7 @@ function ForgetPassword() {
     <div>
       <form onSubmit={handleSubmit}>
         <section className="form-02-main">
-          <div className="container">
+          <div className="container fade-in-right">
             <div className="row">
               <div className="col-md-12">
                 <div className="_lk_de">

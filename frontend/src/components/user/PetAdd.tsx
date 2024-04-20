@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { setImageFile, setPetDataForm } from "@/redux/user/userSlice";
 import { petAdd } from "@/redux/user/userService";
+import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
 
 function PetAdd() {
   const router = useRouter();
@@ -31,39 +32,47 @@ function PetAdd() {
     }
   };
 
+  const handleInputPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files[0];
+
+    const { url } = await uploadImageToCloudinary(file);
+    dispatch(setPetDataForm({ ...petDataForm, imageUrl: url }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const result = await dispatch(petAdd(petDataForm));
       if (result.type === "petAdd/rejected") {
         throw result;
-      } else {
-        const petId = result.payload._id;
-        if (imageFile) {
-          const petDataFormWithImage = new FormData();
-          petDataFormWithImage.append("image", imageFile);
-          const res = await axios.post(
-            `${process.env.HOST}/pet/${petId}/uploadImage`,
-            petDataFormWithImage
-          );
-          toast.success("Pet Added!");
-          router.push("user/profile");
-        }
       }
+      // else {
+      //   const petId = result.payload._id;
+      //   if (imageFile) {
+      //     const petDataFormWithImage = new FormData();
+      //     petDataFormWithImage.append("image", imageFile);
+      //     const res = await axios.post(
+      //       `${process.env.HOST}/pet/${petId}/uploadImage`,
+      //       petDataFormWithImage
+      //     );
+      //     toast.success("Pet Added!");
+      //     router.push("user/profile");
+      //   }
+      // }
       router.push("/user/profile");
     } catch (error) {
       toast.error(error.payload);
     }
   };
+
   return (
-    <div className=" w-2/5 ms-5">
+    <div className="w-full max-w-lg mx-auto">
       <h2
-        className="text-center text-3xl font-bold my-8"
+        className="text-3xl font-bold mb-4 mt-6"
         style={{ fontFamily: "open-sans", fontSize: "40px" }}
       >
         Create Pet
       </h2>
-      <div className="border-2 border-gray-180 mb-3"></div>
       <form onSubmit={handleSubmit}>
         <label
           className="block mb-2"
@@ -225,7 +234,7 @@ function PetAdd() {
         <input
           type="file"
           accept="image/*"
-          onChange={handleFileChange}
+          onChange={handleInputPhoto}
           className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
           required
         />
@@ -265,12 +274,15 @@ function PetAdd() {
           </label>
         </div>
 
-        <button
-          type="submit"
-          className="text-gray-700   flex items-center bg-saddle-brown py-2 px-3 mx-16 my-8 rounded-pill fs-6 no-underline"
-        >
-          Create Pet
-        </button>
+        <div className="w-full max-w-md mx-auto">
+          <button
+            type="submit"
+            className="bg-dark-blue text-white py-2 px-4 rounded-md mt-4"
+            style={{ marginBottom: "20px" }}
+          >
+            Create Pet
+          </button>
+        </div>
       </form>
     </div>
   );

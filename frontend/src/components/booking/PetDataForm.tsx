@@ -27,7 +27,7 @@ function PetDataForm({
   return (
     <>
 
-      <div className=" w-full mt-5">
+      <div className="w-full max-w-lg mx-auto mt-4">
         <h1
           className="text-center text-3xl font-bold mb-8"
           style={{ fontFamily: "open-sans", fontSize: "40px" }}
@@ -35,7 +35,7 @@ function PetDataForm({
           Add your pet Details
         </h1>
 
-        <div className="mb-6 p-3">
+        <div className="mb-6">
           <label
             htmlFor="pet_species"
             className="block mb-2"

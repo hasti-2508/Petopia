@@ -13,14 +13,17 @@ function RatingModal({handleSubmit, handleRating, id}) {
                       className="modal-dialog modal-dialog-centered"
                       role="document"
                     >
-                      <div className="modal-content rounded-4 shadow">
-                        <div className="modal-header">
-                          <h1
-                            className="modal-title fs-5"
-                            id="staticBackdropLabel"
-                          >
-                            Rating
-                          </h1>
+                      <div className="modal-content rounded-4 ">
+                        <div className="flex justify-between p-4">
+                         <div> <h1
+                           
+                           className=" modal-title fs-5text-center text-dark-blue font-semibold text-2xl"
+           style={{ fontFamily: "open-sans", fontSize: "28px" }}
+                           id="staticBackdropLabel"
+                         >
+                           Do you like Petopia?
+                         </h1>
+                         <p className='text-gray-600'>Please rate the booking to make us better</p></div>
                           <button
                             type="button"
                             className="btn-close"
@@ -28,9 +31,9 @@ function RatingModal({handleSubmit, handleRating, id}) {
                             aria-label="Close"
                           ></button>
                         </div>
-                        <div className="modal-body p-4 text-center">
+                        <div className="modal-body ">
                           <div className="container">
-                            <div className="feedback">
+                            <div className="">
                               <div className="rating">
                                 <input
                                   type="radio"
@@ -404,7 +407,7 @@ function RatingModal({handleSubmit, handleRating, id}) {
                             </div>
                           </div>
                         </div>
-                        <div className="modal-footer flex-nowrap p-0">
+                        <div className="p-3 mx-auto">
                           <button
                             type="button"
                             className="btn btn-primary"

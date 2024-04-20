@@ -32,4 +32,5 @@ export interface Pet {
   }
  export interface PetCardProps {
     pet: Pet;
+    handle
   }

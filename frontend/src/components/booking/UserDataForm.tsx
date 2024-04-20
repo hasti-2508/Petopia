@@ -28,14 +28,14 @@ function UserDataForm({
   updateFields,
 }: UserDataProps) {
   return (
-    <div className=" w-full mr-12 mt-6">
+    <div className=" w-full max-w-md mx-auto mt-4">
       <h1
         className="text-center text-3xl font-bold mb-8"
         style={{ fontFamily: "open-sans", fontSize: "40px" }}
       >
         Add your personal details
       </h1>
-      <div className="border-2 border-gray-200 mb-4"></div>
+    
       <div className="mb-4">
         <label
           htmlFor="user_name"

@@ -8,6 +8,7 @@ import { login } from "@/redux/auth/authService";
 import { AppDispatch, RootState } from "@/redux/store";
 import { setFormData, setShowPassword } from "@/redux/auth/authSlice";
 import Link from "next/link";
+import { imageConfigDefault } from "next/dist/shared/lib/image-config";
 
 function Login() {
   const router = useRouter();
@@ -65,7 +66,7 @@ function Login() {
       } else {
         toast.success("Login Successful!");
             setTimeout(() => {
-              router.push("/home")
+              router.replace("/home")
             }, 1000);
       }
     } catch (error) {
@@ -75,8 +76,8 @@ function Login() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <section className="form-02-main mt-">
-        <div className="container">
+      <section className="form-02-main ">
+        <div className="container fade-in-right">
           <div className="row">
             <div className="col-md-12">
               <div className="_lk_de">

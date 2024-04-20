@@ -12,6 +12,7 @@ import {
   setIsChecked,
   setVet,
   setVetIsEditing,
+  setIsLoading
 } from "@/redux/vet/vetSlice";
 import {
   getServiceBookingData,
@@ -39,6 +40,7 @@ function VetProfile() {
     editedVet,
     bookingImages,
     activeVetTab,
+    isLoading
   } = useSelector((state: RootState) => state.vet);
   const handleTabClick = (tab: string) => {
     dispatch(setActiveVetTab(tab));
@@ -68,7 +70,6 @@ function VetProfile() {
         toast.error(error.payload);
       }
     };
-
     getUser();
   }, []);
 
@@ -171,7 +172,6 @@ function VetProfile() {
 
   //   return <div style={divStyle} />;
   // }
-  console.log(bookings);
   const renderTabContent = () => {
     switch (activeVetTab) {
       case "Profile":
@@ -201,10 +201,12 @@ function VetProfile() {
                 </>
               ) : (
                 <>
-                  <div className="flex justify-between relative">
+                  <div className="flex justify-between relative fade-in-up ">
                     <VetCard user={vet} />
                     <div className="flex flex-col items-center">
-                      <label className="inline-flex items-center cursor-pointer bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline mx-3">
+                    <h1 style={{fontSize: "18px"}} className="inline-block rounded-t-lg border-transparent text-dark-blue hover:text-saddle-brown">Are you free for having call?</h1>
+                      <label className="inline-flex items-center cursor-pointer  rounded-xl  no-underline mx-3">
+                        
                         <input
                           type="checkbox"
                           value=""
@@ -215,11 +217,11 @@ function VetProfile() {
                         <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all  peer-checked:bg-dark-blue"></div>
                         <span className="ms-3 text-sm font-medium text-gray-900 ">
                           {isChecked ? (
-                            <span className="font-bold text-xl mb-2">
+                            <span className="font-bold text-xl mb-2 text-saddle-brown">
                               Available
                             </span>
                           ) : (
-                            <span className="font-bold text-xl mb-2">
+                            <span className="font-bold text-xl mb-2 text-gray-600">
                               Not Available
                             </span>
                           )}
@@ -235,6 +237,8 @@ function VetProfile() {
       case "ongoingBookings":
         return (
           <div>
+            <div className="container-fluid mt-3"> 
+            <div className="row gap-5">
             {bookings.length > 0 &&
             bookings.filter((booking) => !booking.isCompleted).length > 0 ? (
               bookings
@@ -243,9 +247,9 @@ function VetProfile() {
                   <div
                     style={{
                       height: "630px",
-                      width: "400px",
+                      width: "430px",
                     }}
-                    className="col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
+                    className="mx-auto col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
                     key={index}
                   >
                     <div>
@@ -324,16 +328,6 @@ function VetProfile() {
                           </label>
                           {booking.isConfirmed ? `Done` : `Pending`}
                         </p>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2  "
-                          >
-                            Booking Status:
-                          </label>
-                          {booking.isCompleted ? `Completed` : `Not Completed`}
-                        </p>
                         <div className="my-4 ">
                           {booking.isCompleted ? (
                             <span className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline my-3">
@@ -355,7 +349,7 @@ function VetProfile() {
             ) : (
               <div
                 style={{ height: "80vh" }}
-                className="flex flex-col mb-3 items-center justify-center"
+                className="flex flex-col mb-3 items-center justify-center fade-in-up"
               >
                 <img
                   src="http://localhost:3000/assets/NoTraining.jpg"
@@ -371,10 +365,14 @@ function VetProfile() {
               </div>
             )}
           </div>
+            </div>
+          </div>
         );
       case "bookingHistory":
         return (
-            <div className="row justify-content-between">
+            <div>
+              <div className="container-fluid mt-3">
+              <div className="row gap-5">
               {bookings.length > 0 &&
               bookings.filter((booking) => booking.isCompleted).length > 0 ? (
                 bookings
@@ -385,7 +383,7 @@ function VetProfile() {
                         height: "630px",
                         width: "400px",
                       }}
-                      className="col-md-4 col-sm-12 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom py-4 mx-auto"
+                      className="col-md-4 col-sm-12 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom py-4 mx-auto fade-in-up"
                       key={index}
                     >
                       <div>
@@ -465,27 +463,15 @@ function VetProfile() {
                             </label>
                             {booking.isConfirmed ? `Done` : `Pending`}
                           </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Booking Status:
-                            </label>
-                            {booking.isCompleted
-                              ? `Completed`
-                              : `Not Completed`}
-                          </p>
 
-                          <div className="my-4 ">
+                          <div className="my-4 mx-auto">
                             {booking.isCompleted ? (
-                              <span className="bg-green-600 text-white px-3 py-2 rounded-md mr-2 no-underline my-3">
+                              <span className="bg-green-600 text-white px-3 py-2 rounded-md  no-underline my-3">
                                 Completed
                               </span>
                             ) : (
                               <button
-                                className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline"
+                                className="bg-blue-600 text-white px-3 py-2 rounded-md  no-underline"
                                 onClick={() => handleComplete(booking._id)}
                               >
                                 Complete
@@ -499,7 +485,7 @@ function VetProfile() {
               ) : (
                 <div
                   style={{ height: "80vh" }}
-                  className="flex flex-col mb-3 items-center justify-center"
+                  className="flex flex-col mb-3 items-center justify-center fade-in-up  "
                 >
                   <img
                     src="http://localhost:3000/assets/NoTraining.jpg"
@@ -515,17 +501,32 @@ function VetProfile() {
                 </div>
               )}
             </div>
+              </div>
+            </div>
         );
       default:
         return null;
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center w-full h-full">
+        <img
+          style={{ width: "150px", height: "150px" }}
+          className=" rounded-pill my-40 "
+          src="http://localhost:3000/assets/profile.gif"
+          alt="Loading..."
+        />
+      </div>
+    );
+  }
+
   return (
-    <div>
+    <div className="fade-in-right">
       <div className="p-9">
         <div className="text-sm font-medium text-center text-gray-500 ">
-          <ul className="flex flex-wrap -mb-px">
+          <ul className="flex flex-wrap -mb-px ">
             <li className="me-2">
               <button
                 style={{ fontSize: "18px" }}

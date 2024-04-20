@@ -1,31 +1,45 @@
 "use client";
-import { TrainingPlan } from "@/interfaces/traingPlan";
+
+import { TrainingPlanData } from "@/interfaces/trainingPlan";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 function TrainingPlan() {
   const handleBookTraining = (trainingPlanId: string) => {
+    setLoading(true);
     const bookingPageUrl = `/trainingPlan/bookTraining?trainingPlanId=${trainingPlanId}`;
     window.location.href = bookingPageUrl;
+    setLoading(false);
   };
-  const [trainingPlans, setTrainingPlans] = useState<TrainingPlan[]>([]);
+  const [trainingPlans, setTrainingPlans] = useState<TrainingPlanData[]>([]);
+  const [loading , setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     async function fetchTrainingPlans() {
       try {
-        const response = await axios.get<TrainingPlan[]>(
+        setLoading(true);
+        const response = await axios.get<TrainingPlanData[]>(
           `${process.env.HOST}/training-plan`
         );
         setTrainingPlans(response.data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching Training plans:", error);
       }
     }
-
     fetchTrainingPlans();
   }, []);
   return (
     <div>
+    {loading ? <div className="flex justify-center items-center my-52">
+          <img
+            style={{ width: "250px", height: "250px" }}
+            src="http://localhost:3000/assets/AdoptLoading.gif"
+            alt="Loading..."
+          />
+        </div> : (
+      <div className="fade-in-up">
       <div>
         <section className="relative">
           <div className="absolute inset-0 bg-black opacity-50"></div>
@@ -48,18 +62,27 @@ function TrainingPlan() {
             >
               Dog-friendly, one-on-one dog training
             </div>
-            <a href="trainingPlan/bookTraining">
+            
               <button
+              onClick={() => {
+                toast("Select Plan first!",{
+                  style: {
+                    borderRadius: '10px',
+                    background: '#FBA834',
+                    color: '#242d62',
+                  },
+                })
+              }}
                 type="button"
                 className="px-4 py-2 bg-saddle-brown text-dark-blue rounded cursor-pointer"
               >
                 Book a Session
               </button>
-            </a>
+           
           </div>
         </section>
-
-        <section className=" mt-5 p-10 bg-gray-200">
+  
+        <section className=" mt-5 p-10 ">
           <div className="text-center">
             <h1
               className=" mb-2 font-bold"
@@ -94,7 +117,7 @@ function TrainingPlan() {
                 </p>
               </div>
             </div>
-
+  
             <div className="flex flex-col items-center">
               <img
                 src="http://localhost:3000/assets/training2.jpg"
@@ -116,7 +139,7 @@ function TrainingPlan() {
                 </p>
               </div>
             </div>
-
+  
             <div className="flex flex-col items-center">
               <img
                 src="http://localhost:3000/assets/training3.jpg"
@@ -139,7 +162,7 @@ function TrainingPlan() {
                 </p>
               </div>
             </div>
-
+  
             <div className="flex flex-col items-center">
               <img
                 src="http://localhost:3000/assets/training4.jpg"
@@ -163,22 +186,22 @@ function TrainingPlan() {
             </div>
           </div>
         </section>
-
+  
         <div className="bg-white mt-5 mb-5">
           <h1
-            className="font-bold text-center py-4 text-gray-600"
-            style={{ fontFamily: "open-sans", fontSize: "40px" }}
+            className="text-center text-dark-blue font-semibold text-2xl pt-4 mb-12"
+            style={{ fontFamily: "open-sans", fontSize: "35px" }}
           >
             Training Plans for your pet
           </h1>
-          <div className="border-2 border-gray-200 mb-5"></div>
+              
           <div className="flex flex-wrap justify-center gap-16">
             {trainingPlans.map((plan, index) => (
               <div
                 key={index}
-                className="w-full p-4 max-w-sm bg-gray-100 border border-gray-200 rounded-lg shadow"
+                className="w-full p-4 max-w-sm bg-gray-100 border border-gray-200 rounded-lg shadow-2xl card-container"
               >
-                <h2 className="text-center font-semibold text-gray-600 mb-4">
+                <h2 className="text-center font-semibold text-dark-blue mb-4" style={{  fontSize: "28px" }}>
                   {plan.TrainingName}
                 </h2>
                 <div className="border-2 border-gray-200 mb-4"></div>
@@ -191,7 +214,7 @@ function TrainingPlan() {
                           className="w-5 h-5"
                           alt="bullet"
                         />
-                        <li className="font-medium text-gray-600">
+                        <li className="font-medium text-dark-blue">
                           {training}
                         </li>
                       </div>
@@ -237,14 +260,14 @@ function TrainingPlan() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-3xl mt-4 font-bold text-gray-900 dark:text-red">
-                      ${plan.price}
+                    ₹{plan.price}
                     </span>
-                    <a
+                    <button
                       onClick={() => handleBookTraining(plan._id)}
-                      className="text-gray-700 no-underline flex justify-center bg-saddle-brown py-2 px-3 mt-4 font-semibold rounded-lg fs-6"
+                      className="text-gray-700 no-underline flex cursor-pointer justify-center bg-saddle-brown py-2 px-3 mt-4 font-semibold rounded-lg fs-6"
                     >
                       Book Training
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -253,7 +276,11 @@ function TrainingPlan() {
         </div>
       </div>
     </div>
-  );
-}
-
-export default TrainingPlan;
+    )}
+  </div>
+    );
+  }
+  
+  export default TrainingPlan;
+  
+ 

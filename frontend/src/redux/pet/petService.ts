@@ -22,7 +22,7 @@ export const getPets = createAsyncThunk("getPets", async (currentPage: number) =
   });
 
 
-  export const getPetDetails = createAsyncThunk("getPetDetails", async (id: any) => {
+  export const getPetDetails = createAsyncThunk("getPetDetails", async (id: string) => {
     try{
         const response = await axiosInstance.get(`/pet/${id}`);
         return response.data;
@@ -31,7 +31,7 @@ export const getPets = createAsyncThunk("getPets", async (currentPage: number) =
     }
   })
 
-  export const setAdopted = createAsyncThunk("setAdopted", async (id: any) => {
+  export const setAdopted = createAsyncThunk("setAdopted", async (id: string) => {
     try{
         const response = await axiosInstance.post(`/user/${id}/adopt`);
         return response.data;

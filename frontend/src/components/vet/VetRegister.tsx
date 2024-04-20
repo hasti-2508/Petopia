@@ -1,5 +1,4 @@
 "use client";
-import { Vet } from "@/interfaces/vet";
 import axios from "axios";
 import React, { ChangeEvent, FormEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";

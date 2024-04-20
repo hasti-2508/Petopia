@@ -191,15 +191,15 @@ function SignUp() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <section className="form-02-main">
-        <div className="container">
+      <section className="form-02-main ">
+        <div className="container fade-in-right">
           <div className="row">
             <div className="col-md-12">
               <div className="_lk_de">
                 <div className="form-03-main">
                   <div className="form-group">
                     <label htmlFor="role" className="mb-2 font-bold">
-                      What role would you like to signup for?
+                      What role would you like to sign up for?
 
                     </label>
                     <select

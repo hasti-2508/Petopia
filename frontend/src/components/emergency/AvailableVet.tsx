@@ -69,7 +69,7 @@ import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import { getVetData, notifyVet } from "@/redux/vet/vetService";
-import { VetCard } from "../vet/VetCard";
+import { AvailableVetCard, VetCard } from "../vet/VetCard";
 
 function AvailableVet() {
   const router = useRouter();
@@ -142,10 +142,10 @@ function AvailableVet() {
       >
         Veterinarians Available for Call
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {vet.map((v, index) => (
-          <div className="flex flex-col">
-            <VetCard user={v} />
+          <div className="flex flex-col " key={index}>
+            <AvailableVetCard user={v} />
             <button
               onClick={() => makeCall(v._id)}
               className="mt-4 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline max-w-sm"

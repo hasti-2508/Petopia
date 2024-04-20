@@ -4,6 +4,8 @@ import mongoose from 'mongoose';
 import { Trainer } from './schemas/trainer.schema';
 import { CreateTrainerDto } from './dto/trainer.dto';
 import { TrainingPlanBooking } from 'src/training-plan-booking/schemas/training-plan-booking.schema';
+import { Vet } from 'src/vet/schemas/vet.schema';
+import { Query } from 'express-serve-static-core';
 
 @Injectable()
 export class TrainerService {
@@ -14,11 +16,15 @@ export class TrainerService {
     private TrainingPlanBookingModel: mongoose.Model<TrainingPlanBooking>,
   ) {}
 
-  async findTrainer() {
-    return this.TrainerModel.find({ isActive: true }).exec();
+  async findTrainer(qu: Query): Promise<Trainer[]> {
+    let query = this.TrainerModel.find({ isActive: true });
+    const resPerPage = 9;
+    const currentPage = Number(qu.page) || 1;
+    const skip = resPerPage * (currentPage - 1);
+    return query.limit(resPerPage).skip(skip).exec();
   }
   async register(createTrainerDto: CreateTrainerDto): Promise<Trainer> {
-    const newTrainer = await this.TrainerModel.create({...createTrainerDto});
+    const newTrainer = await this.TrainerModel.create({ ...createTrainerDto });
     return newTrainer;
   }
   async findByEmail(email: string): Promise<Trainer> {

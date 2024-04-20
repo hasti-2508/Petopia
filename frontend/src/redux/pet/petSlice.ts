@@ -1,8 +1,7 @@
 import { Pet } from "@/interfaces/pet";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getOwner, getPetDetails, getPets } from "./petService";
-import { User } from "@/interfaces/user";
-import { ACTION_PREFETCH } from "next/dist/client/components/router-reducer/router-reducer-types";
+
 
 interface PetState {
   petData: Pet[];
@@ -10,7 +9,7 @@ interface PetState {
   currentPage: number;
   searchTerm: string;
   loading: boolean;
-  owner: User;
+  owner: any;
   petDetails: Pet;
 }
 

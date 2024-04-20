@@ -140,136 +140,171 @@ function Home() {
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
-      
-      <section className="py-12 shadow-2xl bg-dark-blue mb-4 " style={{ marginTop: "400px" }}>
-  <div className=" mx-auto md:px-0 md:max-w-screen-md lg:max-w-screen-lg">
-    <h2 className="text-xl font-bold text-white  text-center  " style={{ fontFamily: "open-sans", fontSize: "40px" }}>
-      How it works?
-    </h2>
-    <p className="text-sm font-semibold text-white  text-center mt-3" style={{ fontFamily: "open-sans", fontSize: "20px" }}>
-      Charges may vary based on Pet and City.
-    </p>
-    <div className="flex justify-evenly gap-5 items-center mt-8 ">
-      {/* Card 1 */}
-      <div className="max-w-[388px] w-full text-center flex flex-col items-center bg-white  p-5 rounded-lg shadow-2xl card-container  ">
-        <div className="svg mb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="40"
-            version="1.1"
-            viewBox="-1 0 136 136.21852"
-            width="40"
+      <section
+        className="py-12 shadow-2xl bg-dark-blue mb-4 "
+        style={{ marginTop: "400px" }}
+      >
+        <div className=" mx-auto md:px-0 md:max-w-screen-md lg:max-w-screen-lg">
+          <h2
+            className="text-xl font-bold text-white  text-center  "
+            style={{ fontFamily: "open-sans", fontSize: "40px" }}
           >
-            <g id="surface1">
-              <path
-                d="M 93.148438 80.832031 C 109.5 57.742188 104.03125 25.769531 80.941406 9.421875 C 57.851562 -6.925781 25.878906 -1.460938 9.53125 21.632812 C -6.816406 44.722656 -1.351562 76.691406 21.742188 93.039062 C 38.222656 104.707031 60.011719 105.605469 77.394531 95.339844 L 115.164062 132.882812 C 119.242188 137.175781 126.027344 137.347656 130.320312 133.269531 C 134.613281 129.195312 134.785156 122.410156 130.710938 118.117188 C 130.582031 117.980469 130.457031 117.855469 130.320312 117.726562 Z M 51.308594 84.332031 C 33.0625 84.335938 18.269531 69.554688 18.257812 51.308594 C 18.253906 33.0625 33.035156 18.269531 51.285156 18.261719 C 69.507812 18.253906 84.292969 33.011719 84.328125 51.234375 C 84.359375 69.484375 69.585938 84.300781 51.332031 84.332031 C 51.324219 84.332031 51.320312 84.332031 51.308594 84.332031 Z M 51.308594 84.332031 "
-                style={{
-                  stroke: "none",
-                  fillRule: "nonzero",
-                  fill: "#000000",
-                  fillOpacity: "1",
-                }}
-              ></path>
-            </g>
-          </svg>
-        </div>
-        <h4 className="text-black font-bold" style={{ fontFamily: "open-sans", fontSize: "40px" }}>
-          Search
-        </h4>
-        <p style={{ fontFamily: "open-sans", fontSize: "20px" }} className="text-black">
-          Search pet care heroes by location and service.
-        </p>
-      </div>
+            How it works?
+          </h2>
+          <p
+            className="text-sm font-semibold text-white  text-center mt-3"
+            style={{ fontFamily: "open-sans", fontSize: "20px" }}
+          >
+            Charges may vary based on Pet and City.
+          </p>
+          <div className="flex justify-evenly gap-5 items-center mt-8 ">
+            {/* Card 1 */}
+            <div className="max-w-[388px] w-full text-center flex flex-col items-center bg-white  p-5 rounded-lg shadow-2xl card-container  ">
+              <div className="svg mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="40"
+                  version="1.1"
+                  viewBox="-1 0 136 136.21852"
+                  width="40"
+                >
+                  <g id="surface1">
+                    <path
+                      d="M 93.148438 80.832031 C 109.5 57.742188 104.03125 25.769531 80.941406 9.421875 C 57.851562 -6.925781 25.878906 -1.460938 9.53125 21.632812 C -6.816406 44.722656 -1.351562 76.691406 21.742188 93.039062 C 38.222656 104.707031 60.011719 105.605469 77.394531 95.339844 L 115.164062 132.882812 C 119.242188 137.175781 126.027344 137.347656 130.320312 133.269531 C 134.613281 129.195312 134.785156 122.410156 130.710938 118.117188 C 130.582031 117.980469 130.457031 117.855469 130.320312 117.726562 Z M 51.308594 84.332031 C 33.0625 84.335938 18.269531 69.554688 18.257812 51.308594 C 18.253906 33.0625 33.035156 18.269531 51.285156 18.261719 C 69.507812 18.253906 84.292969 33.011719 84.328125 51.234375 C 84.359375 69.484375 69.585938 84.300781 51.332031 84.332031 C 51.324219 84.332031 51.320312 84.332031 51.308594 84.332031 Z M 51.308594 84.332031 "
+                      style={{
+                        stroke: "none",
+                        fillRule: "nonzero",
+                        fill: "#000000",
+                        fillOpacity: "1",
+                      }}
+                    ></path>
+                  </g>
+                </svg>
+              </div>
+              <h4
+                className="text-black font-bold"
+                style={{ fontFamily: "open-sans", fontSize: "40px" }}
+              >
+                Search
+              </h4>
+              <p
+                style={{ fontFamily: "open-sans", fontSize: "20px" }}
+                className="text-black"
+              >
+                Search pet care heroes by location and service.
+              </p>
+            </div>
 
-      {/* Card 2 */}
-      <div className="max-w-[388px] w-full text-center flex flex-col items-center bg-white p-5 rounded-lg shadow-2xl card-container">
-        <div className="svg mb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            height="40"
-            viewBox="-21 -47 682.66669 682"
-            width="40"
-          >
-            <path
-              d="m552.011719-1.332031h-464.023438c-48.515625 0-87.988281 39.472656-87.988281 87.988281v283.972656c0 48.421875 39.300781 87.824219 87.675781 87.988282v128.871093l185.183594-128.859375h279.152344c48.515625 0 87.988281-39.472656 87.988281-88v-283.972656c0-48.515625-39.472656-87.988281-87.988281-87.988281zm-83.308594 330.011719h-297.40625v-37.5h297.40625zm0-80h-297.40625v-37.5h297.40625zm0-80h-297.40625v-37.5h297.40625zm0 0"
-              fill="#000000"
-            ></path>
-          </svg>
-        </div>
-        <h4 className="text-black font-bold" style={{ fontFamily: "open-sans", fontSize: "40px" }}>
-          Book
-        </h4>
-        <p className="mb-4 text-black" style={{ fontFamily: "open-sans", fontSize: "20px" }}>
-          Schedule your appointment at home.
-        </p>
-      </div>
-
-      {/* Card 3 */}
-      <div className="max-w-[388px] w-full text-center flex flex-col items-center bg-white p-5 rounded-lg shadow-2xl card-container  ">
-        <div className="svg mb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="40"
-            height="40"
-            viewBox="0 0 469.333 469.333"
-            style={
-              {
-                enableBackground: "new 0 0 469.333 469.333",
-              } as React.CSSProperties
-            }
-            xmlSpace="preserve"
-          >
-            <g>
-              <g>
-                <g>
+            {/* Card 2 */}
+            <div className="max-w-[388px] w-full text-center flex flex-col items-center bg-white p-5 rounded-lg shadow-2xl card-container">
+              <div className="svg mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  height="40"
+                  viewBox="-21 -47 682.66669 682"
+                  width="40"
+                >
                   <path
-                    d="M 434.979,42.667H 85.333 c -1.053,0 -2.014,0.396 -3.001,0.693 l -8.594,-28.241 C 71.005,6.138 62.721,0 53.333,0 H 10.667 C 4.776,0 0,4.776 0,10.667 v 32 c 0,5.891 4.776,10.667 10.667,10.667 h 26.865 l 66.646,219.01 l -24.891,29.039 c -9.838,11.477 -14.268,27.291 -9.74,41.713 c 5.791,18.445 22.07,30.237 40.839,30.237 H 416 c 5.891,0 10.667,-4.776 10.667,-10.667 v -21.333 c 0,-5.891 -4.776,-10.667 -10.667,-10.667 H 110.385 l 33.813,-39.448 c 0.85,-0.992 1.475,-2.112 2.12,-3.219 h 206.703 c 16.533,0 31.578,-9.548 38.618,-24.507 l 74.434,-158.17 c 2.135,-4.552 3.26,-9.604 3.26,-14.615 v -3.021 C 469.333,58.048 453.952,42.667 434.979,42.667 z"
+                    d="m552.011719-1.332031h-464.023438c-48.515625 0-87.988281 39.472656-87.988281 87.988281v283.972656c0 48.421875 39.300781 87.824219 87.675781 87.988282v128.871093l185.183594-128.859375h279.152344c48.515625 0 87.988281-39.472656 87.988281-88v-283.972656c0-48.515625-39.472656-87.988281-87.988281-87.988281zm-83.308594 330.011719h-297.40625v-37.5h297.40625zm0-80h-297.40625v-37.5h297.40625zm0-80h-297.40625v-37.5h297.40625zm0 0"
                     fill="#000000"
                   ></path>
-                  <circle cx="128" cy="426.667" r="42.667" fill="#000000"></circle>
-                  <circle cx="384" cy="426.667" r="42.667" fill="#000000"></circle>
-                </g>
-              </g>
-            </g>
-            <g> </g>
-            <g> </g>
-            <g> </g>
-            <g> </g>
-            <g> </g>
-            <g> </g>
-            <g> </g>
-            <g> </g>
-            <g> </g>
-            <g> </g>
-            <g> </g>
-            <g> </g>
-            <g> </g>
-            <g> </g>
-            <g> </g>
-          </svg>
-        </div>
-        <h4 className="text-black font-bold" style={{ fontFamily: "open-sans", fontSize: "40px" }}>
-          Relax
-        </h4>
-        <p className="text-black" style={{ fontFamily: "open-sans", fontSize: "20px" }}>
-          Sit back and relax! Your pet hero is on his way.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
+                </svg>
+              </div>
+              <h4
+                className="text-black font-bold"
+                style={{ fontFamily: "open-sans", fontSize: "40px" }}
+              >
+                Book
+              </h4>
+              <p
+                className="mb-4 text-black"
+                style={{ fontFamily: "open-sans", fontSize: "20px" }}
+              >
+                Schedule your appointment at home.
+              </p>
+            </div>
 
-      <div className="bg-white p-8 " >
-        {/* <h1
+            {/* Card 3 */}
+            <div className="max-w-[388px] w-full text-center flex flex-col items-center bg-white p-5 rounded-lg shadow-2xl card-container  ">
+              <div className="svg mb-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="40"
+                  height="40"
+                  viewBox="0 0 469.333 469.333"
+                  style={
+                    {
+                      enableBackground: "new 0 0 469.333 469.333",
+                    } as React.CSSProperties
+                  }
+                  xmlSpace="preserve"
+                >
+                  <g>
+                    <g>
+                      <g>
+                        <path
+                          d="M 434.979,42.667H 85.333 c -1.053,0 -2.014,0.396 -3.001,0.693 l -8.594,-28.241 C 71.005,6.138 62.721,0 53.333,0 H 10.667 C 4.776,0 0,4.776 0,10.667 v 32 c 0,5.891 4.776,10.667 10.667,10.667 h 26.865 l 66.646,219.01 l -24.891,29.039 c -9.838,11.477 -14.268,27.291 -9.74,41.713 c 5.791,18.445 22.07,30.237 40.839,30.237 H 416 c 5.891,0 10.667,-4.776 10.667,-10.667 v -21.333 c 0,-5.891 -4.776,-10.667 -10.667,-10.667 H 110.385 l 33.813,-39.448 c 0.85,-0.992 1.475,-2.112 2.12,-3.219 h 206.703 c 16.533,0 31.578,-9.548 38.618,-24.507 l 74.434,-158.17 c 2.135,-4.552 3.26,-9.604 3.26,-14.615 v -3.021 C 469.333,58.048 453.952,42.667 434.979,42.667 z"
+                          fill="#000000"
+                        ></path>
+                        <circle
+                          cx="128"
+                          cy="426.667"
+                          r="42.667"
+                          fill="#000000"
+                        ></circle>
+                        <circle
+                          cx="384"
+                          cy="426.667"
+                          r="42.667"
+                          fill="#000000"
+                        ></circle>
+                      </g>
+                    </g>
+                  </g>
+                  <g> </g>
+                  <g> </g>
+                  <g> </g>
+                  <g> </g>
+                  <g> </g>
+                  <g> </g>
+                  <g> </g>
+                  <g> </g>
+                  <g> </g>
+                  <g> </g>
+                  <g> </g>
+                  <g> </g>
+                  <g> </g>
+                  <g> </g>
+                  <g> </g>
+                </svg>
+              </div>
+              <h4
+                className="text-black font-bold"
+                style={{ fontFamily: "open-sans", fontSize: "40px" }}
+              >
+                Relax
+              </h4>
+              <p
+                className="text-black"
+                style={{ fontFamily: "open-sans", fontSize: "20px" }}
+              >
+                Sit back and relax! Your pet hero is on his way.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="bg-white p-8 ">
+        <h1
           className="text-center text-3xl font-bold text-gray-700 mb-12 "
           style={{ fontFamily: "open-sans", fontSize: "35px" }}
         >
           Your Pet Adoption Journey with Petopia
-        </h1> */}
+        </h1>
         <div className="flex px-56">
           <div className="w-full h-full mr-6 mt-32">
             <img src="http://localhost:3000/assets/home.avif" alt="" />
@@ -534,16 +569,8 @@ function Home() {
         </div>
       </div>
 
-     
-      <div className="bg-white  w-full">
-        <img
-          className="w-full"
-          src="http://localhost:3000/assets/end.svg"
-          alt=""
-        />
+      <div className="bg-white w-full bg-home">
       </div>
-
-      
     </div>
   );
 }

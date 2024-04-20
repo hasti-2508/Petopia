@@ -41,7 +41,7 @@ export class ServicePlanBookingController {
 
   @Get('booking/:bookingId')
   async findBookingById(
-    @Param('bookingId') bookingId: string
+    @Param('bookingId') bookingId: string,
   ): Promise<ServicePlanBooking> {
     return await this.servicePlanBookingService.findBookingById(bookingId);
   }
@@ -58,34 +58,27 @@ export class ServicePlanBookingController {
   }
 
   @Post('/:servicePlanId')
+  @UseInterceptors(JwtInterceptor)
   async create(
     @Req() request,
     @Res() res,
     @Param('servicePlanId') servicePlanId: string,
     @Body() createServicePlanBookingDto: CreateServicePlanBookingDto,
   ): Promise<ServicePlanBooking> {
-    try {
-      const data : JwtPayload = request.token;
+   
+      const data: JwtPayload = request.token;
       if (!data) {
-        throw new UnauthorizedException('No Data found');
+        throw new UnauthorizedException('Please Login First!');
       }
       const userId = data.userId;
-      const booking =  await this.servicePlanBookingService.bookService(
+      const booking = await this.servicePlanBookingService.bookService(
         userId,
-        servicePlanId,  
+        servicePlanId,
         createServicePlanBookingDto,
       );
       return res.json({
         booking,
       });
-    } catch (error) {
-      if (error instanceof HttpException) {
-        res.status(401).json({ error: error.message });
-      } else {
-        console.error('Error:', error.message);
-        // res.status(500).json({ error: 'Internal Server Error' });
-      }
-    }
   }
 
   @Post('/assign/:bookingId')
@@ -98,16 +91,16 @@ export class ServicePlanBookingController {
 
   @Post(':BookingId/rate')
   @UseInterceptors(JwtInterceptor)
-  async rateVet(  
+  async rateVet(
     @Req() request,
     @Param('BookingId') BookingId: string,
     @Body() rateDto: RateDto,
   ): Promise<ServicePlanBooking> {
-    const data : JwtPayload = request.token;
-      if (!data) {
-        throw new UnauthorizedException('No Data found');
-      }
-      const userId = data.userId;
+    const data: JwtPayload = request.token;
+    if (!data) {
+      throw new UnauthorizedException('No Data found');
+    }
+    const userId = data.userId;
     return this.servicePlanBookingService.addRating(
       userId,
       BookingId,
