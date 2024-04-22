@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  HttpException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { User } from './schemas/user.schema';
@@ -87,19 +82,6 @@ export class UserService {
     const user = await this.findUserById(id);
     user.isActive = false;
     user.save();
-  }
-
-  async uploadUserPictureUrl(id: string, imageUrl: string): Promise<User> {
-    const user = await this.UserModel.findById(id).exec();
-    if (!user) {
-      throw new Error('User not found');
-    }
-    if (user.imageUrl) {
-      user.imageHistory = [user.imageUrl, ...(user.imageHistory || [])];
-    }
-
-    user.imageUrl = imageUrl;
-    return user.save();
   }
 
   async deleteUserPictureUrl(id: string): Promise<User> {

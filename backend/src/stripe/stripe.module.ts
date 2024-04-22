@@ -5,8 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ServicePlanBookingSchema } from 'src/service-plan-booking/schemas/service-plan-booking.schema';
 import { TrainingPlanBookingSchema } from 'src/training-plan-booking/schemas/training-plan-booking.schema';
 import { UserSchema } from 'src/user/schemas/user.schema';
-import { TrainerSchema } from 'src/trainer/schemas/trainer.schema';
-import { VetSchema } from 'src/vet/schemas/vet.schema';
+
 
 @Module({
   imports: [

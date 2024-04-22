@@ -37,7 +37,7 @@ export class ServicePlanBookingService {
 
     return this.servicePlanBookingModel
       .find()
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .limit(resPerPage)
       .skip(skip)
       .exec();
@@ -162,8 +162,8 @@ export class ServicePlanBookingService {
     if (!booking) {
       throw new NotFoundException('Booking not found');
     }
-    if(booking.isCompleted === false){
-      throw new HttpException("This booking isn't fulfilled yet!",409);
+    if (booking.isCompleted === false) {
+      throw new HttpException("This booking isn't fulfilled yet!", 409);
     }
     const existingRating = booking.ratings.find((r) => r.userId === userId);
     if (existingRating) {
@@ -182,7 +182,7 @@ export class ServicePlanBookingService {
     const averageRating =
       booking.ratings.reduce((acc, curr) => acc + curr.rating, 0) /
       booking.ratings.length;
-    booking.averageRating =Number( averageRating.toFixed(1));
+    booking.averageRating = Number(averageRating.toFixed(1));
     const isValidPlanId = mongoose.Types.ObjectId.isValid(servicePlanID);
     if (!isValidPlanId) {
       throw new HttpException('Invalid ID', 400);
@@ -195,7 +195,6 @@ export class ServicePlanBookingService {
     plan.average_rating = Number(booking.averageRating.toFixed(1));
     plan.save();
     return booking.save();
-
   }
 
   async markBookingAsComplete(id: string): Promise<ServicePlanBooking> {

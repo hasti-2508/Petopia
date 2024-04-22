@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { SchemaTypes, Document } from 'mongoose';
-import { Pet } from 'src/pet/schemas/pet.schema';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -38,7 +37,6 @@ export class User extends Document {
 
   @Prop({ type: [String] }) 
   imageHistory: string[];
-
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Pet' }] })
   pets: string[];

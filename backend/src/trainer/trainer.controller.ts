@@ -10,31 +10,18 @@ import {
   Put,
   Query,
   Req,
-  Res,
-  UploadedFile,
-  UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import * as bcrypt from 'bcrypt';
 import { CreateTrainerDto } from './dto/trainer.dto';
 import { TrainerService } from './trainer.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as path from 'path';
-import { RolesGuard } from 'src/role/guard/role.guard';
-import { Roles } from 'src/role/role.decorator';
-import { Role } from 'src/role/role.enum';
 import { Trainer } from './schemas/trainer.schema';
 import { JwtService } from '@nestjs/jwt';
 import { Query as ExpressQuery } from 'express-serve-static-core';
-import { Vet } from 'src/vet/schemas/vet.schema';
 
 @Controller('trainer')
 export class TrainerController {
   constructor(
     private trainerService: TrainerService,
-    private cloudinaryService: CloudinaryService,
     private jwtService: JwtService,
   ) {}
 
@@ -51,6 +38,7 @@ export class TrainerController {
       YearsOfExperience,
       NumberOfPetsTrained,
       trainings,
+      imageUrl
     } = createTrainerDto;
     if (password.length < 6) {
       throw new BadRequestException(
@@ -112,6 +100,7 @@ export class TrainerController {
       NumberOfPetsTrained,
       role: 'trainer',
       trainings,
+      imageUrl,
     };
 
     const existingTrainer = await this.trainerService.findByWithEmail(email);
@@ -122,8 +111,6 @@ export class TrainerController {
     return newTrainer;
   }
 
-  // @UseGuards(RolesGuard)
-  // @Roles(Role.ADMIN)
   @Get('/')
   async getTrainers(@Query() query: ExpressQuery): Promise<Trainer[]> {
     return this.trainerService.findTrainer(query);
@@ -134,48 +121,6 @@ export class TrainerController {
     return this.trainerService.findTrainerById(trainerId);
   }
 
-  @Post(':id/uploadImage')
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './assets/',
-        filename: (req, file, callback) => {
-          const fileName = path
-            .parse(file.originalname)
-            .name.replace(/\s/g, '');
-          const extension = path.parse(file.originalname).ext;
-          callback(null, `${fileName}${extension}`);
-        },
-      }),
-    }),
-  )
-  async uploadFile(
-    @UploadedFile() file,
-    @Res() res,
-    @Param('id') trainerId: string,
-  ) {
-    try {
-      if (!file || !file.path) {
-        throw new NotFoundException('No file uploaded or file path is missing');
-      }
-      const cloudinaryResponse =
-        await this.cloudinaryService.uploadOnCloudinary(file.path);
-      const trainer = await this.trainerService.findTrainerById(trainerId);
-     if (!trainer) {
-        throw new NotFoundException('Trainer Not Found!');
-      }
-      await this.trainerService.uploadUserPictureUrl(
-        trainerId,
-        cloudinaryResponse.url,
-      );
-      return cloudinaryResponse;
-    } catch (error) {
-      return res.json({
-        success: false,
-        error: 'Failed to upload image',
-      });
-    }
-  }
 
   @Put('/:id')
   async updateUser(
@@ -185,8 +130,6 @@ export class TrainerController {
     return this.trainerService.updateTrainer(trainerId, updateUserDto);
   }
 
-  // @UseGuards(RolesGuard)
-  // @Roles(Role.ADMIN)
   @Delete('/:id')
   async deleteTrainer(@Param('id') trainerId: string) {
     return this.trainerService.deleteTrainer(trainerId);

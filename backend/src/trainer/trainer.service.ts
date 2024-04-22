@@ -4,7 +4,6 @@ import mongoose from 'mongoose';
 import { Trainer } from './schemas/trainer.schema';
 import { CreateTrainerDto } from './dto/trainer.dto';
 import { TrainingPlanBooking } from 'src/training-plan-booking/schemas/training-plan-booking.schema';
-import { Vet } from 'src/vet/schemas/vet.schema';
 import { Query } from 'express-serve-static-core';
 
 @Injectable()
@@ -39,12 +38,11 @@ export class TrainerService {
     return trainer;
   }
 
-  async findTrainerById(id: string) {
+  async findTrainerById(id: string): Promise<Trainer> {
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) {
       throw new HttpException('Invalid ID', 400);
     }
-
     const trainer = await this.TrainerModel.findOne({
       _id: id,
       isActive: true,
@@ -52,7 +50,6 @@ export class TrainerService {
     if (!trainer) {
       throw new NotFoundException('Trainer not found');
     }
-
     return trainer;
   }
 
@@ -61,17 +58,14 @@ export class TrainerService {
     if (!isValid) {
       throw new HttpException('Invalid Id', 400);
     }
-
     const updatedTrainer = await this.TrainerModel.findByIdAndUpdate(
       id,
       fieldToUpdate,
       { new: true },
     );
-
     if (!updatedTrainer) {
       throw new NotFoundException('Trainer not found');
     }
-
     return updatedTrainer;
   }
 
@@ -79,22 +73,6 @@ export class TrainerService {
     const trainer = await this.findTrainerById(id);
     trainer.isActive = false;
     trainer.save();
-  }
-
-  async uploadUserPictureUrl(id: string, imageUrl: string): Promise<Trainer> {
-    const trainer = await this.TrainerModel.findById(id).exec();
-    if (!trainer) {
-      throw new Error('User not found');
-    }
-    if (trainer.imageUrl) {
-      trainer.imageHistory = [
-        trainer.imageUrl,
-        ...(trainer.imageHistory || []),
-      ];
-    }
-
-    trainer.imageUrl = imageUrl;
-    return trainer.save();
   }
 
   async deleteUserPictureUrl(id: string): Promise<Trainer> {

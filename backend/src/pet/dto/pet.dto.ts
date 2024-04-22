@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsOptional } from 'class-validator';
 
 export class PetDto {
   @IsString()
@@ -36,9 +36,9 @@ export class PetDto {
   @IsOptional()
   additional_notes: string;
 
-  isActive:string;
-  
-  isAdopted: boolean; 
+  isActive: string;
+
+  isAdopted: boolean;
 
   @IsOptional()
   imageUrl: string;
