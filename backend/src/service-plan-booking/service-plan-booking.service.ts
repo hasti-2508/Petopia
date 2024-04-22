@@ -104,7 +104,9 @@ export class ServicePlanBookingService {
     if (booking.isConfirmed === false) {
       throw new HttpException('This booking is not confirmed yet', 409);
     }
-
+    if(booking.city !== vet.city){
+      throw new HttpException('The Vet is from different city!', 402);
+    }
     booking.vetId = vet._id;
     vet.bookings.push(booking._id);
     vet.save();
@@ -115,15 +117,6 @@ export class ServicePlanBookingService {
     return booking.save();
   }
 
-  // async cancelBooking(bookingId: string){
-  //   const booking = await this.servicePlanBookingModel.findById(bookingId)
-  //   booking.isCancelled = true;
-  //   const vetToMail = await this.VetModel.findById(booking.vetId);
-  //   if (vetToMail) {
-  //     await this.sendBookingEmail(vetToMail);
-  //   }
-  // return booking.save();
-  // }
 
   async sendBookingEmail(vet: Vet): Promise<void> {
     const transporter = nodemailer.createTransport({
@@ -135,7 +128,7 @@ export class ServicePlanBookingService {
     });
     const mailOptions = {
       from: process.env.EMAIL,
-      to: vet.email,
+      to: process.env.EMAIL,
       subject: 'Assigned Booking',
       text: `Hello Vet, 
     You have assigned a service.

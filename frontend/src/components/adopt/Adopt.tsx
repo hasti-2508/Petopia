@@ -13,6 +13,7 @@ import {
   setLoading,
 } from "@/redux/pet/petSlice";
 import toast from "react-hot-toast";
+import redirectLoggedIn from "@/middleware/redirectToLogin";
 
 function Adopt() {
   const dispatch: AppDispatch = useDispatch();
@@ -172,4 +173,4 @@ function Adopt() {
   );
 }
 
-export default Adopt;
+export default redirectLoggedIn(Adopt);

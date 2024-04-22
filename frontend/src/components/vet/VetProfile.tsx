@@ -1,7 +1,7 @@
 "use client";
 import { Service } from "@/interfaces/service";
-import React, { useEffect, useState } from "react";
-import { VetCard, VetUpdateCard } from "./VetCard";
+import React, { useEffect } from "react";
+import { VetCard } from "./VetCard";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import {
@@ -12,7 +12,6 @@ import {
   setIsChecked,
   setVet,
   setVetIsEditing,
-  setIsLoading
 } from "@/redux/vet/vetSlice";
 import {
   getServiceBookingData,
@@ -22,6 +21,7 @@ import {
   vetUpdate,
 } from "@/redux/vet/vetService";
 import toast from "react-hot-toast";
+import redirectLoggedIn from "@/middleware/redirectToLogin";
 
 const imageUrls = [
   "http://localhost:3000/assets/service1.jpeg",
@@ -40,7 +40,7 @@ function VetProfile() {
     editedVet,
     bookingImages,
     activeVetTab,
-    isLoading
+    isLoading,
   } = useSelector((state: RootState) => state.vet);
   const handleTabClick = (tab: string) => {
     dispatch(setActiveVetTab(tab));
@@ -100,7 +100,6 @@ function VetProfile() {
       if (vetResult.type === "vetUpdate/rejected") {
         throw vetResult;
       } else {
-        // dispatch(setVet(vetResult.payload));
         return vetResult;
       }
     } catch (error) {
@@ -145,364 +144,319 @@ function VetProfile() {
       toast.error(error.payload);
     }
   };
-  // const [soundPlayed, setSoundPlayed] = useState(false);
-  // function Light({ value }) {
-  //   useEffect(() => {
-  //     if (value && !soundPlayed) {
-  //       const audio = new Audio(
-  //         "http://localhost:3000/assets/audio/emergency-alarm-with-reverb-29431.mp3"
-  //       );
-  //       audio.play();
-  //       setSoundPlayed(true);
-  //     }
-  //   }, [value]);
-
-  //   const lightClass = value ? "bg-red-500" : "bg-green-500";
-
-  //   const divStyle = {
-  //     width: "15px",
-  //     height: "15px",
-  //     borderRadius: "50%",
-  //     // boxShadow:
-  //     //   "0 0 10px 5px #fff, 0 0 20px 10px #fff, 0 0 20px 5px #fff, 0 0 20px 10px #fff, 0 0 25px 12px #fff, 0 0 30px 15px #fff, 0 0 35px 17px #fff",
-  //     background: value
-  //       ? "radial-gradient(circle, rgba(50, 205, 50, 1) 0%, rgba(0, 100, 0, 1) 100%)"
-  //       : "radial-gradient(circle, rgba(255, 50, 50, 1) 0%, rgba(139, 0, 0, 1) 100%)",
-  //   };
-
-  //   return <div style={divStyle} />;
-  // }
   const renderTabContent = () => {
     switch (activeVetTab) {
       case "Profile":
         return (
           <div>
             <div>
-              {isEditing ? (
-                <>
-                  <VetUpdateCard
-                    editedUser={editedVet}
-                    handleChange={handleChange}
-                  />
-                  <div className="flex mt-8 mx-6 ">
-                    <button
-                      className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
-                      onClick={handleSaveEdit}
+              <>
+                <div className="flex justify-between relative fade-in-up ">
+                  <VetCard user={vet} />
+                  <div className="flex flex-col items-center">
+                    <h1
+                      style={{ fontSize: "18px" }}
+                      className="inline-block rounded-t-lg border-transparent text-dark-blue hover:text-saddle-brown"
                     >
-                      Save
-                    </button>
-                    <button
-                      className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline mx-3"
-                      onClick={handleCancelEdit}
-                    >
-                      Cancel
-                    </button>
+                      Are you free for having call?
+                    </h1>
+                    <label className="inline-flex items-center cursor-pointer  rounded-xl  no-underline mx-3">
+                      <input
+                        type="checkbox"
+                        value=""
+                        className="sr-only peer"
+                        checked={isChecked}
+                        onChange={handleCheckboxChange}
+                      />
+                      <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all  peer-checked:bg-dark-blue"></div>
+                      <span className="ms-3 text-sm font-medium text-gray-900 ">
+                        {isChecked ? (
+                          <span className="font-bold text-xl mb-2 text-saddle-brown">
+                            Available
+                          </span>
+                        ) : (
+                          <span className="font-bold text-xl mb-2 text-gray-600">
+                            Not Available
+                          </span>
+                        )}
+                      </span>
+                    </label>
                   </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex justify-between relative fade-in-up ">
-                    <VetCard user={vet} />
-                    <div className="flex flex-col items-center">
-                    <h1 style={{fontSize: "18px"}} className="inline-block rounded-t-lg border-transparent text-dark-blue hover:text-saddle-brown">Are you free for having call?</h1>
-                      <label className="inline-flex items-center cursor-pointer  rounded-xl  no-underline mx-3">
-                        
-                        <input
-                          type="checkbox"
-                          value=""
-                          className="sr-only peer"
-                          checked={isChecked}
-                          onChange={handleCheckboxChange}
-                        />
-                        <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all  peer-checked:bg-dark-blue"></div>
-                        <span className="ms-3 text-sm font-medium text-gray-900 ">
-                          {isChecked ? (
-                            <span className="font-bold text-xl mb-2 text-saddle-brown">
-                              Available
-                            </span>
-                          ) : (
-                            <span className="font-bold text-xl mb-2 text-gray-600">
-                              Not Available
-                            </span>
-                          )}
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-                </>
-              )}
+                </div>
+              </>
             </div>
           </div>
         );
       case "ongoingBookings":
         return (
           <div>
-            <div className="container-fluid mt-3"> 
-            <div className="row gap-5">
-            {bookings.length > 0 &&
-            bookings.filter((booking) => !booking.isCompleted).length > 0 ? (
-              bookings
-                .filter((booking) => !booking.isCompleted)
-                .map((booking, index) => (
-                  <div
-                    style={{
-                      height: "630px",
-                      width: "430px",
-                    }}
-                    className="mx-auto col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
-                    key={index}
-                  >
-                    <div>
-                      <img
-                        src={bookingImages[index]}
-                        alt={`Service ${index}`}
-                        className="w-full h-48 mb-4 border-2"
-                      />
-                      <div>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2 "
-                          >
-                            Name:
-                          </label>
-                          {booking.user_name}
-                        </p>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2 "
-                          >
-                            Email:
-                          </label>
-                          {booking.email}
-                        </p>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2 "
-                          >
-                            City:
-                          </label>
-                          {booking.city}
-                        </p>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2 "
-                          >
-                            Pet Species:
-                          </label>
-                          {booking.pet_species}
-                        </p>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2  "
-                          >
-                            Booking Date:
-                          </label>
-                          {booking.booking_date}
-                        </p>
-                        <p>
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2  "
-                          >
-                            Booking Time:
-                          </label>
-                          {booking.booking_time}
-                        </p>
-                        <p>
-                          {" "}
-                          <label
-                            htmlFor="species"
-                            className="font-bold text-dark-blue mx-2  "
-                          >
-                            Payment Status:
-                          </label>
-                          {booking.isConfirmed ? `Done` : `Pending`}
-                        </p>
-                        <div className="my-4 ">
-                          {booking.isCompleted ? (
-                            <span className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline my-3">
-                              Completed
-                            </span>
-                          ) : (
-                            <button
-                              className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline"
-                              onClick={() => handleComplete(booking._id)}
-                            >
-                              Complete
-                            </button>
-                          )}
+            <div className="container-fluid mt-3">
+              <div className="row gap-5">
+                {bookings.length > 0 &&
+                bookings.filter((booking) => !booking.isCompleted).length >
+                  0 ? (
+                  bookings
+                    .filter((booking) => !booking.isCompleted)
+                    .map((booking, index) => (
+                      <div
+                        style={{
+                          height: "630px",
+                          width: "430px",
+                        }}
+                        className="mx-auto col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
+                        key={index}
+                      >
+                        <div>
+                          <img
+                            src={bookingImages[index]}
+                            alt={`Service ${index}`}
+                            className="w-full h-48 mb-4 border-2"
+                          />
+                          <div>
+                            <p>
+                              {" "}
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2 "
+                              >
+                                Name:
+                              </label>
+                              {booking.user_name}
+                            </p>
+                            <p>
+                              {" "}
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2 "
+                              >
+                                Email:
+                              </label>
+                              {booking.email}
+                            </p>
+                            <p>
+                              {" "}
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2 "
+                              >
+                                City:
+                              </label>
+                              {booking.city}
+                            </p>
+                            <p>
+                              {" "}
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2 "
+                              >
+                                Pet Species:
+                              </label>
+                              {booking.pet_species}
+                            </p>
+                            <p>
+                              {" "}
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2  "
+                              >
+                                Booking Date:
+                              </label>
+                              {booking.booking_date}
+                            </p>
+                            <p>
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2  "
+                              >
+                                Booking Time:
+                              </label>
+                              {booking.booking_time}
+                            </p>
+                            <p>
+                              {" "}
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2  "
+                              >
+                                Payment Status:
+                              </label>
+                              {booking.isConfirmed ? `Done` : `Pending`}
+                            </p>
+                            <div className="my-4 ">
+                              {booking.isCompleted ? (
+                                <span className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline my-3">
+                                  Completed
+                                </span>
+                              ) : (
+                                <button
+                                  className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline"
+                                  onClick={() => handleComplete(booking._id)}
+                                >
+                                  Complete
+                                </button>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    ))
+                ) : (
+                  <div
+                    style={{ height: "80vh" }}
+                    className="flex flex-col mb-3 items-center justify-center fade-in-up"
+                  >
+                    <img
+                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      className="w-1/3 items-center"
+                      alt=""
+                    />
+                    <p
+                      style={{ fontSize: "18px" }}
+                      className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl"
+                    >
+                      You have no service Assigned!
+                    </p>
                   </div>
-                ))
-            ) : (
-              <div
-                style={{ height: "80vh" }}
-                className="flex flex-col mb-3 items-center justify-center fade-in-up"
-              >
-                <img
-                  src="http://localhost:3000/assets/NoTraining.jpg"
-                  className="w-1/3 items-center"
-                  alt=""
-                />
-                <p
-                  style={{ fontSize: "18px" }}
-                  className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl"
-                >
-                  You have no service Assigned!
-                </p>
+                )}
               </div>
-            )}
-          </div>
             </div>
           </div>
         );
       case "bookingHistory":
         return (
-            <div>
-              <div className="container-fluid mt-3">
+          <div>
+            <div className="container-fluid mt-3">
               <div className="row gap-5">
-              {bookings.length > 0 &&
-              bookings.filter((booking) => booking.isCompleted).length > 0 ? (
-                bookings
-                  .filter((booking) => booking.isCompleted)
-                  .map((booking, index) => (
-                    <div
-                      style={{
-                        height: "630px",
-                        width: "400px",
-                      }}
-                      className="col-md-4 col-sm-12 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom py-4 mx-auto fade-in-up"
-                      key={index}
-                    >
-                      <div>
-                        <img
-                          src={bookingImages[index]}
-                          alt={`Service ${index}`}
-                          className="w-full h-48 mb-4 border-2"
-                          style={{width: "350px"}}
-                        />
+                {bookings.length > 0 &&
+                bookings.filter((booking) => booking.isCompleted).length > 0 ? (
+                  bookings
+                    .filter((booking) => booking.isCompleted)
+                    .map((booking, index) => (
+                      <div
+                        style={{
+                          height: "630px",
+                          width: "400px",
+                        }}
+                        className="col-md-4 col-sm-12 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom py-4 mx-auto fade-in-up"
+                        key={index}
+                      >
                         <div>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2 "
-                            >
-                              Name:
-                            </label>
-                            {booking.user_name}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2 "
-                            >
-                              Email:
-                            </label>
-                            {booking.email}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2 "
-                            >
-                              City:
-                            </label>
-                            {booking.city}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2 "
-                            >
-                              Pet Species:
-                            </label>
-                            {booking.pet_species}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Booking Date:
-                            </label>
-                            {booking.booking_date}
-                          </p>
-                          <p>
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Booking Time:
-                            </label>
-                            {booking.booking_time}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Payment Status:
-                            </label>
-                            {booking.isConfirmed ? `Done` : `Pending`}
-                          </p>
-
-                          <div className="my-4 mx-auto">
-                            {booking.isCompleted ? (
-                              <span className="bg-green-600 text-white px-3 py-2 rounded-md  no-underline my-3">
-                                Completed
-                              </span>
-                            ) : (
-                              <button
-                                className="bg-blue-600 text-white px-3 py-2 rounded-md  no-underline"
-                                onClick={() => handleComplete(booking._id)}
+                          <img
+                            src={bookingImages[index]}
+                            alt={`Service ${index}`}
+                            className="w-full h-48 mb-4 border-2"
+                            style={{ width: "350px" }}
+                          />
+                          <div>
+                            <p>
+                              {" "}
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2 "
                               >
-                                Complete
-                              </button>
-                            )}
+                                Name:
+                              </label>
+                              {booking.user_name}
+                            </p>
+                            <p>
+                              {" "}
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2 "
+                              >
+                                Email:
+                              </label>
+                              {booking.email}
+                            </p>
+                            <p>
+                              {" "}
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2 "
+                              >
+                                City:
+                              </label>
+                              {booking.city}
+                            </p>
+                            <p>
+                              {" "}
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2 "
+                              >
+                                Pet Species:
+                              </label>
+                              {booking.pet_species}
+                            </p>
+                            <p>
+                              {" "}
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2  "
+                              >
+                                Booking Date:
+                              </label>
+                              {booking.booking_date}
+                            </p>
+                            <p>
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2  "
+                              >
+                                Booking Time:
+                              </label>
+                              {booking.booking_time}
+                            </p>
+                            <p>
+                              {" "}
+                              <label
+                                htmlFor="species"
+                                className="font-bold text-dark-blue mx-2  "
+                              >
+                                Payment Status:
+                              </label>
+                              {booking.isConfirmed ? `Done` : `Pending`}
+                            </p>
+
+                            <div className="my-4 mx-auto">
+                              {booking.isCompleted ? (
+                                <span className="bg-green-600 text-white px-3 py-2 rounded-md  no-underline my-3">
+                                  Completed
+                                </span>
+                              ) : (
+                                <button
+                                  className="bg-blue-600 text-white px-3 py-2 rounded-md  no-underline"
+                                  onClick={() => handleComplete(booking._id)}
+                                >
+                                  Complete
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))
-              ) : (
-                <div
-                  style={{ height: "80vh" }}
-                  className="flex flex-col mb-3 items-center justify-center fade-in-up  "
-                >
-                  <img
-                    src="http://localhost:3000/assets/NoTraining.jpg"
-                    className="w-1/3 items-center"
-                    alt=""
-                  />
-                  <p
-                    style={{ fontSize: "18px" }}
-                    className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl"
+                    ))
+                ) : (
+                  <div
+                    style={{ height: "80vh" }}
+                    className="flex flex-col mb-3 items-center justify-center fade-in-up  "
                   >
-                    You have no completed bookings!
-                  </p>
-                </div>
-              )}
-            </div>
+                    <img
+                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      className="w-1/3 items-center"
+                      alt=""
+                    />
+                    <p
+                      style={{ fontSize: "18px" }}
+                      className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl"
+                    >
+                      You have no completed bookings!
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
+          </div>
         );
       default:
         return null;
@@ -575,4 +529,4 @@ function VetProfile() {
   );
 }
 
-export default VetProfile;
+export default redirectLoggedIn(VetProfile);

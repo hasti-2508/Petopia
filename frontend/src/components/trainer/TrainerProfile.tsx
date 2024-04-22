@@ -15,6 +15,7 @@ import {
 } from "@/redux/trainer/trainerSlice";
 import toast from "react-hot-toast";
 import { TrainerCard } from "./TrainerCard";
+import redirectLoggedIn from "@/middleware/redirectToLogin";
 
 const images = [
   "http://localhost:3000/assets/training1.jpeg",
@@ -425,4 +426,4 @@ function TrainerProfile() {
   );
 }
 
-export default TrainerProfile;
+export default redirectLoggedIn(TrainerProfile);

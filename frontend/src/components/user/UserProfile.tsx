@@ -11,7 +11,6 @@ import { AppDispatch, RootState } from "@/redux/store";
 import {
   setActiveTab,
   setEditedUser,
-  setIsEditing,
   setLoading,
   setPets,
   setRate,
@@ -33,6 +32,7 @@ import {
   trainingRating,
   userUpdate,
 } from "@/redux/user/userService";
+import redirectLoggedIn from "@/middleware/redirectToLogin";
 
 const imageUrls = [
   "http://localhost:3000/assets/service1.jpeg",
@@ -527,7 +527,7 @@ function UserProfile() {
                               data-bs-toggle="modal"
                               data-bs-target="#myModal"
                               onClick={() =>
-                                dispatch(setServiceId(training._id))
+                                dispatch(setTrainingId(training._id))
                               }
                               className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
                               style={{ width: "68px" }}
@@ -670,4 +670,4 @@ function UserProfile() {
   );
 }
 
-export default UserProfile;
+export default redirectLoggedIn(UserProfile);

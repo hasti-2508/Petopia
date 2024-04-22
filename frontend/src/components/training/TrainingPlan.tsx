@@ -4,6 +4,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import redirectLoggedIn from "@/middleware/redirectToLogin";
 
 function TrainingPlan() {
   const router = useRouter();
@@ -288,6 +289,6 @@ function TrainingPlan() {
     );
   }
   
-  export default TrainingPlan;
+  export default redirectLoggedIn(TrainingPlan);
   
  

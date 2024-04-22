@@ -15,6 +15,7 @@ import { TrainerAdminCard, TrainerCard } from "../trainer/TrainerCard";
 import { UserCard } from "../user/UserCard";
 import { VetAdminCard, VetCard } from "../vet/VetCard";
 import Pagination from "../pagination/Pagination";
+import redirectLoggedIn from "@/middleware/redirectToLogin";
 
 function AdminProfile() {
   const [activeTab, setActiveTab] = useState("ServicesBookings");
@@ -290,7 +291,7 @@ function AdminProfile() {
                   <input
                     type="search"
                     id="default-search"
-                    className="block w-full ml-2 p-4 ps-10 text-sm text-gray-700 border border-dark-blue rounded-lg bg-white  focus:ring-black focus:border-black "
+                    className="block w-full ml-2 p-4 ps-10 text-sm text-gray-700 border border-dark-blue rounded-lg bg-white  focus:ring-black focus:border-black  "
                     placeholder="Search by city, price, booking date & time ...."
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -397,7 +398,7 @@ function AdminProfile() {
       case "TrainingBookings":
         return (
           <div className="fade-in-up">
-            <form className=" max-w-xl mx-auto mt-6 mb-5 fade-in-up">
+            <form className=" max-w-xl mx-auto mt-6 mb-5">
               <div className="relative">
                 <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                   <svg
@@ -417,7 +418,6 @@ function AdminProfile() {
                   </svg>
                 </div>
                 <div className="">
-                  {" "}
                   <input
                     type="search"
                     id="default-search"
@@ -528,7 +528,7 @@ function AdminProfile() {
 
       case "Users":
         return (
-          <div>
+          <div className="fade-in-up">
             <div className="container-fluid mt-3 gap-3 fade-in-up">
               <div className="row ">
                 {users.map((user) => (
@@ -558,7 +558,7 @@ function AdminProfile() {
         );
       case "Vets":
         return (
-          <div>
+          <div className="fade-in-up">
             <div className="container-fluid mt-3 gap-3 fade-in-up">
               <div className="row">
                 {vets.map((vet) => (
@@ -590,7 +590,7 @@ function AdminProfile() {
 
       case "Trainers":
         return (
-          <div>
+          <div className="fade-in-up">
             <div className="container-fluid mt-3 fade-in-up">
               <div className="row">
                 {trainers.map((trainer) => (
@@ -619,7 +619,7 @@ function AdminProfile() {
 
       case "Pets":
         return (
-          <div>
+          <div className="fade-in-up">
             <div className="container-fluid mt-3 fade-in-up">
               <div className="row">
                 {pets.map((pet) => (
@@ -656,7 +656,7 @@ function AdminProfile() {
   return (
     <div>
       <div className=" p-9 ">
-        <div className="text-sm font-medium text-center text-gray-500 fade-in-up ">
+        <div className="text-sm font-medium text-center text-gray-500">
           <ul className="flex flex-wrap -mb-px">
             <li className="me-2">
               <button
@@ -744,4 +744,4 @@ function AdminProfile() {
   );
 }
 
-export default AdminProfile;
+export default redirectLoggedIn(AdminProfile);

@@ -8,6 +8,7 @@ import { AppDispatch } from "@/redux/store";
 import { notifyVet } from "@/redux/vet/vetService";
 import { AvailableVetCard } from "../vet/VetCard";
 import toast from "react-hot-toast";
+import redirectLoggedIn from "@/middleware/redirectToLogin";
 
 function AvailableVet() {
   const router = useRouter();
@@ -75,4 +76,4 @@ function AvailableVet() {
   );
 }
 
-export default AvailableVet;
+export default redirectLoggedIn(AvailableVet);

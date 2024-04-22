@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import PlanCard from "../booking/PlanCard";
 import toast from "react-hot-toast";
+import redirectLoggedIn from "@/middleware/redirectToLogin";
 
 function ServicePlan() {
   const router = useRouter();
@@ -260,4 +261,4 @@ function ServicePlan() {
 
   
 
-export default ServicePlan;
+export default redirectLoggedIn(ServicePlan);

@@ -162,7 +162,14 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
   }, []);
 
   const handlePetDetails = () => {
-    toast("Loading.....");
+    toast("Loading...", {
+      style: {
+        borderRadius: "10px",
+        background: "#FBA834",
+        color: "#242d62",
+      },
+      duration: 1500,
+    });
     router.push(`adopt/petData/${pet._id}`);
   };
   return (

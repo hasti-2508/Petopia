@@ -85,15 +85,23 @@ function AssignVet() {
         error.response.status === 409
       ) {
         toast.error("The booking is not confirmed Yet!");
+        router.push('/admin/profile');
       } else if (
+        axios.isAxiosError(error) &&
+        error.response &&
+        error.response.status === 402
+      ) {
+        toast.error("city is conflicting between Vet and User!");
+        router.push('/admin/profile');
+      }else if (
         axios.isAxiosError(error) &&
         error.response &&
         error.response.status === 404
       ) {
         toast.error("Booking or Vet Not Found!");
+        router.push('/admin/profile');
       } else {
         toast.error("Error assigning vet");
-        console.error(error.response.data.message);
       }
     }
   };
