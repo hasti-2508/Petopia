@@ -8,17 +8,19 @@ import { Roles } from 'src/role/role.decorator';
 
 @Controller('service-plan')
 export class ServicePlanController {
-    constructor(private readonly servicePlanService: ServicePlanService) {}
+  constructor(private readonly servicePlanService: ServicePlanService) {}
 
   @Post('/create')
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN)
-  async create(@Body() createServicePlanDto: CreateServicePlanDto): Promise<ServicePlan> {
+  async create(
+    @Body() createServicePlanDto: CreateServicePlanDto,
+  ): Promise<ServicePlan> {
     return this.servicePlanService.create(createServicePlanDto);
   }
 
   @Get()
-  async getPlans(){
+  async getPlans() {
     return await this.servicePlanService.find();
   }
 }

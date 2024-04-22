@@ -9,26 +9,14 @@ import {
   Param,
   Patch,
   Post,
-  Put,
   Query,
   Req,
-  Res,
-  UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import * as bcrypt from 'bcrypt';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as path from 'path';
-import { RolesGuard } from 'src/role/guard/role.guard';
-import { Roles } from 'src/role/role.decorator';
-import { Role } from 'src/role/role.enum';
 import { CreateUserDto } from './dto/user.dto';
 import { User } from './schemas/user.schema';
 import { UserService } from './user.service';
-import { JwtService } from '@nestjs/jwt';
 import { PetService } from 'src/pet/pet.service';
 import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 import { Query as ExpressQuery } from 'express-serve-static-core';
@@ -37,14 +25,12 @@ import { Query as ExpressQuery } from 'express-serve-static-core';
 export class UserController {
   constructor(
     private userService: UserService,
-    private cloudinaryService: CloudinaryService,
-    private jwtService: JwtService,
     private petService: PetService,
   ) {}
 
   @Post('/register')
   async register(@Body() createUserDto: CreateUserDto): Promise<User> {
-    const { name, email, password, phoneNo, address, city, state } =
+    const { name, email, password, phoneNo, address, city, state,imageUrl } =
       createUserDto;
     if (password.length < 6) {
       throw new BadRequestException(
@@ -91,6 +77,7 @@ export class UserController {
       state,
       role: 'user',
       isActive: true,
+      imageUrl
     };
 
     if (!address && !city && !state) {
@@ -127,71 +114,11 @@ export class UserController {
     }
   }
 
-  @Post(':id/uploadImage')
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './assets/',
-        filename: (req, file, callback) => {
-          const fileName = path
-            .parse(file.originalname)
-            .name.replace(/\s/g, '');
-          const extension = path.parse(file.originalname).ext;
-          callback(null, `${fileName}${extension}`);
-        },
-      }),
-    }),
-  )
-  async uploadFile(
-    @UploadedFile() file,
-    @Res() res,
-    @Param('id') userId: string,
-  ) {
-    try {
-      if (!file || !file.path) {
-        throw new NotFoundException('No file uploaded or file path is missing');
-      }
-
-      const cloudinaryResponse =
-        await this.cloudinaryService.uploadOnCloudinary(file.path);
-      const user = await this.userService.findUserById(userId);
-
-      if (!user) {
-        throw new NotFoundException('User Not Found!');
-      }
-
-      await this.userService.uploadUserPictureUrl(
-        userId,
-        cloudinaryResponse.url,
-      );
-
-      return res.json({
-        success: true,
-        data: file.path,
-        cloudinaryResponse: cloudinaryResponse,
-      });
-    } catch (error) {
-      return res.json({
-        success: false,
-        error: 'Failed to upload image',
-      });
-    }
-  }
-
-  // @Put('update/:id')
-  // async updateUser(
-  //   @Body() updateUserDto: CreateUserDto,
-  //   @Param('id') userId: string,
-  // ) {
-  //   return this.userService.updateUser(userId, updateUserDto);
-  // }
   @Patch('update/:id')
   async updateUser(@Body() updateUserDto, @Param('id') userId: string) {
     return this.userService.updateUser(userId, updateUserDto);
   }
 
-  // @UseGuards(RolesGuard)
-  // @Roles(Role.ADMIN)
   @Delete('delete/:id')
   async deleteUser(@Param('id') userId: string) {
     return this.userService.deleteUser(userId);

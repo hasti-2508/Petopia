@@ -1,7 +1,6 @@
 import { Prop } from '@nestjs/mongoose';
 import { IsString, IsNotEmpty, IsNumber, IsEmail, IsPositive, Min, Max } from 'class-validator';
 import { Types } from 'mongoose';
-
 export class CreateTrainingPlanBookingDto {
 
   @IsString()
@@ -64,13 +63,10 @@ export class CreateTrainingPlanBookingDto {
 
   totalPrice: number;
 }
-
-
 export class AssignTrainerDto{
   @Prop({ type: Types.ObjectId, ref: 'Vet' })
   trainerId: Types.ObjectId; 
 }
-
 export class RateDto {
   @IsNumber()
   @IsPositive()

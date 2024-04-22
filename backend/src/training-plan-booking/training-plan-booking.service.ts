@@ -54,7 +54,6 @@ export class TrainingPlanBookingService {
     TrainingPlanId: string,
     createTrainingPlanBookingDto: CreateTrainingPlanBookingDto,
   ): Promise<TrainingPlanBooking> {
-    // try {
     const requiredFields = [
       'user_name',
       'email',
@@ -95,10 +94,6 @@ export class TrainingPlanBookingService {
     };
     const createdBooking = await this.TrainingPlanBookingModel.create(booking);
     return createdBooking.save();
-    // } catch (error) {
-    //   console.log('error', error);
-    //   throw new HttpException('Forbidden', 400);
-    // }
   }
   async assignTrainer(bookingId: string, assignTrainerDto: AssignTrainerDto) {
     const trainerId = await new mongoose.Types.ObjectId(assignTrainerDto.trainerId);

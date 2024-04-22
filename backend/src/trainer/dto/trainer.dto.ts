@@ -40,7 +40,7 @@ export class CreateTrainerDto {
 
   @IsOptional()
   @IsString()
-  imageUrl?: string;
+  imageUrl: string;
 
   @IsOptional()
   @IsArray()

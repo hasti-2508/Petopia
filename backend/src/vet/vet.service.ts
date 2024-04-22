@@ -24,8 +24,8 @@ export class VetService {
     return query.limit(resPerPage).skip(skip).exec();
   }
 
-  async findAvailableVet(): Promise<Vet[]>{
-    return await this.VetModel.find({isActive: true, isAvailable: true});
+  async findAvailableVet(): Promise<Vet[]> {
+    return await this.VetModel.find({ isActive: true, isAvailable: true });
   }
   async register(createVetDto: CreateVetDto): Promise<Vet> {
     const newVet = await this.VetModel.create({ ...createVetDto });
@@ -48,15 +48,12 @@ export class VetService {
     if (!isValid) {
       throw new HttpException('Invalid ID', 400);
     }
-
     const vet = await this.VetModel.findOne({ _id: id, isActive: true });
     if (!vet) {
       throw new NotFoundException('Vet not found');
     }
-
     return vet;
   }
-
 
   async updateVet(id: string, fieldsToUpdate: any): Promise<Vet> {
     const isValid = mongoose.Types.ObjectId.isValid(id);
@@ -70,17 +67,17 @@ export class VetService {
         updateObj[key] = fieldsToUpdate[key];
       }
     }
-  
+
     const updatedVet = await this.VetModel.findByIdAndUpdate(
       id,
       { $set: updateObj },
       { new: true },
     );
-  
+
     if (!updatedVet) {
       throw new NotFoundException('Vet not found');
     }
-  
+
     return updatedVet;
   }
 
@@ -88,19 +85,6 @@ export class VetService {
     const vet = await this.findVetById(id);
     vet.isActive = false;
     vet.save();
-  }
-
-  async uploadUserPictureUrl(id: string, imageUrl: string): Promise<Vet> {
-    const vet = await this.VetModel.findById(id).exec();
-    if (!vet) {
-      throw new Error('Vet not found');
-    }
-    if (vet.imageUrl) {
-      vet.imageHistory = [vet.imageUrl, ...(vet.imageHistory || [])];
-    }
-
-    vet.imageUrl = imageUrl;
-    return vet.save();
   }
 
   async deleteUserPictureUrl(id: string): Promise<Vet> {
@@ -141,7 +125,7 @@ export class VetService {
     return booking.save();
   }
 
-  async markIsAvailable(id: string){
+  async markIsAvailable(id: string) {
     const vet = await this.VetModel.findOne({ _id: id });
     if (!vet) {
       throw new NotFoundException('Vet not found');
@@ -154,15 +138,14 @@ export class VetService {
     }
   }
 
-  async notifyVet(id : string){
-    const vet = await this.VetModel.findOne({_id: id})
-    if(!vet){
-      throw new NotFoundException("Vet Not Found!")
+  async notifyVet(id: string) {
+    const vet = await this.VetModel.findOne({ _id: id });
+    if (!vet) {
+      throw new NotFoundException('Vet Not Found!');
     }
     if (vet) {
       vet.isHavingCall = !vet.isHavingCall;
-      if(vet){
- 
+      if (vet) {
         const transporter = nodemailer.createTransport({
           service: 'Gmail',
           auth: {
@@ -179,26 +162,13 @@ export class VetService {
        Please join the link attached
        Link : http://localhost:3000/room?roomId=${id}`,
         };
-    
+
         await transporter.sendMail(mailOptions);
-    }
+      }
       return vet.save();
     } else {
       throw new Error('Vet not found');
     }
-   
   }
 
-  // async callVet(id: string){
-  //   const vet = await this.VetModel.findOne({ _id: id });
-  //   if (!vet) {
-  //     throw new NotFoundException('Vet not found');
-  //   }
-  //   if (vet) {
-  //     vet.isHavingCall = !vet.isAvailable;
-  //     return vet.save();
-  //   } else {
-  //     throw new Error('Vet not found');
-  //   }
-  // }
 }

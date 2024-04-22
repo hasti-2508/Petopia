@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
   NotFoundException,
   Param,
   Patch,
@@ -27,8 +26,7 @@ import JwtPayload from 'src/interceptor/interface/jwtpayload';
 @Controller('trainingBooking')
 export class TrainingPlanBookingController {
   constructor(
-    private readonly TrainingPlanBookingService: TrainingPlanBookingService,
-    private jwtService: JwtService,
+    private TrainingPlanBookingService: TrainingPlanBookingService,
   ) {}
 
   @Get('')
@@ -41,17 +39,17 @@ export class TrainingPlanBookingController {
   @Get('booking/:bookingId')
   async findBookingById(
     @Param('bookingId') bookingId: string,
-  ):Promise<TrainingPlanBooking>{
-const booking = await this.TrainingPlanBookingService.findBookingById(bookingId)
-return booking;
-
+  ): Promise<TrainingPlanBooking> {
+    const booking =
+      await this.TrainingPlanBookingService.findBookingById(bookingId);
+    return booking;
   }
 
   @Get('user/:userId')
   async getTraining(
     @Param('userId') userId: string,
   ): Promise<TrainingPlanBooking[]> {
-    const booking =await this.TrainingPlanBookingService.findByUserId(userId);
+    const booking = await this.TrainingPlanBookingService.findByUserId(userId);
     if (!booking) {
       throw new NotFoundException('No Booking Found for this user!');
     }
@@ -65,7 +63,7 @@ return booking;
     @Param('TrainingPlanId') TrainingPlanId: string,
     @Body() createTrainingPlanBookingDto: CreateTrainingPlanBookingDto,
   ): Promise<TrainingPlanBooking> {
-    const data : JwtPayload = request.token;
+    const data: JwtPayload = request.token;
     if (!data) {
       throw new UnauthorizedException('No Data found');
     }
@@ -96,8 +94,8 @@ return booking;
     @Body() rateDto: RateDto,
   ): Promise<TrainingPlanBooking> {
     const data = request.token;
-    if(!data){
-      throw new UnauthorizedException("No Data found!")
+    if (!data) {
+      throw new UnauthorizedException('No Data found!');
     }
     const userId = data.userId;
     return this.TrainingPlanBookingService.addRating(
@@ -108,7 +106,7 @@ return booking;
   }
 
   @Patch('/:id/complete')
-  async markTrainingAsComplete(@Param('id') id: string){
+  async markTrainingAsComplete(@Param('id') id: string) {
     return this.TrainingPlanBookingService.markTrainingAsComplete(id);
   }
 }

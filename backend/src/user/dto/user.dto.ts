@@ -35,5 +35,8 @@ export class CreateUserDto {
   role?: string;
 
   isActive:boolean;
+  
+  @IsOptional()
+  imageUrl: string;
 }
 

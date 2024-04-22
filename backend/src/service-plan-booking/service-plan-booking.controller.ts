@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
   NotFoundException,
   Param,
   Patch,
@@ -65,20 +64,19 @@ export class ServicePlanBookingController {
     @Param('servicePlanId') servicePlanId: string,
     @Body() createServicePlanBookingDto: CreateServicePlanBookingDto,
   ): Promise<ServicePlanBooking> {
-   
-      const data: JwtPayload = request.token;
-      if (!data) {
-        throw new UnauthorizedException('Please Login First!');
-      }
-      const userId = data.userId;
-      const booking = await this.servicePlanBookingService.bookService(
-        userId,
-        servicePlanId,
-        createServicePlanBookingDto,
-      );
-      return res.json({
-        booking,
-      });
+    const data: JwtPayload = request.token;
+    if (!data) {
+      throw new UnauthorizedException('Please Login First!');
+    }
+    const userId = data.userId;
+    const booking = await this.servicePlanBookingService.bookService(
+      userId,
+      servicePlanId,
+      createServicePlanBookingDto,
+    );
+    return res.json({
+      booking,
+    });
   }
 
   @Post('/assign/:bookingId')

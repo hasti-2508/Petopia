@@ -1,7 +1,5 @@
 import { IsEmail, IsString, IsNotEmpty, IsNumber, IsArray, IsOptional } from 'class-validator';
-
 export class CreateVetDto {
-
 
   @IsString()
   @IsNotEmpty()
@@ -33,7 +31,7 @@ export class CreateVetDto {
 
   @IsOptional()
   @IsString()
-  imageUrl?: string;
+  imageUrl: string;
 
   @IsOptional()
   @IsArray()

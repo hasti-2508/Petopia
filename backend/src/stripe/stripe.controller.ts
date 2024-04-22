@@ -5,15 +5,6 @@ import { StripeService } from './stripe.service';
 export class StripeController {
   constructor(private stripeService: StripeService) {}
 
-  // @Get('service/:servicePlanId')
-  // checkoutForServiceBooking(@Param('servicePlanId') servicePlanId: string) {
-  //   try {
-  //     return this.stripeService.checkoutForServiceBooking(servicePlanId);
-  //   } catch (err) {
-  //     return err;
-  //   }
-  // }
-
   @Get('/:id')
   async checkoutForTrainingBooking(@Param('id') id: string) {
     try {
@@ -24,7 +15,7 @@ export class StripeController {
   }
 
   @Patch('/:id/confirmation')
-  async confirmationOfPayment (@Param('id') id:string){
+  async confirmationOfPayment(@Param('id') id: string) {
     return await this.stripeService.confirmationOfPayment(id);
   }
 }

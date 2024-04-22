@@ -1,14 +1,11 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { ObjectId } from 'mongodb';
 import Stripe from 'stripe';
 import { TrainingPlanBooking } from 'src/training-plan-booking/schemas/training-plan-booking.schema';
 import { ServicePlanBooking } from 'src/service-plan-booking/schemas/service-plan-booking.schema';
 import { User } from 'src/user/schemas/user.schema';
 import * as nodemailer from 'nodemailer';
-import { tracingChannel } from 'diagnostics_channel';
-import { NoFilesInterceptor } from '@nestjs/platform-express';
 
 @Injectable()
 export class StripeService {
@@ -22,7 +19,7 @@ export class StripeService {
     private UserModel: mongoose.Model<User>,
   ) {
     this.stripe = new Stripe(
-      'sk_test_51OxvE9JmAuF6GgDWkPQEWhZYdCPJPmSzYr6qQUcyteMWbt0Fk8UEPYYkRkL118BvUVLvOaWitFTSGRDbslddISoJ00GD2mjcdN',
+      process.env.STRIPE_SECRET_KEY,
       {
         apiVersion: '2023-10-16',
       },

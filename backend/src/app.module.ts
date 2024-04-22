@@ -5,7 +5,6 @@ import { PetModule } from './pet/pet.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import { CloudinaryService } from './cloudinary/cloudinary.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { TrainerModule } from './trainer/trainer.module';
@@ -35,7 +34,7 @@ import { StripeModule } from './stripe/stripe.module';
     StripeModule,
   ],
   controllers: [AppController],
-  providers: [AppService,CloudinaryService],
+  providers: [AppService],
 })
 export class AppModule {
   async onModuleInit(){

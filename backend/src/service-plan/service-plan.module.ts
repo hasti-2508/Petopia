@@ -5,8 +5,12 @@ import { ServicePlanSchema } from './schemas/service-plan.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: "ServicePlan", schema: ServicePlanSchema }])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'ServicePlan', schema: ServicePlanSchema },
+    ]),
+  ],
   controllers: [ServicePlanController],
-  providers: [ServicePlanService]
+  providers: [ServicePlanService],
 })
 export class ServicePlanModule {}

@@ -8,22 +8,10 @@ import {
   Param,
   Patch,
   Post,
-  Put,
   Query,
   Req,
-  Res,
-  UploadedFile,
-  UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
-import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import * as bcrypt from 'bcrypt';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import * as path from 'path';
-import { RolesGuard } from 'src/role/guard/role.guard';
-import { Roles } from 'src/role/role.decorator';
-import { Role } from 'src/role/role.enum';
 import { VetService } from './vet.service';
 import { Vet } from './schemas/vet.schema';
 import { CreateVetDto } from './dto/vet.dto';
@@ -34,10 +22,8 @@ import { Query as ExpressQuery } from 'express-serve-static-core';
 export class VetController {
   constructor(
     private vetService: VetService,
-    private cloudinaryService: CloudinaryService,
     private jwtService: JwtService,
   ) {}
- 
 
   @Post('/register')
   async register(@Body() createVetDto: CreateVetDto): Promise<Vet> {
@@ -51,6 +37,7 @@ export class VetController {
       state,
       YearsOfExperience,
       services,
+      imageUrl,
     } = createVetDto;
     if (password.length < 6) {
       throw new BadRequestException(
@@ -108,6 +95,7 @@ export class VetController {
       YearsOfExperience,
       services,
       role: 'vet',
+      imageUrl,
     };
 
     const existingVet = await this.vetService.findByWithEmail(email);
@@ -118,8 +106,6 @@ export class VetController {
     return newVet;
   }
 
- // @UseGuards(RolesGuard)
-  // @Roles(Role.ADMIN)
   @Get('/')
   async getVet(@Query() query: ExpressQuery): Promise<Vet[]> {
     return await this.vetService.findVet(query);
@@ -134,68 +120,11 @@ export class VetController {
   async getTrainerByID(@Param('id') trainerId: string) {
     return await this.vetService.findVetById(trainerId);
   }
-
-  @Post(':id/uploadImage')
-  @UseInterceptors(
-    FileInterceptor('image', {
-      storage: diskStorage({
-        destination: './assets/',
-        filename: (req, file, callback) => {
-          const fileName = path
-            .parse(file.originalname)
-            .name.replace(/\s/g, '');
-          const extension = path.parse(file.originalname).ext;
-          callback(null, `${fileName}${extension}`);
-        },
-      }),
-    }),
-  )
-  async uploadFile(
-    @UploadedFile() file,
-    @Res() res,
-    @Param('id') vetId: string,
-  ) {
-    try {
-      if (!file || !file.path) {
-        throw new NotFoundException('No file uploaded or file path is missing');
-      }
-
-      const cloudinaryResponse =
-        await this.cloudinaryService.uploadOnCloudinary(file.path);
-      const vet = await this.vetService.findVetById(vetId);
-
-      if (!vet) {
-        throw new NotFoundException('Vet Not Found!');
-      }
-
-      await this.vetService.uploadUserPictureUrl(
-        vetId,
-        cloudinaryResponse.url,
-      );
-      // return res.json({
-      //   success: true,
-      //   data: file.path,
-      //   cloudinaryResponse: cloudinaryResponse,
-      // })
-      return;
-    } catch (error) {
-      return res.json({
-        success: false,
-        error: 'Failed to upload image',
-      });
-    }
-  }
-
   @Patch('update/:id')
-  async updateUser(
-    @Body() updateUserDto,
-    @Param('id') trainerId: string,
-  ) {
+  async updateUser(@Body() updateUserDto, @Param('id') trainerId: string) {
     return this.vetService.updateVet(trainerId, updateUserDto);
   }
 
-  // @UseGuards(RolesGuard)
-  // @Roles(Role.ADMIN)
   @Delete('/:id')
   async deleteTrainer(@Param('id') trainerId: string) {
     return this.vetService.deleteTrainer(trainerId);
@@ -227,8 +156,4 @@ export class VetController {
     return await this.vetService.notifyVet(vetId);
   }
 
-  // @Patch('/:id/call')
-  // async callVet(@Param('id') vetId: string){
-  //   return await this.vetService.callVet(vetId)
-  // }
 }

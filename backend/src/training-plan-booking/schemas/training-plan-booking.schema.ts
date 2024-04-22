@@ -4,8 +4,7 @@ import mongoose, { Document, Types } from 'mongoose';
 @Schema({
   timestamps: true,
 })
-export class TrainingPlanBooking extends Document{
-
+export class TrainingPlanBooking extends Document {
   @Prop({ required: true })
   userId: mongoose.Types.ObjectId;
 
@@ -69,15 +68,14 @@ export class TrainingPlanBooking extends Document{
   @Prop({ default: false })
   isCancelled: boolean;
 
- 
   @Prop({ type: Types.ObjectId, ref: 'Trainer' })
   trainerId: Types.ObjectId;
 
   @Prop()
   ratings: any[];
-  
+
   @Prop()
-  averageRating: number; 
+  averageRating: number;
 }
 
 export const TrainingPlanBookingSchema =

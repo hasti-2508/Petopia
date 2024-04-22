@@ -8,7 +8,7 @@ import { User } from 'src/user/schemas/user.schema';
 })
 export class Pet extends Document {
   _id: mongoose.Types.ObjectId;
-  
+
   @Prop()
   pet_name: string;
 
@@ -22,10 +22,10 @@ export class Pet extends Document {
   age: string;
 
   @Prop()
-  city: string
+  city: string;
 
   @Prop()
-  state: string
+  state: string;
 
   @Prop()
   gender: string;

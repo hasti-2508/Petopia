@@ -20,51 +20,27 @@ export class PetService {
     sortDto: PetSortDto,
     qu: Query,
   ): Promise<Pet[]> {
-    let query = this.petModel.find({isActive: "true", isAdopted: false}); //isAdopted: false
+    let query = this.petModel.find({ isActive: 'true', isAdopted: false });
     const resPerPage = 9;
     const currentPage = Number(qu.page) || 1;
     const skip = resPerPage * (currentPage - 1);
-    // if (filterDto) {
-    //   if (filterDto.species) {
-    //     query = query.where('species').equals(filterDto.species);
-    //   }
-    //   if (filterDto.breed) {
-    //     query = query.where('breed').equals(filterDto.breed);
-    //   }
-    //   if (filterDto.age) {
-    //     query = query.where('age').equals(filterDto.age);
-    //   }
-    //   if (filterDto.gender) {
-    //     query = query.where('gender').equals(filterDto.gender);
-    //   }
-    //   if (filterDto.city) {
-    //     query = query.where('city').equals(filterDto.city);
-    //   }
-    //   if (filterDto.state) {
-    //     query = query.where('state').equals(filterDto.state);
-    //   }
-    // }
-    // if (sortDto && sortDto.sortBy) {
-    //   const sortOrder = sortDto.sortOrder === 'desc' ? -1 : 1;
-    //   query = query.sort({ [sortDto.sortBy]: sortOrder });
-    // }
     return query.limit(resPerPage).skip(skip).exec();
   }
 
   async createPet(petDto: PetDto, userId: string): Promise<Pet> {
     const pet = await this.petModel.create({ ...petDto, owner: userId });
     const user = await this.UserModel.findById(userId);
-    user.pets.push( pet.id);
+    user.pets.push(pet.id);
     await user.save();
-    return pet; 
+    return pet;
   }
 
   async findPetById(id: string) {
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) {
       throw new HttpException('Invalid ID', 400);
-    }  
-    const pet = await this.petModel.findOne({ _id: id, isActive: "true" });
+    }
+    const pet = await this.petModel.findOne({ _id: id, isActive: 'true' });
     if (!pet) {
       throw new NotFoundException('Pet not found');
     }
@@ -76,19 +52,6 @@ export class PetService {
     Object.assign(pet, petDto);
     const updatedPet = await pet.save();
     return updatedPet;
-  }
-
-  async uploadPetImageUrl(id: string, imageUrl: string): Promise<Pet> {
-    const pet = await this.petModel.findById(id);
-    if (!pet) {
-      throw new Error('Pet not found');
-    }
-    if (pet.imageUrl) {
-      pet.imageHistory = [pet.imageUrl, ...(pet.imageHistory || [])];
-    }
-
-    pet.imageUrl = imageUrl;
-    return await pet.save();
   }
 
   async deletePet(id: string) {

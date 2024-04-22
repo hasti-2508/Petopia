@@ -2,18 +2,13 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Delete,
   Get,
   HttpException,
   NotFoundException,
-  Param,
   Post,
-  Put,
   Req,
   Res,
   UnauthorizedException,
-  UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -60,7 +55,6 @@ export class AuthController {
     return { token: jwt };
   }
 
-  // @UseGuards(AuthGuard)
   @Get('/currentUser')
   @UseInterceptors(JwtInterceptor)
   async currentUser(@Req() request: Request) {
@@ -96,19 +90,3 @@ export class AuthController {
     await this.authService.sendPasswordResetEmail(user);
   }
 }
-
-// @Post('/SendOtp')
-// async sendOtp(@Body() data: { phone: string }){
-//   let prefix = '+91';
-//   let phone = prefix.concat(data.phone);
-//   return await this.authService.sendOtp(phone);
-// }
-
-// @Post('/VerifyOtp')
-// async verifyOtp(
-//   @Body() data: { phone: string; otp: string },
-// ): Promise<{ msg: string }> {
-//   let prefix = '+91';
-//   let phone = prefix.concat(data.phone);
-//   return await this.authService.verifyOtp(phone, data.otp);
-// }
