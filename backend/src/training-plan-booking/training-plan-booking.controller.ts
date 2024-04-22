@@ -58,7 +58,8 @@ return booking;
     return booking;
   }
 
-  @Post('booking/:TrainingPlanId')
+  @Post('/:TrainingPlanId')
+  @UseInterceptors(JwtInterceptor)
   async create(
     @Req() request,
     @Param('TrainingPlanId') TrainingPlanId: string,

@@ -7,8 +7,8 @@ export interface TrainerData {
     city: string;
     state: string;
     YearsOfExperience: number;
-    NumberOfPetTrained: number
-    services: string[];
+    NumberOfPetsTrained: number
+    trainings: string[];
   }
   
   export interface Trainer {
@@ -21,8 +21,9 @@ export interface TrainerData {
     city: string;
     state: string;
     YearsOfExperience: number;
-    NumberOfPetTrained: number
+    NumberOfPetsTrained: number
     trainings: string[];
+    bookings: string[];
     imageUrl: string;
     OnGoingTraining: string[];
   }

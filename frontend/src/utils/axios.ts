@@ -2,7 +2,7 @@ import axios from "axios";
 
 const axiosInstance = axios.create({
   baseURL: `${process.env.HOST}`,
-  timeout: 5000, 
+  timeout: 5000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -10,9 +10,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   function (config) {
- // const encryptedToken = localStorage.getItem("token");
-    // const token = decryptToken(encryptedToken);
-    const token = localStorage.getItem('jwt');
+    const token = localStorage.getItem("jwt");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

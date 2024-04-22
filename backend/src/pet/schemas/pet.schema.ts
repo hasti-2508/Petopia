@@ -37,7 +37,7 @@ export class Pet extends Document {
   weight: string;
 
   @Prop()
-  health_status: string;
+  health_conditions: string;
 
   @Prop()
   allergies: string;

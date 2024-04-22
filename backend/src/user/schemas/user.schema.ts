@@ -41,7 +41,7 @@ export class User extends Document {
 
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Pet' }] })
-  pets: Pet[];
+  pets: string[];
 
   @Prop({ type: [{ type: SchemaTypes.ObjectId, ref: 'Pet' }] }) 
   petHistory: string[];

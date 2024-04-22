@@ -9,7 +9,6 @@ interface AuthState {
   formData: {
     email: string;
     password: string;
-    role: string;
   };
   showPassword: boolean;
   forgetPasswordData : {
@@ -17,11 +16,11 @@ interface AuthState {
     role: string;
   };
   userRole: string;
+  imageUrl: string;
 }
 const initialFormData = {
     email: "",
     password: "",
-    role: "",
   };
 
 const initialForgetPasswordData = {
@@ -37,6 +36,7 @@ const initialState: AuthState = {
   showPassword: false,
   forgetPasswordData: initialForgetPasswordData,
   userRole: null,
+  imageUrl: "",
 };
 
 
@@ -94,6 +94,7 @@ const authSlice = createSlice({
       builder.addCase(currentUser.fulfilled, (state,action) => {
         state.isLoading = false;
         state.userRole = action.payload.role;
+        state.imageUrl = action.payload.imageUrl;
       });
       builder.addCase(currentUser.rejected, (state, action) => {
         state.isLoading = false;

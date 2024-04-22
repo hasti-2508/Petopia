@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 function Footer() {
@@ -19,95 +20,110 @@ function Footer() {
           </div>
           <div className="grid grid-cols-2 gap-8 sm:gap-3 sm:grid-cols-4">
             <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white ml-10">
+              <h2 className="mb-6 text-sm font-semibold text-saddle-brown uppercase ml-8">
                 Petopia
               </h2>
-              <ul className="text-gray-400 font-medium ml-10">
+              <ul className="text-white font-medium ml-8 ps-0">
                 <li className="mb-4">
-                  <a href="https://Petopia.com/" className="hover:underline">
+                  <Link
+                    href="/home"
+                    className="hover:underline text-white no-underline"
+                  >
                     About us
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="https://tailwindcss.com/"
-                    className="hover:underline"
+                  <Link
+                    href="/home"
+                    className="hover:underline text-white no-underline"
                   >
                     Blog
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
-            <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white">
+            <div className="flex flex-col">
+              <h2 className="mb-6 text-sm font-semibold text-saddle-brown uppercase">
                 Home Services
               </h2>
-              <ul className="text-gray-500 dark:text-gray-400 font-medium">
+              <ul className="text-gray-500 dark:text-gray-400 font-medium ps-0">
                 <li className="mb-4">
-                  <a
-                    href="https://github.com/themesberg/Petopia"
-                    className="hover:underline "
+                  <Link
+                    href="/servicePlan"
+                    className="hover:underline text-white no-underline"
                   >
                     Pet Grooming
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-4">
-                  <a
-                    href="https://discord.gg/4eeurUVvTy"
-                    className="hover:underline"
+                  <Link
+                    href="/trainingPlan"
+                    className="hover:underline text-white no-underline"
                   >
                     Pet Training
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-4">
-                  <a
-                    href="https://discord.gg/4eeurUVvTy"
-                    className="hover:underline"
+                  <Link
+                    href="/availableVet"
+                    className="hover:underline text-white no-underline"
                   >
                     Home Vet Consultation
-                  </a>
+                  </Link>
                 </li>
                 <li className="mb-4">
-                  <a
-                    href="https://discord.gg/4eeurUVvTy"
-                    className="hover:underline"
+                  <Link
+                    href="/availableVet"
+                    className="hover:underline text-white no-underline"
                   >
                     Online Vet Consultation
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white ml-8">
+              <h2 className="mb-6 text-sm font-semibold text-saddle-brown uppercase  ml-8">
                 Partner
               </h2>
-              <ul className="text-gray-500 dark:text-gray-400 font-medium ml-8">
+              <ul className="text-gray-500 dark:text-gray-400 font-medium ml-8 ps-0">
                 <li className="mb-4">
-                  <a href="#" className="hover:underline">
+                  <Link
+                    href="/vet/register"
+                    className="hover:underline text-white no-underline"
+                  >
                     Become a Vet
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:underline">
+                  <Link
+                    href="/trainer/register"
+                    className="hover:underline text-white no-underline"
+                  >
                     Become a Trainer
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
             <div>
-              <h2 className="mb-6 text-sm font-semibold text-gray-900 uppercase dark:text-white ml-8">
+              <h2 className="mb-6 text-sm font-semibold text-saddle-brown uppercase ml-8">
                 Policy
               </h2>
-              <ul className="text-gray-500 dark:text-gray-400 font-medium ml-8">
+              <ul className="text-gray-500 dark:text-gray-400 font-medium ml-8 ps-0">
                 <li className="mb-4">
-                  <a href="#" className="hover:underline">
+                  <Link
+                    href="/home"
+                    className="hover:underline text-white no-underline"
+                  >
                     Privacy Policy
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:underline">
+                  <Link
+                    href="/home"
+                    className="hover:underline text-white no-underline "
+                  >
                     Terms & Conditions
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -116,18 +132,20 @@ function Footer() {
         <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-200 lg:my-8" />
         <div className="sm:flex sm:items-center sm:justify-between">
           <span className="text-sm text-gray-400 sm:text-center ">
-            © 2023{" "}
-            <a href="https://Petopia.com/" className="hover:underline">
+            © 2023
+            <Link href="/home" className="hover:underline">
               Petopia™
-            </a>
+            </Link>
             . All Rights Reserved.
           </span>
           <div className="flex mt-4 sm:justify-center sm:mt-0">
-            <div className="text-gray-200">Made by @Hasti Kapadiya</div>
-            <a
+            <div className="text-gray-200">
+              Designed & Developed by @Hasti Kapadiya
+            </div>
+            <Link
               href="https://github.com/hasti-2508"
               target="_blank"
-              className="text-gray-200 hover:text-gray-900 dark:hover:text-white ms-5"
+              className="text-gray-200 hover:text-gray-900 dark:hover:text-white ml-2"
             >
               <svg
                 className="w-6 h-6"
@@ -143,7 +161,7 @@ function Footer() {
                 />
               </svg>
               <span className="sr-only">GitHub account</span>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   Req,
   Res,
   UploadedFile,
@@ -27,6 +28,7 @@ import { VetService } from './vet.service';
 import { Vet } from './schemas/vet.schema';
 import { CreateVetDto } from './dto/vet.dto';
 import { JwtService } from '@nestjs/jwt';
+import { Query as ExpressQuery } from 'express-serve-static-core';
 
 @Controller('vet')
 export class VetController {
@@ -35,11 +37,7 @@ export class VetController {
     private cloudinaryService: CloudinaryService,
     private jwtService: JwtService,
   ) {}
-
-  @Get('')
-  async getVet(): Promise<Vet[]> {
-    return await this.vetService.findVet();
-  }
+ 
 
   @Post('/register')
   async register(@Body() createVetDto: CreateVetDto): Promise<Vet> {
@@ -120,11 +118,11 @@ export class VetController {
     return newVet;
   }
 
-  // @UseGuards(RolesGuard)
+ // @UseGuards(RolesGuard)
   // @Roles(Role.ADMIN)
   @Get('/')
-  async getTrainers() {
-    return await this.vetService.findVet();
+  async getVet(@Query() query: ExpressQuery): Promise<Vet[]> {
+    return await this.vetService.findVet(query);
   }
 
   @Get('/available/')
@@ -155,7 +153,7 @@ export class VetController {
   async uploadFile(
     @UploadedFile() file,
     @Res() res,
-    @Param('id') trainerId: string,
+    @Param('id') vetId: string,
   ) {
     try {
       if (!file || !file.path) {
@@ -164,18 +162,22 @@ export class VetController {
 
       const cloudinaryResponse =
         await this.cloudinaryService.uploadOnCloudinary(file.path);
-      const trainer = await this.vetService.findVetById(trainerId);
+      const vet = await this.vetService.findVetById(vetId);
 
-      if (!trainer) {
-        throw new NotFoundException('Trainer Not Found!');
+      if (!vet) {
+        throw new NotFoundException('Vet Not Found!');
       }
 
       await this.vetService.uploadUserPictureUrl(
-        trainerId,
+        vetId,
         cloudinaryResponse.url,
       );
-
-      return cloudinaryResponse;
+      // return res.json({
+      //   success: true,
+      //   data: file.path,
+      //   cloudinaryResponse: cloudinaryResponse,
+      // })
+      return;
     } catch (error) {
       return res.json({
         success: false,

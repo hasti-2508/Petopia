@@ -9,18 +9,12 @@ export class LoginDto {
   @IsNotEmpty()
   password: string;
 
-  @IsString()
-  @IsNotEmpty()
-  role: string;
 }
 
 export class ResetPasswordDto{
 
   @IsEmail()
   email: string
-
-  @IsString()
-  role: string
 }
 
 

@@ -24,7 +24,6 @@ import { LoginDto, ResetPasswordDto } from './dto/auth.dto';
 import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 import JwtPayload from 'src/interceptor/interface/jwtpayload';
 
-
 @Controller()
 export class AuthController {
   constructor(
@@ -37,31 +36,19 @@ export class AuthController {
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<object> {
-    const { email, password, role } = loginDto;
+    const { email, password } = loginDto;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!role) {
-      throw new BadRequestException('Please define your Role');
-    }
     if (!emailRegex.test(email)) {
       throw new BadRequestException('Invalid email format');
     }
-    
     let user;
-    if (role === 'user' || role === 'admin') {
-      user = await this.authService.findByEmailInUser(email);
-    } else if (role === 'trainer') {
-      user = await this.authService.findByEmailInTrainer(email);
-    } else if (role === 'vet') {
-      user = await this.authService.findByEmailInVet(email);
-    }
-
+    user = await this.authService.findByEmailInUser(email);
     if (!user) {
       throw new UnauthorizedException('No such user found');
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      throw new HttpException('Password Incorrect',403);
+      throw new HttpException('Password Incorrect', 403);
     }
     const payload = {
       email: user.email,
@@ -78,35 +65,17 @@ export class AuthController {
   @UseInterceptors(JwtInterceptor)
   async currentUser(@Req() request: Request) {
     try {
-      // const cookie = request.cookie.jwt;
-      // const { jwt } = request.body;
-      // const authHeader = request.headers.authorization;
-      // if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      //   throw new UnauthorizedException('Bearer token not found');
-      // }
-     
-      // const token = authHeader.substring(7);// aa error kya \ kai error?
-      const data : JwtPayload = request.token;
+      const data: JwtPayload = request.token;
       if (!data) {
         throw new UnauthorizedException('No Data found');
       }
-      let user;
-      if (data.role === 'user' || data.role === 'admin') {
-        user = await this.authService.findByEmailInUser(data.email);
-      } else if (data.role === 'trainer') {
-        user = await this.authService.findByEmailInTrainer(data.email);
-      } else if (data.role === 'vet') {
-        user = await this.authService.findByEmailInVet(data.email);
-      } else {
-        throw new UnauthorizedException('Invalid role');
-      }
+      const user = await this.authService.findByEmailInUser(data.email);
       if (!user) {
         throw new NotFoundException('No user found');
       }
-
       return user;
     } catch (error) {
-      throw new UnauthorizedException('Unauthorized');
+      throw new UnauthorizedException('Please login first!');
     }
   }
 
@@ -118,36 +87,15 @@ export class AuthController {
 
   @Post('forgetPassword')
   async sendPasswordResetEmail(@Body() resetPasswordDto: ResetPasswordDto) {
-    const { email, role } = resetPasswordDto;
+    const { email } = resetPasswordDto;
     let user;
-    if (role === 'user' || role === 'admin') {
-      user = await this.authService.findByEmailInUser(email);
-
-      if (!user) {
-        throw new BadRequestException('No such user found');
-      }
-
-      await this.authService.sendPasswordResetEmail(user);
-    } else if (role === 'trainer') {
-      user = await this.authService.findByEmailInTrainer(email);
-
-      if (!user) {
-        throw new BadRequestException('No such user found');
-      }
-
-      await this.authService.sendPasswordResetEmail(user);
-    } else if (role === 'vet') {
-      user = await this.authService.findByEmailInVet(email);
-
-      if (!user) {
-        throw new BadRequestException('No such user found');
-      }
-      await this.authService.sendPasswordResetEmail(user);
+    user = await this.authService.findByEmailInUser(email);
+    if (!user) {
+      throw new UnauthorizedException('No such user found');
     }
+    await this.authService.sendPasswordResetEmail(user);
   }
 }
-
-
 
 // @Post('/SendOtp')
 // async sendOtp(@Body() data: { phone: string }){

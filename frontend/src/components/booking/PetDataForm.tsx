@@ -26,22 +26,21 @@ function PetDataForm({
 }: PetDataProps) {
   return (
     <>
-
-      <div className=" w-full mr-12 ">
+      <div className="w-full max-w-lg mx-auto mt-4">
         <h1
           className="text-center text-3xl font-bold mb-8"
           style={{ fontFamily: "open-sans", fontSize: "40px" }}
         >
           Add your pet Details
         </h1>
-        <div className="border-2 border-gray-200 mb-3"></div>
-        <div className="mb-6 p-3">
+
+        <div className="mb-6">
           <label
             htmlFor="pet_species"
             className="block mb-2"
             style={{ fontFamily: "open-sans", fontSize: "20px" }}
           >
-            🌀 What is type of your pet?
+            What is type of your pet?
           </label>
           <div className="flex gap-4">
             <button
@@ -76,7 +75,7 @@ function PetDataForm({
             className="block mb-3"
             style={{ fontFamily: "open-sans", fontSize: "20px" }}
           >
-            🌀 What is the Breed of your pet?
+            What is the Breed of your pet?
           </label>
           <input
             type="text"
@@ -92,7 +91,7 @@ function PetDataForm({
             className="block mb-3"
             style={{ fontFamily: "open-sans", fontSize: "20px" }}
           >
-            🌀 What is the size of your pet?
+            What is the size of your pet?
           </label>
           <div className="flex gap-4">
             <button
@@ -130,7 +129,7 @@ function PetDataForm({
             className="block mb-3"
             style={{ fontFamily: "open-sans", fontSize: "20px" }}
           >
-            🌀 How old is your pet?
+            How old is your pet?
           </label>
           <input
             type="text"
@@ -150,7 +149,7 @@ function PetDataForm({
             className="block mb-3"
             style={{ fontFamily: "open-sans", fontSize: "20px" }}
           >
-            🌀 What is the gender of your pet?
+            What is the gender of your pet?
           </label>
           <div className="flex gap-4">
             <button
@@ -179,7 +178,7 @@ function PetDataForm({
             className="block mb-3"
             style={{ fontFamily: "open-sans", fontSize: "20px" }}
           >
-            🌀 How aggressive is your pet?
+            How aggressive is your pet?
           </label>
           <div className="flex gap-4">
             <button

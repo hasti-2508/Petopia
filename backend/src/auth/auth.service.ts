@@ -24,27 +24,37 @@ constructor(
   ) {}
 
  
-  async findByEmailInUser(email: string): Promise<User>{
-    const user = await this.UserModel.findOne({email, isActive: true});
-    if (!user) {
-      throw new NotFoundException('User not found');
+  async findByEmailInUser(email: string): Promise<User | Trainer | Vet> {
+    let user;
+    user = await this.UserModel.findOne({ email, isActive: true });
+    if (user) {
+      return user;
     }
-    return user;
+    user = await this.TrainerModel.findOne({ email, isActive: true });
+    if (user) {
+      return user;
+    }
+    user = await this.VetModel.findOne({ email, isActive: true });
+    if (user) {
+      return user;
+    }
+    throw new NotFoundException('User not found');
   }
-  async findByEmailInTrainer(email: string): Promise<Trainer>{
-    const user = await this.TrainerModel.findOne({email, isActive: true});
-    if (!user) {
-      throw new NotFoundException('Trainer not found');
-    }
-    return user;
-  }//frontend no code 
-  async findByEmailInVet(email: string): Promise<Vet>{
-    const user = await this.VetModel.findOne({email, isActive: true});
-    if (!user) {
-      throw new NotFoundException('Vet not found');
-    }
-    return user;
-  }
+  
+  // async findByEmailInTrainer(email: string): Promise<Trainer>{
+  //   const user = await this.TrainerModel.findOne({email, isActive: true});
+  //   if (!user) {
+  //     throw new NotFoundException('Trainer not found');
+  //   }
+  //   return user;
+  // }//frontend no code 
+  // async findByEmailInVet(email: string): Promise<Vet>{
+  //   const user = await this.VetModel.findOne({email, isActive: true});
+  //   if (!user) {
+  //     throw new NotFoundException('Vet not found');
+  //   }
+  //   return user;
+  // }
   async findUserById(id: string){
     
     const isValid = mongoose.Types.ObjectId.isValid(id);
@@ -76,7 +86,7 @@ constructor(
     });
     const mailOptions = {
       from: process.env.EMAIL,
-      to: user.email, 
+      to: process.env.EMAIL, 
       subject: 'Password Reset Request',
       text: `Hello, 
       You requested a password reset. Please use the following token to reset your password: ${token}`,

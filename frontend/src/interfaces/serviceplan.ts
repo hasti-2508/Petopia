@@ -1,4 +1,4 @@
- export interface ServicePlan {
+ export interface ServicePlanType {
     _id: string;
     serviceName: string;
     species: string;

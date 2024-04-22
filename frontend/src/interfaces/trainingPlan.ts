@@ -1,4 +1,4 @@
-export interface TrainingPlan {
+export interface TrainingPlanData {
     _id: string;
     TrainingName: string;
     species: string;

@@ -2,8 +2,8 @@ import React from "react";
 
 const PlanCard = ({ plan, handleBookService }) => {
   return (
-    <div className="w-full p-4 max-w-sm bg-gray-100 border border-gray-200 rounded-lg shadow d-flex flex-column">
-      <h3 className="text-center font-semibold text-gray-600 mb-4">
+    <div className="w-full p-4 max-w-sm border border-gray-200 rounded-lg shadow-2xl d-flex flex-column card-container">
+      <h3 className="text-center font-semibold text-dark-blue mb-4">
         {plan.serviceName}
       </h3>
       <div className="border-2 gray-600"></div>
@@ -17,7 +17,7 @@ const PlanCard = ({ plan, handleBookService }) => {
                   className="w-5 h-5"
                   alt="bullet"
                 />
-                <li className="font-medium text-gray-600">{service}</li>
+                <li className="font-medium text-dark-blue">{service}</li>
               </div>
             ))}
           </ul>
@@ -63,14 +63,14 @@ const PlanCard = ({ plan, handleBookService }) => {
           </div>
           <div className="flex items-center justify-between">
             <span className="text-3xl mt-4 font-bold text-gray-900 dark:text-red">
-              ${plan.price}
+              ₹{plan.price}
             </span>
-            <a
+            <button
               onClick={() => handleBookService(plan._id)}
               className="text-gray-700 no-underline flex justify-center bg-saddle-brown py-2 px-3 mt-4 font-semibold rounded-lg fs-6 cursor-pointer"
             >
               Book Service
-            </a>
+            </button>
           </div>
         </div>
       </div>

@@ -1,16 +1,15 @@
 "use client";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import useMultipleStep from "@/Hooks/useMultipleStep";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 import { ServicePlanBooking } from "@/interfaces/servicePlanBooking";
-import { Notifications } from "react-push-notification";
-import addNotification from "react-push-notification";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/utils/axios";
 import PetDataForm from "../booking/PetDataForm";
 import UserDataForm from "../booking/UserDataForm";
 import DateAndTime from "../booking/DateAndTime";
+import toast from "react-hot-toast";
 
 const serviceBookingData: ServicePlanBooking = {
   pet_species: "cat",
@@ -31,6 +30,13 @@ const serviceBookingData: ServicePlanBooking = {
 };
 
 function BookService() {
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.classList.add("animate__animated", "animate__zoomIn");
+    }
+  }, []);
   const [data, setData] = useState(serviceBookingData);
   const [servicePlanId, setServicePlanId] = useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -38,17 +44,6 @@ function BookService() {
 
   const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
   const stripePromise = loadStripe(publishableKey);
-
-  function warningNotification() {
-    addNotification({
-      title: "Warning",
-      subtitle: "Sorry",
-      message: "We are not providing Training in your city.",
-      theme: "red",
-      closeButton: "X",
-    });
-  }
-
   useEffect(() => {
     if (typeof window !== "undefined") {
       const urlParams = new URLSearchParams(window.location.search);
@@ -67,26 +62,22 @@ function BookService() {
     <UserDataForm {...data} updateFields={updateFields} />,
     <DateAndTime {...data} updateFields={updateFields} />,
   ]);
+  const isBookingDataFilled = data.booking_date && data.booking_time;
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
-
     if (!isLastStep) return next();
     async function postData() {
       try {
-        // const response = await axios.post(
-        //   `${process.env.HOST}/serviceBooking/${servicePlanId}`,
-        //   requestData
-        // );
+        if (!isBookingDataFilled) {
+          toast.error("Please fill the booking date and time");
+          return;
+        }
         const response = await axiosInstance.post(
           `/serviceBooking/${servicePlanId}`,
           data
         );
-        // console.log(response.data.booking._id);
         setBookingSuccess(true);
-        // setTimeout(() => {
-        //   router.push(`/payment?bookingId=${response.data.booking._id}`);
-        // }, 5000);
         setTimeout(async () => {
           const stripe = await stripePromise;
           const checkoutSession = await axiosInstance.get(
@@ -103,13 +94,16 @@ function BookService() {
           error.response &&
           error.response.status === 409
         ) {
-          warningNotification();
-          router.push("/home");
+          toast.error("We are not providing service in this city");
+          setTimeout(() => {
+            router.push("/home");
+          }, 1000);
         } else if (
           axios.isAxiosError(error) &&
           error.response &&
           error.response.status === 401
         ) {
+          toast.error("Please Login First!");
           router.push("/login");
         } else {
           console.error("Error posting booking data:", error);
@@ -121,53 +115,35 @@ function BookService() {
   }
   return (
     <div>
-      <Notifications />
-      <div
-        style={{
-          position: "relative",
-          background: "white",
-          padding: "2rem",
-          margin: "1rem",
-          borderRadius: ".5rem",
-          fontFamily: "Arial",
-          maxWidth: "max-content",
-        }}
-      >
-        <form onSubmit={onSubmit}>
+      <div className="w-full max-w-xl mx-auto">
+        <form ref={formRef} onSubmit={onSubmit}>
           {step}
           <div
             className=" text-white"
             style={{
-              marginTop: "1rem",
+              marginTop: "1.5rem",
+              marginBottom: "1.5rem",
               display: "flex",
               gap: ".5rem",
               justifyContent: "flex-end",
             }}
           >
             {!isFirstStep && (
-              <button
-                type="button"
-                className="text-gray-700 font-bold flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
-                onClick={back}
-              >
-                Back
+              <button>
+                <img src="http://localhost:3000/assets/left.svg" alt="" />
               </button>
             )}
-            {/* <button type="submit">{isLastStep ? "Pay" : "Next"}</button> */}
 
             {isLastStep ? (
               <button
                 type="submit"
-                className="text-white flex items-center bg-dark-blue py-2 px-3 rounded-pill fs-6 no-underline"
+                className="text-dark-blue flex items-center bg-saddle-brown px-6 rounded-full font-bold no-underline"
               >
                 Pay
               </button>
             ) : (
-              <button
-                type="submit"
-                className="text-gray-700   flex items-center font-bold bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
-              >
-                Next
+              <button className="">
+                <img src="http://localhost:3000/assets/right.svg" alt="" />
               </button>
             )}
           </div>

@@ -1,13 +1,11 @@
 "use client";
 import { TrainingPlanBooking } from "@/interfaces/trainingPlanBooking";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import useMultipleStep from "@/Hooks/useMultipleStep";
 import PetDataForm from "../booking/PetDataForm";
 import UserDataForm from "../booking/UserDataForm";
 import DateAndTime from "../booking/DateAndTime";
 import axios from "axios";
-// import { Notifications } from "react-push-notification";
-// import addNotification from "react-push-notification";
 import { useRouter } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
 import axiosInstance from "@/utils/axios";
@@ -32,6 +30,13 @@ const trainingBookingData: TrainingPlanBooking = {
 };
 
 function BookTraining() {
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.classList.add("animate__animated", "animate__zoomIn");
+    }
+  }, []);
   const [data, setData] = useState(trainingBookingData);
   const [trainingPlanId, setTrainingPlanId] = useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -39,16 +44,6 @@ function BookTraining() {
 
   const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
   const stripePromise = loadStripe(publishableKey);
-
-  // function warningNotification() {
-  //   addNotification({
-  //     title: "Warning",
-  //     subtitle: "Sorry",
-  //     message: "We are not providing Training in your city.",
-  //     theme: "red",
-  //     closeButton: "X",
-  //   });
-  // }
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -71,18 +66,12 @@ function BookTraining() {
 
   function onSubmit(e: FormEvent) {
     e.preventDefault();
-    const jwt = localStorage.getItem("jwt");
-    // const jwt2 = Cookies.get("jwt");
-    const requestData = {
-      ...data,
-      jwt: jwt,
-    };
     if (!isLastStep) return next();
     async function postData() {
       try {
-        const response = await axios.post(
-          `${process.env.HOST}/trainingBooking/${trainingPlanId}`,
-          requestData
+        const response = await axiosInstance.post(
+          `/trainingBooking/${trainingPlanId}`,
+          data
         );
         setBookingSuccess(true);
         setTimeout(async () => {
@@ -101,9 +90,10 @@ function BookTraining() {
           error.response &&
           error.response.status === 409
         ) {
-          // warningNotification();
           toast.error("Sorry, we are not providing training in this city");
-          // router.push("/Home");
+          setTimeout(() => {
+            router.push("/home");
+          }, 1000);
         } else if (
           axios.isAxiosError(error) &&
           error.response &&
@@ -121,10 +111,6 @@ function BookTraining() {
           toast.error("Please select Booking date and time!");
         } else {
           toast.error("Error Occurred!");
-          // console.error(
-          //   "Error posting booking data:",
-          //   error.response.data.message
-          // );
         }
       }
     }
@@ -133,51 +119,34 @@ function BookTraining() {
   }
   return (
     <div>
-      {/* <Notifications /> */}
-      <div
-        style={{
-          position: "relative",
-          background: "white",
-          padding: "2rem",
-          margin: "1rem",
-          borderRadius: ".5rem",
-          fontFamily: "Arial",
-          maxWidth: "max-content",
-        }}
-      >
-        <form onSubmit={onSubmit}>
+      <div className="w-full max-w-xl mx-auto">
+        <form ref={formRef} onSubmit={onSubmit}>
           {step}
           <div
             className=" text-white"
             style={{
-              marginTop: "1rem",
+              marginTop: "1.5rem",
+              marginBottom: "1.5rem",
               display: "flex",
               gap: ".5rem",
               justifyContent: "flex-end",
             }}
           >
             {!isFirstStep && (
-              <button
-                type="button"
-                className="text-gray-700 font-bold flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
-                onClick={back}
-              >
-                Back
+              <button>
+                <img src="http://localhost:3000/assets/left.svg" alt="" />
               </button>
             )}
             {isLastStep ? (
               <button
                 type="submit"
-                className="text-white flex items-center bg-dark-blue py-2 px-3 rounded-pill fs-6 no-underline"
+                className="text-dark-blue flex items-center bg-saddle-brown px-6 rounded-full font-bold no-underline"
               >
                 Pay
               </button>
             ) : (
-              <button
-                type="submit"
-                className="text-gray-700   flex items-center font-bold bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
-              >
-                Next
+              <button className="">
+                <img src="http://localhost:3000/assets/right.svg" alt="" />
               </button>
             )}
           </div>

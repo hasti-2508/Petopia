@@ -1,4 +1,3 @@
-
 "use client";
 import { TrainingPlanBooking } from "@/interfaces/trainingPlanBooking";
 import React from "react";
@@ -28,21 +27,21 @@ function UserDataForm({
   updateFields,
 }: UserDataProps) {
   return (
-    <div className=" w-full mr-12">
+    <div className=" w-full max-w-md mx-auto mt-4">
       <h1
         className="text-center text-3xl font-bold mb-8"
         style={{ fontFamily: "open-sans", fontSize: "40px" }}
       >
         Add your personal details
       </h1>
-      <div className="border-2 border-gray-200 mb-4"></div>
+
       <div className="mb-4">
         <label
           htmlFor="user_name"
           className="block mb-2"
           style={{ fontFamily: "open-sans", fontSize: "20px" }}
         >
-          🌀 Your Name
+          Your Name
         </label>
         <input
           type="text"
@@ -59,7 +58,7 @@ function UserDataForm({
           className="block mb-2"
           style={{ fontFamily: "open-sans", fontSize: "20px" }}
         >
-          🌀 Your Email Address
+          Your Email Address
         </label>
         <input
           type="email"
@@ -76,15 +75,16 @@ function UserDataForm({
           className="block mb-2"
           style={{ fontFamily: "open-sans", fontSize: "20px" }}
         >
-          🌀 Your Phone Number
+          Your Phone Number
         </label>
         <input
           type="tel"
           placeholder="eg. 7990529537"
-          value={phoneNo}
           pattern="[0-9]{10}"
           maxLength={10}
           title="Number should be of 10 digits"
+          id="phoneNo"
+          name="phoneNo"
           onChange={(e) => updateFields({ phoneNo: e.target.value })}
           className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
           required
@@ -96,7 +96,7 @@ function UserDataForm({
           className="block mb-2"
           style={{ fontFamily: "open-sans", fontSize: "20px" }}
         >
-          🌀 Address
+          Address
         </label>
         <input
           type="text"
@@ -113,7 +113,7 @@ function UserDataForm({
           className="block mb-2"
           style={{ fontFamily: "open-sans", fontSize: "20px" }}
         >
-          🌀 City
+          City
         </label>
         <input
           type="text"
@@ -130,7 +130,7 @@ function UserDataForm({
           className="block mb-2"
           style={{ fontFamily: "open-sans", fontSize: "20px" }}
         >
-          🌀 State
+          State
         </label>
         <input
           type="text"
@@ -147,7 +147,7 @@ function UserDataForm({
           className="block mb-2"
           style={{ fontFamily: "open-sans", fontSize: "20px" }}
         >
-          🌀 Additional notes for Groomer
+          Additional notes for Groomer
         </label>
         <input
           type="text"

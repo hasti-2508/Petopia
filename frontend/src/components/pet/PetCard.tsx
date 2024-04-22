@@ -6,6 +6,9 @@ import PersonIcon from "@mui/icons-material/Person";
 import Link from "next/link";
 import { PetCardProps } from "../../interfaces/pet";
 import { User, UserData } from "../../interfaces/user";
+import axiosInstance from "@/utils/axios";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const [owner, setOwner] = useState<User>();
@@ -13,9 +16,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   useEffect(() => {
     async function fetchOwnerName() {
       try {
-        const response = await axios.get(
-          `${process.env.HOST}/user/${pet.owner[0]}`
-        );
+        const response = await axiosInstance.get(`/user/${pet.owner[0]}`);
         const { user } = response.data;
         setOwner(user);
       } catch (error) {
@@ -41,11 +42,14 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   }, []);
 
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom">
-      <Link href="/Adopt/PetData">
+    <div
+      style={{ height: "560px" }}
+      className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom"
+    >
+      <Link href={`/adopt/petData/${pet._id}`} className="flex justify-center">
         <img
-          style={{ height: "250px" }}
-          className="w-full p-4 img-responsive"
+          style={{ height: "250px", width: "370px" }}
+          className="p-4 img-responsive flex justify-center"
           src={pet.imageUrl}
           alt={pet.pet_name}
         />
@@ -83,12 +87,12 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             <label htmlFor="species" className="font-bold text-dark-blue  ">
               City:
             </label>{" "}
-            <span className="fw-medium">have to add city here</span>
+            <span className="fw-medium">{owner?.city}</span>
           </div>
         </div>
       </div>
 
-      <ul className="list-group p-2 border-top" key={Math.random()}>
+      <ul className="list-group p-2" key={Math.random()}>
         <li
           className="list-group-item border-0 d-flex justify-content-between align-items-start"
           key={Math.random()}
@@ -100,17 +104,19 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
                 <img
                   src="http://localhost:3000/assets/user.png"
                   alt="Owner Image"
-                  className="rounded-circle w-16 border border-1"
+                  className="rounded-circle w-16 "
                 />
               </div>
               <div>
                 <div className="d-flex flex-column gap-1">
                   <span className="d-flex gap-2">
-                    <PersonIcon color="primary" /> Hasti Kapadiya
+                    <PersonIcon color="primary" /> {owner?.name}
                   </span>
                   <span className="d-flex gap-2">
                     <CallIcon color="success" />{" "}
-                    <a className="text-gray-700 no-underline">Contact Now</a>
+                    <p className="text-gray-700 no-underline">
+                      {owner?.phoneNo}
+                    </p>
                   </span>
                 </div>
               </div>
@@ -118,13 +124,13 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
           </div>
         </li>
       </ul>
-      <div className="border-1 border-gray-200"></div>
     </div>
   );
 };
 
 const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
   const [owner, setOwner] = useState<UserData>();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchOwnerName() {
@@ -152,20 +158,27 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
         }
       }
     }
-
     fetchOwnerName();
   }, []);
 
+  const handlePetDetails = () => {
+    toast("Loading.....");
+    router.push(`adopt/petData/${pet._id}`);
+  };
   return (
-    <div className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom">
-      <Link href="/Adopt/PetData">
+    <div
+      style={{ height: "100%" }}
+      className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom position-relative pb-10 fade-in-up"
+    >
+      {/* <Link  href={`/adopt/petData/${pet._id}`}> */}
+      <button onClick={handlePetDetails}>
         <img
-          style={{ height: "250px" }}
-          className="w-full p-4 img-responsive"
+          style={{ height: "280px", width: "500px" }}
+          className="w-full p-3 img-responsive rounded-lg"
           src={pet.imageUrl}
           alt={pet.pet_name}
         />
-      </Link>
+      </button>
       <div className="px-6 py-3">
         <div className="font-bold text-2xl mb-2">{pet?.pet_name}</div>
         <div className="text-gray-700 text-base">
@@ -203,59 +216,36 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
           </div>
         </div>
       </div>
-
-      <ul className="list-group p-2 border-top" key={Math.random()}>
-        <li
-          className="list-group-item border-0 d-flex justify-content-between align-items-start"
-          key={Math.random()}
+      <div className="position-absolute bottom-0 w-100">
+        <div className="border-1 border-gray-200"></div>
+        <Link
+          href={`/adopt/petData/${pet._id}`}
+          className="no-underline flex justify-center items-center"
         >
-          <div className="ms-2 me-auto">
-            <p className="fw-semibold text-secondary">Owner:</p>
-            <div className="fw-bold d-flex gap-4">
-              <div>
-                <img
-                  src="http://localhost:3000/assets/user.png"
-                  alt="Owner Image"
-                  className="rounded-circle w-16 border border-1"
-                />
-              </div>
-              <div>
-                <div className="d-flex flex-column gap-1">
-                  <span className="d-flex gap-2">
-                    <PersonIcon color="primary" />
-                    {owner?.name}
-                  </span>
-                  <span className="d-flex gap-2">
-                    <CallIcon color="success" />
-                    <a className="text-gray-700 no-underline">
-                      {owner?.phoneNo}
-                    </a>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </li>
-      </ul>
-      <div className="border-1 border-gray-200"></div>
-      <Link
-        href="/PetData"
-        className="no-underline flex justify-center items-center"
-      >
-        <button
-          type="button"
-          // className="text-gray-700 font-bold items-center bg-saddle-brown py-2 px-8 mr-20 shadow mt-4 rounded-xl fs-6 no-underline"
-          className="text-white bg-primary py-1.5 px-6 my-2 rounded-xl fs-6"
-        >
-          Adopt
-        </button>
-      </Link>
+          <button
+            type="button"
+            className="text-white bg-primary py-1.5 px-6 my-2 rounded-xl fs-6 "
+            onClick={() => {
+              toast("Loading...", {
+                duration: 500,
+                style: {
+                  borderRadius: "10px",
+                  background: "#FBA834",
+                  color: "#242d62",
+                },
+              });
+            }}
+          >
+            Adopt
+          </button>
+        </Link>
+      </div>
     </div>
   );
 };
-
-const PetProfileCard: React.FC<PetCardProps> = ({ pet }) => {
+const PetProfileCard = ({ pet, handleDelete }) => {
   const [owner, setOwner] = useState<UserData>();
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchOwnerName() {
@@ -286,17 +276,20 @@ const PetProfileCard: React.FC<PetCardProps> = ({ pet }) => {
 
     fetchOwnerName();
   }, []);
+  const handlePetDetails = () => {
+    router.push(`/adopt/petData/${pet._id}`);
+  };
 
   return (
     <div className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom">
-      <Link href="/Adopt/PetData">
+      <button onClick={handlePetDetails}>
         <img
-          style={{ height: "250px" }}
+          style={{ height: "250px", width: "380px" }}
           className="w-full p-4 img-responsive"
           src={pet.imageUrl}
           alt={pet.pet_name}
         />
-      </Link>
+      </button>
       <div className="px-6 py-3">
         <div className="font-bold text-xl mb-2">{pet?.pet_name}</div>
         <div className="text-gray-700 text-base">
@@ -331,6 +324,15 @@ const PetProfileCard: React.FC<PetCardProps> = ({ pet }) => {
               City:
             </label>{" "}
             <span className="fw-medium">{owner?.city}</span>
+          </div>
+
+          <div className="flex justify-center">
+            <button
+              onClick={handleDelete}
+              className="text-white fs-6 my-3 bg-red-500 py-2 px-8 rounded-lg text-lg"
+            >
+              {pet.isAdopted=== true ? "Delete" : "Adopted?"}
+            </button>
           </div>
         </div>
       </div>

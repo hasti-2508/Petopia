@@ -17,6 +17,7 @@ function AssignTrainer() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedTrainer, setSelectedTrainer] = useState<string>("");
   const [trainingPlanId, setTrainingPlanId] = useState<Types.ObjectId>();
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -31,7 +32,7 @@ function AssignTrainer() {
           console.error("Invalid ObjectId:", error);
         }
       } else {
-        toast.error("please select booking to assign vet!");
+        toast.error("please select booking to assign trainer!");
       }
     }
   }, []);
@@ -44,8 +45,7 @@ function AssignTrainer() {
         );
         setTrainerList(response.data);
       } catch (error) {
-        toast.error("Couldn't get vet!");
-        // console.error("Error fetching vet list:", error);
+        toast.error("Couldn't get Trainer!");
       }
     };
 
@@ -63,17 +63,22 @@ function AssignTrainer() {
     setSelectedTrainer(e.target.value);
   };
 
-  const handleAssignVet = async () => {
+  const handleAssignTrainer = async () => {
     if (!trainingPlanId || !selectedTrainer) {
       toast.error("Select Trainer First");
       return;
     }
 
     try {
+      setLoading(true);
       const response = await axios.post(
-        `${process.env.HOST}/trainingBooking/assign/6613a910dc81b24327e5256c`,
+        `${
+          process.env.HOST
+        }/trainingBooking/assign/${trainingPlanId?.toString()}`,
         { trainerId: selectedTrainer }
       );
+      setLoading(false);
+      toast.success("Trainer assigned Successfully!");
       router.push("/admin/profile");
     } catch (error) {
       if (
@@ -82,14 +87,6 @@ function AssignTrainer() {
         error.response.status === 409
       ) {
         toast.error("The booking is not confirmed Yet!");
-        // toast("The booking is not confirmed Yet!", {
-        //   icon: "❌",
-        //   style: {
-        //     borderRadius: "10px",
-        //     background: "#fff",
-        //     color: "#242d62",
-        //   },
-        // });
       } else if (
         axios.isAxiosError(error) &&
         error.response &&
@@ -98,32 +95,82 @@ function AssignTrainer() {
         toast.error("Booking or Trainer Not Found!");
       } else {
         toast.error("Error assigning Trainer");
-        // console.error(error);
       }
     }
   };
 
   return (
-    <div>
-      <h1>Assign Trainer</h1>
-      <label htmlFor="search">Search Trainers in City:</label>
-      <input
-        placeholder="Search Trainer by city"
-        type="text"
-        id="search"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-      <label htmlFor="vet">Select Trainer:</label>
-      <select id="vet" onChange={handleTrainerSelection}>
-        <option value="">Select a Trainer</option>
-        {filteredTrainerList.map((trainer) => (
-          <option key={Math.random()} value={trainer._id.toString()}>
-            {trainer.name}
-          </option>
-        ))}
-      </select>
-      <button onClick={handleAssignVet}>Assign Vet</button>
+    <div className="w-full max-w-md mx-auto">
+      <h1
+        className="text-3xl font-bold mb-4 mt-6"
+        style={{ fontFamily: "open-sans", fontSize: "40px" }}
+      >
+        Assign Trainer
+      </h1>
+
+      <div className="space-y-4">
+        <div className="flex flex-col">
+          <label htmlFor="name" className="mb-1">
+            Search Trainer in City:
+          </label>
+          <input
+            placeholder="Search Trainer by city"
+            type="text"
+            id="search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="border border-gray-300 rounded-md px-4 py-2"
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="name" className="mb-1">
+            Select Trainer:
+          </label>
+          <select
+            className="border border-gray-300 rounded-md px-4 py-2"
+            id="vet"
+            onChange={handleTrainerSelection}
+          >
+            {filteredTrainerList.length <= 0 ? (
+              <option
+                className="border border-gray-300 rounded-md px-4 py-2"
+                value=""
+                disabled
+              >
+                No Trainer found
+              </option>
+            ) : (
+              <>
+                <option
+                  className="border border-gray-300 rounded-md px-4 py-2"
+                  value=""
+                >
+                  Select a Trainer
+                </option>
+                {filteredTrainerList.map((trainer) => (
+                  <option
+                    className="border border-gray-300 rounded-md px-4 py-2"
+                    key={Math.random()}
+                    value={trainer._id.toString()}
+                  >
+                    {trainer.name}-{trainer.city}
+                  </option>
+                ))}
+              </>
+            )}
+          </select>
+        </div>
+        <div className="w-full max-w-md mx-auto">
+          <button
+            onClick={handleAssignTrainer}
+            className="bg-dark-blue text-white py-2 px-4 rounded-md mt-4 hover:bg-blue-700"
+            style={{ marginBottom: "50px" }}
+          >
+            {loading ? "Loading..." : "Assign Trainer"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

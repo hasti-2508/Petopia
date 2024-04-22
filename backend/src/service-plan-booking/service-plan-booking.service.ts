@@ -37,6 +37,7 @@ export class ServicePlanBookingService {
 
     return this.servicePlanBookingModel
       .find()
+      .sort({createdAt: -1})
       .limit(resPerPage)
       .skip(skip)
       .exec();
@@ -161,14 +162,16 @@ export class ServicePlanBookingService {
     if (!booking) {
       throw new NotFoundException('Booking not found');
     }
-
-    // const existingRating = booking.ratings.find((r) => r.userId === userId);
-    // if (existingRating) {
-    //   throw new HttpException(
-    //     'You have already rated this Service booking.',
-    //     409,
-    //   );
-    // }
+    if(booking.isCompleted === false){
+      throw new HttpException("This booking isn't fulfilled yet!",409);
+    }
+    const existingRating = booking.ratings.find((r) => r.userId === userId);
+    if (existingRating) {
+      throw new HttpException(
+        'You have already rated this Service booking.',
+        409,
+      );
+    }
     const servicePlanID = booking.servicePlanId;
 
     booking.ratings.push({

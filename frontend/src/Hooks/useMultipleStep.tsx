@@ -17,8 +17,6 @@ function useMultipleStep(steps: ReactElement[]) {
     });
   }
 
-
-
   return {
     currentStepIndex,
     step: steps[currentStepIndex],
@@ -30,4 +28,4 @@ function useMultipleStep(steps: ReactElement[]) {
   };
 }
 
-export default useMultipleStep
+export default useMultipleStep;

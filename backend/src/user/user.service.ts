@@ -9,6 +9,7 @@ import mongoose from 'mongoose';
 import { User } from './schemas/user.schema';
 import { CreateUserDto } from './dto/user.dto';
 import { Pet } from 'src/pet/schemas/pet.schema';
+import { Query } from 'express-serve-static-core';
 
 @Injectable()
 export class UserService {
@@ -19,8 +20,12 @@ export class UserService {
     private petModel: mongoose.Model<Pet>,
   ) {}
 
-  async findUser() {
-    return this.UserModel.find({isActive: true, role: "user"}).exec();
+  async findUser(qu: Query): Promise<User[]> {
+    let query = this.UserModel.find({ isActive: true, role: 'user' });
+    const resPerPage = 9;
+    const currentPage = Number(qu.page) || 1;
+    const skip = resPerPage * (currentPage - 1);
+    return query.limit(resPerPage).skip(skip).exec();
   }
   async register(createUserDto: CreateUserDto): Promise<User> {
     const newUser = await this.UserModel.create(createUserDto);
@@ -40,19 +45,19 @@ export class UserService {
 
   async findUserById(id: string) {
     const isValid = mongoose.Types.ObjectId.isValid(id);
-    
+
     if (!isValid) {
       throw new HttpException('Invalid ID', 400);
     }
 
-    const user = await this.UserModel.findOne({ _id: id, isActive: true});
+    const user = await this.UserModel.findOne({ _id: id, isActive: true });
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
     return user;
   }
-  
+
   async updateUser(id: string, fieldsToUpdate: any): Promise<User> {
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) {
@@ -64,20 +69,20 @@ export class UserService {
         updateObj[key] = fieldsToUpdate[key];
       }
     }
-  
+
     const updatedUser = await this.UserModel.findByIdAndUpdate(
       id,
       { $set: updateObj },
       { new: true },
     );
-  
+
     if (!updatedUser) {
       throw new NotFoundException('User not found');
     }
-  
+
     return updatedUser;
   }
-  
+
   async deleteUser(id: string) {
     const user = await this.findUserById(id);
     user.isActive = false;
@@ -119,20 +124,21 @@ export class UserService {
     pet.isAdopted = true;
     const ownerOfPetId = pet.owner;
     const ownerOfPet = await this.UserModel.findById(ownerOfPetId);
-    if(!ownerOfPet){
-      throw new NotFoundException('No Owner Not Found');
+    if (!ownerOfPet) {
+      throw new NotFoundException('No Owner Found');
     }
-    ownerOfPet.petHistory.push(petId)
-    ownerOfPet.pets = ownerOfPet.pets.filter(pet => pet.toString() !== petId);
+    ownerOfPet.petHistory.push(petId);
+    ownerOfPet.pets = ownerOfPet.pets.filter((pet) => pet.toString() !== petId);
     ownerOfPet.save();
     const user = await this.UserModel.findById(userId);
-    if(!user){
+    if (!user) {
       throw new NotFoundException('User Not Found');
     }
-    pet.owner = ((await user).id)
+    pet.owner = (await user).id;
     pet.save();
- 
+
     user.pets.push((await pet).id);
     user.save();
+    return;
   }
 }

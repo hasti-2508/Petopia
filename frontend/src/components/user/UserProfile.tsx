@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import RatingModal from "@/components/rating/Rating";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import RateStar from "../rating/RateStar";
-import { UserCard, UserUpdateCard } from "./UserCard";
+import { UserCard  } from "./UserCard";
 import { PetProfileCard } from "../pet/PetCard";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -28,6 +28,7 @@ import {
   getServiceData,
   getTrainingData,
   getUserData,
+  petAdoption,
   serviceRating,
   trainingRating,
   userUpdate,
@@ -62,8 +63,6 @@ function UserProfile() {
     loading,
     serviceImages,
     trainingImages,
-    isEditing,
-    editedUser,
   } = useSelector((state: RootState) => state.user);
 
   const handleTabClick = (tab: string) => {
@@ -112,7 +111,7 @@ function UserProfile() {
         toast.error(error.payload);
       }
     };
-    setLoading(true);
+    dispatch(setLoading(true));
     getUser();
   }, []);
 
@@ -126,11 +125,15 @@ function UserProfile() {
       );
       if (trainingRatingResult.type === "trainingRating/rejected") {
         throw trainingRatingResult;
+      }
+      if (trainingRatingResult.type === "trainingRating/fulfilled") {
+        const serviceResult = await dispatch(getTrainingData(user._id));
+        dispatch(setTraining(serviceResult.payload));
       } else {
         return trainingRatingResult;
       }
     } catch (error) {
-      toast.error(error.payload);
+      toast.error("You have already rated this Training!");
     }
   };
   const handleServiceSubmit = async (servicePlanId: string) => {
@@ -140,42 +143,35 @@ function UserProfile() {
       );
       if (ratingResult.type === "serviceRating/rejected") {
         throw ratingResult;
+      }
+      if (ratingResult.type === "serviceRating/fulfilled") {
+        const serviceResult = await dispatch(getServiceData(user._id));
+        dispatch(setService(serviceResult.payload));
       } else {
         return ratingResult;
       }
     } catch (error) {
-      toast.error(error.payload);
+      toast.error("You have already rated this service!");
     }
   };
 
-  const handleEditClick = () => {
-    dispatch(setIsEditing(true));
-  };
-
-  const handleCancelEdit = () => {
-    dispatch(setIsEditing(false));
-    dispatch(setEditedUser(user));
-  };
-
-  const handleSaveEdit = async () => {
+  const handleDelete = async (petId: string) => {
     try {
-      dispatch(setIsEditing(false));
-      const updateResult = await dispatch(
-        userUpdate({ userId: user._id, editedUser })
-      );
-      if (updateResult.type === "userUpdate/rejected") {
-        throw updateResult;
+      const result = await dispatch(petAdoption(petId));
+      if (result.type === "petAdoption/rejected") {
+        throw result;
       } else {
-        return updateResult;
+        const petResult = await dispatch(getPetsData(user._id));
+          if (petResult.type === "getPetsData/rejected") {
+            throw petResult;
+          } else {
+            const { pets } = petResult.payload;
+            dispatch(setPets(pets));
+          }
       }
     } catch (error) {
       toast.error(error.payload);
     }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    dispatch(setEditedUser({[name]: value}))
   };
 
   useEffect(() => {
@@ -183,72 +179,42 @@ function UserProfile() {
       const randomIndex = Math.floor(Math.random() * imageUrls.length);
       return imageUrls[randomIndex];
     });
-    const randomImages2 = Array.from({ length: service.length }, () => {
+    const randomImages2 = Array.from({ length: training.length }, () => {
       const randomIndex2 = Math.floor(Math.random() * images.length);
       return images[randomIndex2];
     });
-   dispatch(setServiceImages (randomImages));
+    dispatch(setServiceImages(randomImages));
     dispatch(setTrainingImages(randomImages2));
-  }, [service]);
+  }, [service,training]);
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "Profile":
         return (
           <div>
-            {isEditing ? (
-              <>
-
-                <UserUpdateCard
-                  editedUser={editedUser}
-                  handleChange={handleChange}
-                />
-                <div className="flex mt-8 mx-6 ">
-                  <button
-                    className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
-                    onClick={handleSaveEdit}
-                  >
-                    Save
-                  </button>
-                  <button
-                    className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline mx-3"
-                    onClick={handleCancelEdit}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <UserCard user={user} />
-                <div className="flex mt-12 mx-6">
-                  <button
-                    onClick={handleEditClick}
-                    className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
-                  >
-                    Edit Profile
-                  </button>
-                  <Link
-                    href={"/pet"}
-                    className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline mx-6"
-                  >
-                    Add Pet
-                  </Link>
-                  <Link
-                    href={"/servicePlan"}
-                    className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline mx-2"
-                  >
-                    Book Service
-                  </Link>
-                  <Link
-                    href={"/trainingPlan"}
-                    className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline mx-4"
-                  >
-                    Book Training
-                  </Link>
-                </div>
-              </>
-            )}
+            <div className="w-1/4 fade-in-up ">
+              <UserCard user={user} />
+            </div>
+            <div className="flex gap-4 mt-12 mx-6">
+              <Link
+                href={"/pet"}
+                className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
+              >
+                Add Pet
+              </Link>
+              <Link
+                href={"/servicePlan"}
+                className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline "
+              >
+                Book Service
+              </Link>
+              <Link
+                href={"/trainingPlan"}
+                className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline "
+              >
+                Book Training
+              </Link>
+            </div>
           </div>
         );
       case "Pet":
@@ -258,23 +224,45 @@ function UserProfile() {
               <div className="row">
                 {pets?.length > 0 ? (
                   pets?.map((pet, index) => (
-                    <div className="col-md-4 mb-6 flex" key={pet._id}>
-                      <PetProfileCard key={index} pet={pet} />
+                    <div
+                      className="fade-in-up col-md-4 mb-6 flex"
+                      key={pet._id}
+                    >
+                      <PetProfileCard
+                        key={index}
+                        pet={pet}
+                        handleDelete={() => handleDelete(pet._id)}
+                      />
                     </div>
                   ))
                 ) : (
-                  <p>No pets found.</p>
+                  <div
+                    style={{ height: "57vh" }}
+                    className="flex flex-col mb-3 items-center justify-center fade-in-up"
+                  >
+                    <img
+                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      className="w-1/3 items-center"
+                      alt=""
+                    />
+                    <p
+                      style={{ fontSize: "18px" }}
+                      className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl "
+                    >
+                      You have no pets!
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
 
-            <a
+            <Link
               href="/pet"
               className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
               style={{ width: "94px" }}
             >
               Add Pet
-            </a>
+            </Link>
           </div>
         );
       case "Services":
@@ -286,15 +274,15 @@ function UserProfile() {
                   service?.map((ser, index) => (
                     <div
                       style={{
-                        height: "680px",
-                        width: "400px",
+                        height: "670px",
+                        width: "370px",
                       }}
-                      className="col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
+                      className=" col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
                       key={index}
                     >
                       <div>
                         <img
-                          src={serviceImages[index]} 
+                          src={serviceImages[index]}
                           alt={`Service ${index}`}
                           className="w-full h-48 mb-4 border-2"
                         />
@@ -371,162 +359,233 @@ function UserProfile() {
                               : `Not Completed Yet`}
                           </p>
                         </div>
-                        <div>
-                          <RateStar averageRating={ser.averageRating} />
-                          <button
-                            type="button"
-                            data-bs-toggle="modal"
-                            data-bs-target="#myModal"
-                            onClick={() => dispatch(setServiceId(ser._id))}
-                            className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
-                            style={{ width: "68px" }}
-                          >
-                            Rate
-                          </button>
-                          <RatingModal
-                            handleRating={Rating}
-                            handleSubmit={handleServiceSubmit}
-                            id={serviceId}
-                          />
-                        </div>
+                        {ser.isCompleted ? (
+                          <div>
+                            <RateStar averageRating={ser.averageRating} />
+                            <button
+                              type="button"
+                              data-bs-toggle="modal"
+                              data-bs-target="#myModal"
+                              onClick={() => dispatch(setServiceId(ser._id))}
+                              className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
+                              style={{ width: "68px" }}
+                            >
+                              Rate
+                            </button>
+                            <RatingModal
+                              handleRating={Rating}
+                              handleSubmit={handleServiceSubmit}
+                              id={serviceId}
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <RateStar averageRating={ser.averageRating} />
+                            <button
+                              onClick={() =>
+                                toast.error(
+                                  "This booking is not completed yet!"
+                                )
+                              }
+                              className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
+                              style={{ width: "68px" }}
+                            >
+                              Rate
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p>You Have no service booked yet!</p>
+                  <div
+                    style={{ height: "55vh" }}
+                    className="flex flex-col mb-3 items-center justify-center fade-in-up"
+                  >
+                    <img
+                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      className="w-1/3 items-center"
+                      alt=""
+                    />
+                    <p
+                      style={{ fontSize: "18px" }}
+                      className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl "
+                    >
+                      You have no Services booked Yet!
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
-            <a
+            <Link
               href="/servicePlan"
               className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline mt-8 mx-6"
               style={{ width: "133px" }}
             >
               Book Service
-            </a>
+            </Link>
           </div>
         );
       case "Trainings":
         return (
           <div>
-            {training?.length > 0 ? (
-              training?.map((training, index) => (
-                <div
-                  style={{
-                    height: "680px",
-                    width: "400px",
-                  }}
-                  className="col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
-                  key={index}
-                >
-                  <div>
+            <div className="container-fluid mt-3 ">
+              <div className="row">
+                {training?.length > 0 ? (
+                  training?.map((training, index) => (
+                    <div
+                      style={{
+                        height: "670px",
+                        width: "370px",
+                      }}
+                      className="col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
+                      key={index}
+                    >
+                      <div>
+                        <img
+                          src={trainingImages[index]}
+                          alt={`training ${index}`}
+                          className="w-full h-48 mb-4 border-2"
+                        />
+                        <div>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue  mx-2 "
+                            >
+                              Name:
+                            </label>
+                            {training.user_name}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Pet Species:
+                            </label>
+                            {training.pet_species}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Pet Gender:
+                            </label>
+                            {training.pet_gender}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Booking Date:
+                            </label>
+                            {training.booking_date}
+                          </p>
+                          <p>
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Booking Time:
+                            </label>
+                            {training.booking_time}
+                          </p>
+                          <p>
+                            {" "}
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2  "
+                            >
+                              Payment Status:
+                            </label>
+                            {training.isConfirmed ? `Done` : `Pending`}
+                          </p>
+                          <p>
+                            <label
+                              htmlFor="species"
+                              className="font-bold text-dark-blue mx-2 "
+                            >
+                              Booking Status:
+                            </label>
+                            {training.isCompleted
+                              ? `Completed`
+                              : `Not Completed Yet`}
+                          </p>
+                        </div>
+                        {training.isCompleted ? (
+                          <div>
+                            <RateStar averageRating={training.averageRating} />
+                            <button
+                              type="button"
+                              data-bs-toggle="modal"
+                              data-bs-target="#myModal"
+                              onClick={() =>
+                                dispatch(setServiceId(training._id))
+                              }
+                              className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
+                              style={{ width: "68px" }}
+                            >
+                              Rate
+                            </button>
+                            <RatingModal
+                              handleRating={Rating}
+                              handleSubmit={handleTrainingSubmit}
+                              id={trainingId}
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <RateStar averageRating={training.averageRating} />
+                            <button
+                              onClick={() =>
+                                toast.error(
+                                  "This training is not completed yet!"
+                                )
+                              }
+                              className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
+                              style={{ width: "68px" }}
+                            >
+                              Rate
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div
+                    style={{ height: "55vh" }}
+                    className="flex flex-col mb-3 items-center justify-center fade-in-up"
+                  >
                     <img
-                      src={trainingImages[index]} 
-                      alt={`training ${index}`}
-                      className="w-full h-48 mb-4 border-2"
+                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      className="w-1/3 items-center"
+                      alt=""
                     />
-                    <div>
-                      <p>
-                        {" "}
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue  mx-2 "
-                        >
-                          Name:
-                        </label>
-                        {training.user_name}
-                      </p>
-                      <p>
-                        {" "}
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue mx-2  "
-                        >
-                          Pet Species:
-                        </label>
-                        {training.pet_species}
-                      </p>
-                      <p>
-                        {" "}
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue mx-2  "
-                        >
-                          Pet Gender:
-                        </label>
-                        {training.pet_gender}
-                      </p>
-                      <p>
-                        {" "}
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue mx-2  "
-                        >
-                          Booking Date:
-                        </label>
-                        {training.booking_date}
-                      </p>
-                      <p>
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue mx-2  "
-                        >
-                          Booking Time:
-                        </label>
-                        {training.booking_time}
-                      </p>
-                      <p>
-                        {" "}
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue mx-2  "
-                        >
-                          Payment Status:
-                        </label>
-                        {training.isConfirmed ? `Done` : `Pending`}
-                      </p>
-                      <p>
-                        <label
-                          htmlFor="species"
-                          className="font-bold text-dark-blue mx-2 "
-                        >
-                          Booking Status:
-                        </label>
-                        {training.isCompleted
-                          ? `Completed`
-                          : `Not Completed Yet`}
-                      </p>
-                    </div>
-                    <div>
-                      <RateStar averageRating={training.averageRating} />
-                      <button
-                        type="button"
-                        data-bs-toggle="modal"
-                        data-bs-target="#myModal"
-                        onClick={() => dispatch(setTrainingId(training._id))}
-                        className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline"
-                      >
-                        Rate
-                      </button>
-                      <RatingModal
-                        handleRating={Rating}
-                        handleSubmit={handleTrainingSubmit}
-                        id={trainingId}
-                      />
-                    </div>
+                    <p
+                      style={{ fontSize: "18px" }}
+                      className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl "
+                    >
+                      You have no trainings booked yet!
+                    </p>
                   </div>
-                </div>
-              ))
-            ) : (
-              <p>You Have no training booked yet!</p>
-            )}
-            <a
+                )}
+              </div>
+            </div>
+            <Link
               href="/trainingPlan"
               className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline mt-8 mx-6"
               style={{ width: "140px" }}
             >
               Book Training
-            </a>
+            </Link>
           </div>
         );
       default:
@@ -550,7 +609,7 @@ function UserProfile() {
     <div>
       <div className="p-9">
         <div className="text-sm font-medium text-center text-gray-500 ">
-          <ul className="flex flex-wrap -mb-px">
+          <ul className="flex flex-wrap -mb-px fade-in-right">
             <li className="me-2">
               <button
                 onClick={() => handleTabClick("Profile")}
@@ -612,5 +671,3 @@ function UserProfile() {
 }
 
 export default UserProfile;
-
-

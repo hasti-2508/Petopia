@@ -1,6 +1,12 @@
 import { Pet, PetDto } from "@/interfaces/pet";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { petAdd, userAdd } from "./userService";
+import {
+  getServiceData,
+  getTrainingData,
+  petAdd,
+  serviceRating,
+  userAdd,
+} from "./userService";
 import { User, UserData } from "@/interfaces/user";
 import { Service } from "@/interfaces/service";
 import { Training } from "@/interfaces/training";
@@ -13,7 +19,7 @@ interface UserState {
   userDataForm: UserData;
   showPassword: boolean;
   passwordError: string;
-  userImageFile: File;
+  userImageFile: string;
   user: User;
   pets: Pet[];
   service: Service[];
@@ -109,9 +115,6 @@ const userSlice = createSlice({
     setPasswordError: (state, action: PayloadAction<string>) => {
       state.passwordError = action.payload;
     },
-    setUserImageFile: (state, action: PayloadAction<File>) => {
-      state.userImageFile = action.payload;
-    },
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
     },
@@ -153,32 +156,20 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    //petAdd
-    builder.addCase(petAdd.pending, (state) => {
-      state.isLoading = true;
-      state.error = null;
-    });
     builder.addCase(petAdd.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.petDataForm = action.payload;
-    });
-    builder.addCase(petAdd.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.error;
-    });
-
-    //userAdd
-    builder.addCase(userAdd.pending, (state) => {
-      state.isLoading = true;
-      state.error = null;
     });
     builder.addCase(userAdd.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.petDataForm = action.payload;
     });
-    builder.addCase(userAdd.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.error;
+    builder.addCase(getServiceData.fulfilled, (state, action) => {
+      state.service = action.payload;
+    });
+    builder.addCase(getTrainingData.fulfilled, (state, action) => {
+      state.training = action.payload;
+    });
+    builder.addCase(serviceRating.rejected, (state, action) => {
+      state.error = action.payload;
     });
   },
 });
@@ -189,7 +180,6 @@ export const {
   setUserDataForm,
   setShowPassword,
   setPasswordError,
-  setUserImageFile,
   setUser,
   setPets,
   setService,

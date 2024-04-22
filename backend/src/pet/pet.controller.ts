@@ -30,7 +30,6 @@ export class PetController {
   constructor(
     private petService: PetService,
     private cloudinaryService: CloudinaryService,
-    private jwtService: JwtService,
   ) {}
 
   @Get()

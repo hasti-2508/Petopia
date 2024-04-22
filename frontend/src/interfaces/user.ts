@@ -1,5 +1,4 @@
 import { Pet } from "./pet";
-import { ObjectId } from 'mongodb';
 
 export interface UserData {
     name: string;
