@@ -2,7 +2,6 @@ import { Pet } from "@/interfaces/pet";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getOwner, getPetDetails, getPets } from "./petService";
 
-
 interface PetState {
   petData: Pet[];
   originalPetData: Pet[];
@@ -44,16 +43,14 @@ const petSlice = createSlice({
     },
     setPetDetails: (state, action: PayloadAction<Pet>) => {
       state.petDetails = action.payload;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getPets.fulfilled, (state, action) => {
-      //  state.petData = action.payload;
       state.originalPetData = action.payload;
     });
 
     builder.addCase(getOwner.fulfilled, (state, action) => {
-      //  state.petData = action.payload;
       state.owner = action.payload;
     });
 
@@ -69,7 +66,7 @@ export const {
   setCurrentPage,
   setSearchTerm,
   setLoading,
-  setPetDetails
+  setPetDetails,
 } = petSlice.actions;
 
 export default petSlice.reducer;

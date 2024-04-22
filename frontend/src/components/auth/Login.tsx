@@ -1,6 +1,5 @@
-
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,7 +7,6 @@ import { login } from "@/redux/auth/authService";
 import { AppDispatch, RootState } from "@/redux/store";
 import { setFormData, setShowPassword } from "@/redux/auth/authSlice";
 import Link from "next/link";
-import { imageConfigDefault } from "next/dist/shared/lib/image-config";
 
 function Login() {
   const router = useRouter();

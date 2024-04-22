@@ -126,7 +126,6 @@ function Adopt() {
                 </svg>
               </div>
               <div className="">
-                {" "}
                 <input
                   type="search"
                   id="default-search"

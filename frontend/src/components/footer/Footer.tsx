@@ -25,12 +25,18 @@ function Footer() {
               </h2>
               <ul className="text-white font-medium ml-8 ps-0">
                 <li className="mb-4">
-                  <Link href="/home" className="hover:underline text-white no-underline">
+                  <Link
+                    href="/home"
+                    className="hover:underline text-white no-underline"
+                  >
                     About us
                   </Link>
                 </li>
                 <li>
-                  <Link href="/home" className="hover:underline text-white no-underline">
+                  <Link
+                    href="/home"
+                    className="hover:underline text-white no-underline"
+                  >
                     Blog
                   </Link>
                 </li>
@@ -81,12 +87,18 @@ function Footer() {
               </h2>
               <ul className="text-gray-500 dark:text-gray-400 font-medium ml-8 ps-0">
                 <li className="mb-4">
-                  <Link href="/vet/register" className="hover:underline text-white no-underline">
+                  <Link
+                    href="/vet/register"
+                    className="hover:underline text-white no-underline"
+                  >
                     Become a Vet
                   </Link>
                 </li>
                 <li>
-                  <Link href="/trainer/register" className="hover:underline text-white no-underline">
+                  <Link
+                    href="/trainer/register"
+                    className="hover:underline text-white no-underline"
+                  >
                     Become a Trainer
                   </Link>
                 </li>
@@ -98,12 +110,18 @@ function Footer() {
               </h2>
               <ul className="text-gray-500 dark:text-gray-400 font-medium ml-8 ps-0">
                 <li className="mb-4">
-                  <Link href="/home" className="hover:underline text-white no-underline">
+                  <Link
+                    href="/home"
+                    className="hover:underline text-white no-underline"
+                  >
                     Privacy Policy
                   </Link>
                 </li>
                 <li>
-                  <Link href="/home" className="hover:underline text-white no-underline ">
+                  <Link
+                    href="/home"
+                    className="hover:underline text-white no-underline "
+                  >
                     Terms & Conditions
                   </Link>
                 </li>
@@ -114,18 +132,20 @@ function Footer() {
         <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-200 lg:my-8" />
         <div className="sm:flex sm:items-center sm:justify-between">
           <span className="text-sm text-gray-400 sm:text-center ">
-            © 2023{" "}
-            <Link href="https://Petopia.com/" className="hover:underline">
+            © 2023
+            <Link href="/home" className="hover:underline">
               Petopia™
             </Link>
             . All Rights Reserved.
           </span>
           <div className="flex mt-4 sm:justify-center sm:mt-0">
-            <div className="text-gray-200">Developed by @Hasti Kapadiya</div>
+            <div className="text-gray-200">
+              Designed & Developed by @Hasti Kapadiya
+            </div>
             <Link
               href="https://github.com/hasti-2508"
               target="_blank"
-              className="text-gray-200 hover:text-gray-900 dark:hover:text-white ms-5"
+              className="text-gray-200 hover:text-gray-900 dark:hover:text-white ml-2"
             >
               <svg
                 className="w-6 h-6"

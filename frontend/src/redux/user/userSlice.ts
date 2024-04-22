@@ -1,11 +1,15 @@
 import { Pet, PetDto } from "@/interfaces/pet";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getServiceData, getTrainingData, petAdd, serviceRating, userAdd } from "./userService";
+import {
+  getServiceData,
+  getTrainingData,
+  petAdd,
+  serviceRating,
+  userAdd,
+} from "./userService";
 import { User, UserData } from "@/interfaces/user";
 import { Service } from "@/interfaces/service";
 import { Training } from "@/interfaces/training";
-import { getTrainingBookingData } from "../trainer/trainerService";
-
 
 interface UserState {
   isLoading: boolean;
@@ -103,7 +107,6 @@ const userSlice = createSlice({
       state,
       action: PayloadAction<Partial<UserState["userDataForm"]>>
     ) => {
-      console.log(action.payload)
       state.userDataForm = { ...state.userDataForm, ...action.payload };
     },
     setShowPassword: (state, action: PayloadAction<boolean>) => {
@@ -153,7 +156,6 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-   
     builder.addCase(petAdd.fulfilled, (state, action) => {
       state.isLoading = false;
     });
@@ -169,7 +171,6 @@ const userSlice = createSlice({
     builder.addCase(serviceRating.rejected, (state, action) => {
       state.error = action.payload;
     });
-
   },
 });
 

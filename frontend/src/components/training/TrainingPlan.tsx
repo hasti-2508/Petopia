@@ -1,5 +1,4 @@
 "use client";
-
 import { TrainingPlanData } from "@/interfaces/trainingPlan";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -9,7 +8,14 @@ import { useRouter } from "next/navigation";
 function TrainingPlan() {
   const router = useRouter();
   const handleBookTraining = (trainingPlanId: string) => {
-    setLoading(true);
+    toast("Loading...", {
+      style: {
+        borderRadius: "10px",
+        background: "#FBA834",
+        color: "#242d62",
+      },
+      duration: 2000,
+    });
     const bookingPageUrl = `/trainingPlan/bookTraining?trainingPlanId=${trainingPlanId}`;
    router.push(bookingPageUrl);
   };
@@ -265,7 +271,7 @@ function TrainingPlan() {
                     </span>
                     <button
                       onClick={() => handleBookTraining(plan._id)}
-                      className="text-gray-700 no-underline flex cursor-pointer justify-center bg-saddle-brown py-2 px-3 mt-4 font-semibold rounded-lg fs-6"
+                      className="text-gray-700 no-underline flex justify-center bg-saddle-brown hover:bg-dark-orange hover:text-white py-2 px-3 mt-4 font-semibold rounded-lg fs-6 transition duration-300 ease-in-out"
                     >
                       Book Training
                     </button>

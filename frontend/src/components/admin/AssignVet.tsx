@@ -17,6 +17,7 @@ function AssignVet() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedVet, setSelectedVet] = useState<string>("");
   const [servicePlanId, setServicePlanId] = useState<Types.ObjectId>();
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -67,12 +68,14 @@ function AssignVet() {
     }
 
     try {
+      setLoading(true);
       const response = await axios.post(
         `${
           process.env.HOST
         }/serviceBooking/assign/${servicePlanId?.toString()}`,
         { vetId: selectedVet }
       );
+      setLoading(false);
       toast.success("Vet assigned Successfully!");
       router.push("/admin/profile");
     } catch (error) {
@@ -150,7 +153,7 @@ function AssignVet() {
                     key={Math.random()}
                     value={vet._id.toString()}
                   >
-                    {vet.name}
+                    {vet.name}-{vet.city}
                   </option>
                 ))}
               </>
@@ -163,7 +166,7 @@ function AssignVet() {
             className="bg-dark-blue text-white py-2 px-4 rounded-md mt-4 hover:bg-blue-700"
             style={{ marginBottom: "50px" }}
           >
-            Assign Vet
+            {loading ? "Loading..." : "Assign Vet"}
           </button>
         </div>
       </div>

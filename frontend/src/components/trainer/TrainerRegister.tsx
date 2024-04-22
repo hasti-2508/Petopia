@@ -1,6 +1,4 @@
 "use client";
-import { Trainer } from "@/interfaces/trainer";
-import axios from "axios";
 import React, {
   ChangeEvent,
   FormEvent,
@@ -13,32 +11,13 @@ import { AppDispatch, RootState } from "@/redux/store";
 import {
   setSelectTrainings,
   setTrainerDataForm,
-  setTrainerImageFile,
   setTrainerPasswordError,
   setTrainerShowPassword,
-  setTrainerTrainingError,
 } from "@/redux/trainer/trainerSlice";
 import { useRouter } from "next/navigation";
 import { trainerRegister } from "@/redux/trainer/trainerService";
 import toast from "react-hot-toast";
 import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
-
-// const TrainerData: Trainer = {
-//   name: "",
-//   email: "",
-//   password: "",
-//   phoneNo: "",
-//   address: "",
-//   city: "",
-//   state: "",
-//   YearsOfExperience: 0,
-//   NumberOfPetsTrained: 0,
-//   trainings: [],
-//   _id: "",
-//   imageUrl: "",
-//   OnGoingTraining: [],
-//   bookings: []
-// };
 
 const servicesList = [
   "Behavioral training",
@@ -308,7 +287,7 @@ function TrainerRegister() {
             type="text"
             id="NumberOfPetsTrained"
             name="NumberOfPetsTrained"
-            maxLength={2}
+            maxLength={5}
             required
             onChange={handleDataChange}
             value={trainerDataForm.NumberOfPetsTrained}

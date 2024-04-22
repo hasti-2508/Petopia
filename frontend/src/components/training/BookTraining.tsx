@@ -1,13 +1,11 @@
 "use client";
 import { TrainingPlanBooking } from "@/interfaces/trainingPlanBooking";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import useMultipleStep from "@/Hooks/useMultipleStep";
 import PetDataForm from "../booking/PetDataForm";
 import UserDataForm from "../booking/UserDataForm";
 import DateAndTime from "../booking/DateAndTime";
 import axios from "axios";
-// import { Notifications } from "react-push-notification";
-// import addNotification from "react-push-notification";
 import { useRouter } from "next/navigation";
 import { loadStripe } from "@stripe/stripe-js";
 import axiosInstance from "@/utils/axios";
@@ -32,6 +30,13 @@ const trainingBookingData: TrainingPlanBooking = {
 };
 
 function BookTraining() {
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.classList.add("animate__animated", "animate__zoomIn");
+    }
+  }, []);
   const [data, setData] = useState(trainingBookingData);
   const [trainingPlanId, setTrainingPlanId] = useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -39,16 +44,6 @@ function BookTraining() {
 
   const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
   const stripePromise = loadStripe(publishableKey);
-
-  // function warningNotification() {
-  //   addNotification({
-  //     title: "Warning",
-  //     subtitle: "Sorry",
-  //     message: "We are not providing Training in your city.",
-  //     theme: "red",
-  //     closeButton: "X",
-  //   });
-  // }
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -125,7 +120,7 @@ function BookTraining() {
   return (
     <div>
       <div className="w-full max-w-xl mx-auto">
-        <form onSubmit={onSubmit}>
+        <form ref={formRef} onSubmit={onSubmit}>
           {step}
           <div
             className=" text-white"

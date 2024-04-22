@@ -569,8 +569,7 @@ function Home() {
         </div>
       </div>
 
-      <div className="bg-white w-full bg-home">
-      </div>
+      <div className="bg-white w-full bg-home"></div>
     </div>
   );
 }

@@ -42,19 +42,6 @@ function PetAdd() {
       if (result.type === "petAdd/rejected") {
         throw result;
       }
-      // else {
-      //   const petId = result.payload._id;
-      //   if (imageFile) {
-      //     const petDataFormWithImage = new FormData();
-      //     petDataFormWithImage.append("image", imageFile);
-      //     const res = await axios.post(
-      //       `${process.env.HOST}/pet/${petId}/uploadImage`,
-      //       petDataFormWithImage
-      //     );
-      //     toast.success("Pet Added!");
-      //     router.push("user/profile");
-      //   }
-      // }
       toast.success("Pet Added!");
       router.push("/user/profile");
     } catch (error) {

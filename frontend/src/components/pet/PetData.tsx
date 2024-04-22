@@ -7,7 +7,7 @@ import { getOwner, getPetDetails } from "@/redux/pet/petService";
 import { setPetDetails } from "@/redux/pet/petSlice";
 
 const PetDetails = () => {
-  const { id }:any = useParams();
+  const { id }: any = useParams();
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const { petDetails, owner } = useSelector((state: RootState) => state.pet);
@@ -29,20 +29,6 @@ const PetDetails = () => {
     }
     fetchData();
   }, [id]);
-  // const handleAdopt = async () => {
-  //   try {
-  //     const response = await dispatch(setAdopted(petDetails._id));
-  //     if (response.type === "setAdopted/rejected") {
-  //       throw response;
-  //     } else {
-  //       toast.success("You have Successfully adopted the pet!");
-  //       router.push("/adopt");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Please Login First!");
-  //     router.push("/login");
-  //   }
-  // };
   return (
     <div>
       <h1
@@ -52,7 +38,7 @@ const PetDetails = () => {
         Facts about: {petDetails?.pet_name}
       </h1>
       <div className=" m-12 border-2 shadow rounder-lg">
-        <div className="flex gap-6 p-5" >
+        <div className="flex gap-6 p-5">
           <img
             src={petDetails?.imageUrl}
             alt="pet picture"
@@ -105,7 +91,6 @@ const PetDetails = () => {
               </span>
             </div>
           </div>
-          
         </div>
         <div className="py-3 px-4 border-2 mt-2 mb-6 mx-12 shadow rounded-xl bg-dark-blue w-1/2 fade-in-up">
           <h1
@@ -114,40 +99,40 @@ const PetDetails = () => {
           >
             Owner Details:
           </h1>
-         <div className="flex gap-8">
-         <div>
-            <div className="flex gap-3">
-              <label className="font-bold text-saddle-brown">Name:</label>
-              <p className="text-white">{owner?.user.name}</p>
+          <div className="flex gap-8">
+            <div>
+              <div className="flex gap-3">
+                <label className="font-bold text-saddle-brown">Name:</label>
+                <p className="text-white">{owner?.user.name}</p>
+              </div>
+              <div className="flex gap-3">
+                <label className="font-bold text-saddle-brown">
+                  Phone Number:
+                </label>
+                <p className="text-white">{owner?.user.phoneNo}</p>
+              </div>
+              <div className="flex gap-3">
+                <label className="font-bold text-saddle-brown">Email:</label>
+                <p className="text-white">{owner?.user.email}</p>
+              </div>
             </div>
-            <div className="flex gap-3">
-              <label className="font-bold text-saddle-brown">
-                Phone Number:
-              </label>
-              <p className="text-white">{owner?.user.phoneNo}</p>
-            </div>
-            <div className="flex gap-3">
-              <label className="font-bold text-saddle-brown">Email:</label>
-              <p className="text-white">{owner?.user.email}</p>
+            <div>
+              <div className="flex gap-3">
+                <label className="font-bold text-saddle-brown">City:</label>
+                <p className="text-white">{owner?.user.city}</p>
+              </div>
+              <div className="flex gap-3">
+                <label className="font-bold text-saddle-brown">State:</label>
+                <p className="text-white">{owner?.user.state}</p>
+              </div>
+              <div className="flex gap-3">
+                <label className="font-bold text-saddle-brown">
+                  Pets owned by owner:
+                </label>
+                <p className="text-white">{owner?.user.pets.length}</p>
+              </div>
             </div>
           </div>
-          <div>
-            <div className="flex gap-3">
-              <label className="font-bold text-saddle-brown">City:</label>
-              <p className="text-white">{owner?.user.city}</p>
-            </div>
-            <div className="flex gap-3">
-              <label className="font-bold text-saddle-brown">State:</label>
-              <p className="text-white">{owner?.user.state}</p>
-            </div>
-            <div className="flex gap-3">
-              <label className="font-bold text-saddle-brown">
-                Pets owned by owner:
-              </label>
-              <p className="text-white">{owner?.user.pets.length}</p>
-            </div>
-          </div>
-         </div>
         </div>
       </div>
 

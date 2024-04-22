@@ -9,7 +9,6 @@ import { User, UserData } from "../../interfaces/user";
 import axiosInstance from "@/utils/axios";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { trusted } from "mongoose";
 
 const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const [owner, setOwner] = useState<User>();
@@ -44,7 +43,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
 
   return (
     <div
-      style={{ height: "610px" }}
+      style={{ height: "560px" }}
       className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom"
     >
       <Link href={`/adopt/petData/${pet._id}`} className="flex justify-center">
@@ -217,40 +216,6 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
           </div>
         </div>
       </div>
-
-      {/* <ul className="list-group p-2 border-top" key={Math.random()}>
-        <li
-          className="list-group-item border-0 d-flex justify-content-between align-items-start"
-          key={Math.random()}
-        >
-          <div className="ms-2">
-            <p className="fw-semibold text-secondary">Owner:</p>
-            <div className="fw-bold d-flex gap-4">
-              <div>
-                <img
-                  src="http://localhost:3000/assets/user.png"
-                  alt="Owner Image"
-                  className="rounded-circle w-16 border border-1"
-                />
-              </div>
-              <div>
-                <div className="d-flex flex-column gap-1">
-                  <span className="d-flex gap-2">
-                    <PersonIcon color="primary" />
-                    {owner?.name}
-                  </span>
-                  <span className="d-flex gap-2">
-                    <CallIcon color="success" />
-                    <p className="text-gray-700 no-underline">
-                      {owner?.phoneNo}
-                    </p>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </li>
-      </ul> */}
       <div className="position-absolute bottom-0 w-100">
         <div className="border-1 border-gray-200"></div>
         <Link

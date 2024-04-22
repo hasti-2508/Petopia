@@ -1,4 +1,3 @@
-
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
@@ -31,7 +30,7 @@ function ForgetPassword() {
       toast.error("No Account Found! Please Sign Up!");
       setTimeout(() => {
         router.push("/signup");
-      },1000)
+      }, 1000);
     }
   };
 

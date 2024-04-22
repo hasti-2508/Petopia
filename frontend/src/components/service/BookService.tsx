@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import useMultipleStep from "@/Hooks/useMultipleStep";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
@@ -30,6 +30,13 @@ const serviceBookingData: ServicePlanBooking = {
 };
 
 function BookService() {
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.classList.add("animate__animated", "animate__zoomIn");
+    }
+  }, []);
   const [data, setData] = useState(serviceBookingData);
   const [servicePlanId, setServicePlanId] = useState<string | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -109,7 +116,7 @@ function BookService() {
   return (
     <div>
       <div className="w-full max-w-xl mx-auto">
-        <form onSubmit={onSubmit}>
+        <form ref={formRef} onSubmit={onSubmit}>
           {step}
           <div
             className=" text-white"

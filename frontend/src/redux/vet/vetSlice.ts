@@ -3,7 +3,6 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { getServiceBookingData, getVetData, notifyVet } from "./vetService";
 import { Service } from "@/interfaces/service";
 
-
 interface VetState {
   vet: Vet;
   isLoading: boolean;
@@ -24,7 +23,7 @@ interface VetState {
 
 const initialVet: Vet = null;
 const initialService: Service[] = [];
-const initialSelectService: string[] =[];
+const initialSelectService: string[] = [];
 
 const initialVetDataForm = {
   name: "",
@@ -110,15 +109,12 @@ const vetSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    //getVetData
     builder.addCase(getVetData.pending, (state) => {
       state.isLoading = true;
       state.error = null;
     });
     builder.addCase(getVetData.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.vet = action.payload;
-      state.editedVet = action.payload;
     });
     builder.addCase(getVetData.rejected, (state, action) => {
       state.isLoading = false;
@@ -127,15 +123,12 @@ const vetSlice = createSlice({
     builder.addCase(notifyVet.fulfilled, (state, action) => {
       state.vet = action.payload;
     });
-
-    //getServiceBookingData
     builder.addCase(getServiceBookingData.pending, (state) => {
       state.isLoading = true;
       state.error = null;
     });
     builder.addCase(getServiceBookingData.fulfilled, (state, action) => {
       state.isLoading = false;
-      state.bookings = action.payload;
     });
     builder.addCase(getServiceBookingData.rejected, (state, action) => {
       state.isLoading = false;
@@ -158,8 +151,7 @@ export const {
   setVetPasswordError,
   setSelectServices,
   setVetServiceError,
-  setIsLoading
-  
+  setIsLoading,
 } = vetSlice.actions;
 
 export default vetSlice.reducer;

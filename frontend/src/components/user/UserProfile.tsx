@@ -1,8 +1,8 @@
 "use client";
 import RatingModal from "@/components/rating/Rating";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import RateStar from "../rating/RateStar";
-import { UserCard, UserUpdateCard } from "./UserCard";
+import { UserCard  } from "./UserCard";
 import { PetProfileCard } from "../pet/PetCard";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -33,7 +33,6 @@ import {
   trainingRating,
   userUpdate,
 } from "@/redux/user/userService";
-import { dividerClasses } from "@mui/material";
 
 const imageUrls = [
   "http://localhost:3000/assets/service1.jpeg",
@@ -180,13 +179,13 @@ function UserProfile() {
       const randomIndex = Math.floor(Math.random() * imageUrls.length);
       return imageUrls[randomIndex];
     });
-    const randomImages2 = Array.from({ length: service.length }, () => {
+    const randomImages2 = Array.from({ length: training.length }, () => {
       const randomIndex2 = Math.floor(Math.random() * images.length);
       return images[randomIndex2];
     });
     dispatch(setServiceImages(randomImages));
     dispatch(setTrainingImages(randomImages2));
-  }, [service]);
+  }, [service,training]);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -237,7 +236,22 @@ function UserProfile() {
                     </div>
                   ))
                 ) : (
-                  <p>No pets found.</p>
+                  <div
+                    style={{ height: "57vh" }}
+                    className="flex flex-col mb-3 items-center justify-center fade-in-up"
+                  >
+                    <img
+                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      className="w-1/3 items-center"
+                      alt=""
+                    />
+                    <p
+                      style={{ fontSize: "18px" }}
+                      className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl "
+                    >
+                      You have no pets!
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
@@ -260,8 +274,8 @@ function UserProfile() {
                   service?.map((ser, index) => (
                     <div
                       style={{
-                        height: "680px",
-                        width: "400px",
+                        height: "670px",
+                        width: "370px",
                       }}
                       className=" col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
                       key={index}
@@ -384,7 +398,22 @@ function UserProfile() {
                     </div>
                   ))
                 ) : (
-                  <p>You Have no service booked yet!</p>
+                  <div
+                    style={{ height: "55vh" }}
+                    className="flex flex-col mb-3 items-center justify-center fade-in-up"
+                  >
+                    <img
+                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      className="w-1/3 items-center"
+                      alt=""
+                    />
+                    <p
+                      style={{ fontSize: "18px" }}
+                      className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl "
+                    >
+                      You have no Services booked Yet!
+                    </p>
+                  </div>
                 )}
               </div>
             </div>
@@ -406,8 +435,8 @@ function UserProfile() {
                   training?.map((training, index) => (
                     <div
                       style={{
-                        height: "680px",
-                        width: "400px",
+                        height: "670px",
+                        width: "370px",
                       }}
                       className="col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
                       key={index}
@@ -531,7 +560,22 @@ function UserProfile() {
                     </div>
                   ))
                 ) : (
-                  <p>You Have no training booked yet!</p>
+                  <div
+                    style={{ height: "55vh" }}
+                    className="flex flex-col mb-3 items-center justify-center fade-in-up"
+                  >
+                    <img
+                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      className="w-1/3 items-center"
+                      alt=""
+                    />
+                    <p
+                      style={{ fontSize: "18px" }}
+                      className="p-4 rounded-t-lg text-dark-blue font-bold font-2xl "
+                    >
+                      You have no trainings booked yet!
+                    </p>
+                  </div>
                 )}
               </div>
             </div>

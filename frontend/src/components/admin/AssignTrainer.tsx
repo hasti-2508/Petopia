@@ -17,6 +17,7 @@ function AssignTrainer() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedTrainer, setSelectedTrainer] = useState<string>("");
   const [trainingPlanId, setTrainingPlanId] = useState<Types.ObjectId>();
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -31,7 +32,7 @@ function AssignTrainer() {
           console.error("Invalid ObjectId:", error);
         }
       } else {
-        toast.error("please select booking to assign vet!");
+        toast.error("please select booking to assign trainer!");
       }
     }
   }, []);
@@ -44,8 +45,7 @@ function AssignTrainer() {
         );
         setTrainerList(response.data);
       } catch (error) {
-        toast.error("Couldn't get vet!");
-        // console.error("Error fetching vet list:", error);
+        toast.error("Couldn't get Trainer!");
       }
     };
 
@@ -70,11 +70,15 @@ function AssignTrainer() {
     }
 
     try {
+      setLoading(true);
       const response = await axios.post(
-        `${process.env.HOST}/trainingBooking/assign/6613a910dc81b24327e5256c`,
+        `${
+          process.env.HOST
+        }/trainingBooking/assign/${trainingPlanId?.toString()}`,
         { trainerId: selectedTrainer }
       );
-      toast.success("Trainer assigned Successfully!")
+      setLoading(false);
+      toast.success("Trainer assigned Successfully!");
       router.push("/admin/profile");
     } catch (error) {
       if (
@@ -91,7 +95,6 @@ function AssignTrainer() {
         toast.error("Booking or Trainer Not Found!");
       } else {
         toast.error("Error assigning Trainer");
-        // console.error(error);
       }
     }
   };
@@ -102,7 +105,7 @@ function AssignTrainer() {
         className="text-3xl font-bold mb-4 mt-6"
         style={{ fontFamily: "open-sans", fontSize: "40px" }}
       >
-        Assign Vet
+        Assign Trainer
       </h1>
 
       <div className="space-y-4">
@@ -151,7 +154,7 @@ function AssignTrainer() {
                     key={Math.random()}
                     value={trainer._id.toString()}
                   >
-                    {trainer.name}
+                    {trainer.name}-{trainer.city}
                   </option>
                 ))}
               </>
@@ -164,7 +167,7 @@ function AssignTrainer() {
             className="bg-dark-blue text-white py-2 px-4 rounded-md mt-4 hover:bg-blue-700"
             style={{ marginBottom: "50px" }}
           >
-            Assign Trainer
+            {loading ? "Loading..." : "Assign Trainer"}
           </button>
         </div>
       </div>

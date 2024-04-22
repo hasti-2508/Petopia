@@ -63,7 +63,7 @@ const PlanCard = ({ plan, handleBookService }) => {
           </div>
           <div className="flex items-center justify-between">
             <span className="text-3xl mt-4 font-bold text-gray-900 dark:text-red">
-            ₹{plan.price}
+              ₹{plan.price}
             </span>
             <button
               onClick={() => handleBookService(plan._id)}

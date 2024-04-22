@@ -3,21 +3,20 @@ import React, { useEffect, useCallback, useState } from "react";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import classNames from "classnames";
-import axios from "axios";
 import { useRouter } from "next/navigation";
-import axiosInstance from "@/utils/axios";
 import toast from "react-hot-toast";
 import { AppDispatch, RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "@/redux/auth/authSlice";
 import { currentUser, logout } from "@/redux/auth/authService";
-import { dividerClasses } from "@mui/material";
 import Link from "next/link";
 
 function Header() {
   const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
-  const { token, userRole, imageUrl } = useSelector((state: RootState) => state.auth);
+  const { token, userRole, imageUrl } = useSelector(
+    (state: RootState) => state.auth
+  );
   const [isHovered, setIsHovered] = useState(false);
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -56,11 +55,18 @@ function Header() {
       }, 1000);
     } catch (error) {
       toast.success("Error Occurred! Please Try Again Later");
-      // console.error(error);
     }
   };
 
   const handleClick = () => {
+    toast("Loading...", {
+      style: {
+        borderRadius: "10px",
+        background: "#FBA834",
+        color: "#242d62",
+      },
+      duration: 1500,
+    });
     router.push("/availableVet");
   };
 
@@ -74,7 +80,10 @@ function Header() {
     } else if (userRole === "trainer") {
       router.push("/trainer/profile");
     } else {
-      toast.success("Unknown role or no role assigned");
+      toast.success("Can't find user Profile! Login Again");
+      setTimeout(() => {
+        router.push("/login");
+      }, 1000);
     }
   }, [userRole]);
 
@@ -130,43 +139,32 @@ function Header() {
 
         <div className="flex items-center space-x-6 ">
           <ul className="flex flex-col font-medium md:p-0 m-0 md:space-x-8 rtl:space-x-reverse md:flex-row">
-            <li >
-              {/* {(userRole === "vet" || userRole === "admin")  ? (<div></div>): ( <div className="fixed bottom-6 right-6">
-                <button
-                  className="text-white flex items-center bg-red-600 py-3 px-4 rounded-pill fs-6 floating-ui"
-                  onClick={handleClick}
-                >
-                  <img
-                    src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1710150406/call-192-svgrepo-com_djygmx.svg"
-                    className="w-6"
-                    alt="Emergency Consultation"
-                  />
-                  <span className="ml-3">
-                    Need a vet Urgently?
-                  </span>
-                </button>
-              </div>)} */}
-                   {(userRole === "vet" || userRole === "admin") ? (
-            <div></div>
-          ) : (
-            <div className="fixed bottom-6 right-6">
-              <button
-                className="text-white flex items-center bg-red-600 py-3 px-4 rounded-pill fs-6 floating-ui "
-                onClick={handleClick}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                <img
-                  src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1710150406/call-192-svgrepo-com_djygmx.svg"
-                  className="w-6"
-                  alt="Emergency Consultation"
-                />
-                <span className={`ml-3 ${isHovered ? "" : "hidden"} fade-in-right` }>
-                  Need a vet Urgently?
-                </span>
-              </button>
-            </div>
-          )}
+            <li>
+              {userRole === "vet" || userRole === "admin" ? (
+                <div></div>
+              ) : (
+                <div className="fixed bottom-6 right-6">
+                  <button
+                    className="text-white flex items-center bg-red-600 py-3 px-4 rounded-pill fs-6 floating-ui "
+                    onClick={handleClick}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  >
+                    <img
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1710150406/call-192-svgrepo-com_djygmx.svg"
+                      className="w-6"
+                      alt="Emergency Consultation"
+                    />
+                    <span
+                      className={`ml-3 ${
+                        isHovered ? "" : "hidden"
+                      } fade-in-right`}
+                    >
+                      Need a vet Urgently?
+                    </span>
+                  </button>
+                </div>
+              )}
             </li>
           </ul>
           {token && (
@@ -176,10 +174,12 @@ function Header() {
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">Open user menu</span>
                   <img
-                  // style={{width: "55px", height:"50px"}}
                     className="w-8 h-8 rounded-full"
-                    // src={`${process.env.LOCAL}/assets/user.png`}
-                    src={imageUrl? imageUrl: "http://localhost:3000/assets/user.png"}
+                    src={
+                      imageUrl
+                        ? imageUrl
+                        : "http://localhost:3000/assets/user.png"
+                    }
                     alt=""
                   />
                 </Menu.Button>
@@ -196,7 +196,7 @@ function Header() {
                 <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <Menu.Item>
                     {({ active }) => (
-                      <Link
+                      <a
                         href="#"
                         onClick={redirectToProfile}
                         className={classNames(
@@ -206,8 +206,8 @@ function Header() {
                           "block px-4 py-2 text-dark-blue hover:text-saddle-brown no-underline"
                         )}
                       >
-                        My Profile
-                      </Link>
+                        Dashboard
+                      </a>
                     )}
                   </Menu.Item>
                   <Menu.Item>
@@ -236,7 +236,7 @@ function Header() {
                 className="text-dark-blue flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
                 href="/login"
               >
-                Login 
+                Login
               </Link>
             </li>
           )}
@@ -247,4 +247,3 @@ function Header() {
 }
 
 export default Header;
-

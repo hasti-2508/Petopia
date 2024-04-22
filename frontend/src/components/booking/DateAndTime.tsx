@@ -20,8 +20,8 @@ export default function DateAndTime({
   booking_time,
   updateFields,
 }: DateAndTimeProps) {
-  const now = moment(); 
-  const minDateTime = now.clone().add(1, "hour"); 
+  const now = moment();
+  const minDateTime = now.clone().add(1, "hour");
 
   const [value, setValue] = React.useState<Moment | null>(
     moment(`${booking_date}T${booking_time}`, "DD/MM/YYTHH:mm:ss")
@@ -50,7 +50,6 @@ export default function DateAndTime({
         booking_date: formattedDate,
         booking_time: formattedTime,
       });
-   
     } else {
       updateFields({
         booking_date: "",
@@ -59,28 +58,25 @@ export default function DateAndTime({
     }
   };
 
-
   return (
-
     <div className="w-full mx-auto mt-4">
-    <h1
-      className="text-center text-3xl font-bold mb-8"
-      style={{ fontFamily: "open-sans", fontSize: "40px" }}
-    >
-      Add Date and Time
-    </h1>
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <StaticDateTimePicker
-        orientation="landscape"
-        value={value}
-        minDateTime={minDateTime}
-        onChange={(newValue) => {
-          setValue(newValue);
-          handleDateChange(newValue);
-        }}
-      />
-    </LocalizationProvider>
+      <h1
+        className="text-center text-3xl font-bold mb-8"
+        style={{ fontFamily: "open-sans", fontSize: "40px" }}
+      >
+        Choose Date and Time
+      </h1>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <StaticDateTimePicker
+          orientation="landscape"
+          value={value}
+          minDateTime={minDateTime}
+          onChange={(newValue) => {
+            setValue(newValue);
+            handleDateChange(newValue);
+          }}
+        />
+      </LocalizationProvider>
     </div>
- 
   );
 }

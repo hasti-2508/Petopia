@@ -149,11 +149,14 @@ export const userUpdate = createAsyncThunk(
   }
 );
 
-export const petAdoption = createAsyncThunk("petAdoption", async (id: string) => {
-  try {
-    const response = await axiosInstance.delete(`/pet/${id}`);
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response.data.message);
+export const petAdoption = createAsyncThunk(
+  "petAdoption",
+  async (id: string) => {
+    try {
+      const response = await axiosInstance.delete(`/pet/${id}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error.response.data.message);
+    }
   }
-});
+);

@@ -1,5 +1,4 @@
 "use client";
-
 import { ServicePlanType } from "@/interfaces/serviceplan";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -10,7 +9,14 @@ import toast from "react-hot-toast";
 function ServicePlan() {
   const router = useRouter();
   const handleBookService = (servicePlanId: string) => {
-    setLoading(true);
+    toast("Loading...", {
+      style: {
+        borderRadius: "10px",
+        background: "#FBA834",
+        color: "#242d62",
+      },
+      duration: 2000,
+    });
     const bookingPageUrl = `/servicePlan/bookService?servicePlanId=${servicePlanId}`;
     router.push(bookingPageUrl);
   };
