@@ -82,7 +82,10 @@ export class ServicePlanBookingService {
     const createdBooking = await this.servicePlanBookingModel.create(booking);
     return createdBooking;
   }
-  async assignVet(bookingId: string, assignVetDto: AssignVetDto) {
+  async assignVet(
+    bookingId: string,
+    assignVetDto: AssignVetDto,
+  ): Promise<ServicePlanBooking> {
     const vetId = new mongoose.Types.ObjectId(assignVetDto.vetId);
     const isValidBookingId = mongoose.Types.ObjectId.isValid(bookingId);
     if (!isValidBookingId) {
@@ -104,7 +107,7 @@ export class ServicePlanBookingService {
     if (booking.isConfirmed === false) {
       throw new HttpException('This booking is not confirmed yet', 409);
     }
-    if(booking.city !== vet.city){
+    if (booking.city !== vet.city) {
       throw new HttpException('The Vet is from different city!', 402);
     }
     booking.vetId = vet._id;
@@ -116,7 +119,6 @@ export class ServicePlanBookingService {
     }
     return booking.save();
   }
-
 
   async sendBookingEmail(vet: Vet): Promise<void> {
     const transporter = nodemailer.createTransport({

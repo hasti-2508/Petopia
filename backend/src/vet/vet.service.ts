@@ -38,12 +38,8 @@ export class VetService {
     }
     return vet;
   }
-  async findByWithEmail(email: string): Promise<Vet> {
-    const vet = await this.VetModel.findOne({ email, isActive: true });
-    return vet;
-  }
 
-  async findVetById(id: string) {
+  async findVetById(id: string): Promise<Vet> {
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) {
       throw new HttpException('Invalid ID', 400);
@@ -85,20 +81,6 @@ export class VetService {
     const vet = await this.findVetById(id);
     vet.isActive = false;
     vet.save();
-  }
-
-  async deleteUserPictureUrl(id: string): Promise<Vet> {
-    const vet = await this.findVetById(id);
-    if (!vet.imageUrl) {
-      throw new NotFoundException('Picture not found for the Vet');
-    }
-    if (!vet.imageHistory) {
-      vet.imageHistory = [];
-    }
-    vet.imageHistory.unshift(vet.imageUrl);
-    vet.imageUrl = '';
-    const updatedVet = await vet.save();
-    return updatedVet;
   }
 
   async confirm(bookingId: string, vetId) {
@@ -170,5 +152,4 @@ export class VetService {
       throw new Error('Vet not found');
     }
   }
-
 }

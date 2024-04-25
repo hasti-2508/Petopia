@@ -18,7 +18,7 @@ export const getOwner = createAsyncThunk(
   "getOwner",
   async (ownerId: string) => {
     try {
-      const response = await axiosInstance.get(`/user/${ownerId}`);
+      const response = await axiosInstance.get(`/pet/user/${ownerId}`);
       const data = response.data;
       return data;
     } catch (error) {

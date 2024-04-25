@@ -10,6 +10,7 @@ import {
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ServicePlanBookingService } from './service-plan-booking.service';
@@ -23,6 +24,9 @@ import {
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 import JwtPayload from 'src/interceptor/interface/jwtpayload';
+import { Roles } from 'src/role/role.decorator';
+import { RolesGuard } from 'src/role/guard/role.guard';
+import { Role } from 'src/role/role.enum';
 
 @Controller('serviceBooking')
 export class ServicePlanBookingController {
@@ -32,6 +36,8 @@ export class ServicePlanBookingController {
   ) {}
 
   @Get('')
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   async getBooking(
     @Query() query: ExpressQuery,
   ): Promise<ServicePlanBooking[]> {
@@ -83,7 +89,7 @@ export class ServicePlanBookingController {
   async assignVet(
     @Param('bookingId') bookingId: string,
     @Body() assignVetDto: AssignVetDto,
-  ) {
+  ): Promise<ServicePlanBooking> {
     return this.servicePlanBookingService.assignVet(bookingId, assignVetDto);
   }
 
@@ -107,21 +113,9 @@ export class ServicePlanBookingController {
   }
 
   @Patch(':id/complete')
-  async markBookingAsComplete(@Param('id') id: string) {
+  async markBookingAsComplete(
+    @Param('id') id: string,
+  ): Promise<ServicePlanBooking> {
     return await this.servicePlanBookingService.markBookingAsComplete(id);
   }
-  // @Post(':BookingId/ratePlan')
-  // async ratePlan(
-  //   @Req() req,
-  //   @Param('ServicePlanId') ServicePlanId: string,
-  //   @Body() rateDto: RateDto,
-  // ): Promise<ServicePlanBooking> {
-  //   const token = req.cookies?.jwt;
-  //   if (!token) {
-  //     throw new NotFoundException('User should be logged in!');
-  //   }
-  //   const decodedToken = this.jwtService.decode(token) as { userId: string };
-  //   const userId = decodedToken.userId;
-  //   return this.servicePlanBookingService.addRating(userId, ServicePlanId, rateDto.rating);
-  // }
 }

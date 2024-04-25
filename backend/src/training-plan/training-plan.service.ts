@@ -11,7 +11,7 @@ export class TrainingPlanService {
     private TrainingPlanModel: Model<TrainingPlan>,
   ) {}
 
-  async find() {
+  async find(): Promise<TrainingPlan[]> {
     return await this.TrainingPlanModel.find();
   }
 

@@ -20,11 +20,13 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const jwtToken = request.cookies?.jwt;
+    const authorizationHeader = request.headers['authorization'];
 
-    if (!jwtToken) {
+    if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
       return false;
     }
+
+    const jwtToken = authorizationHeader.split(' ')[1];
 
     try {
       const decodedToken = this.jwtService.verify(jwtToken);
@@ -36,3 +38,4 @@ export class RolesGuard implements CanActivate {
     }
   }
 }
+

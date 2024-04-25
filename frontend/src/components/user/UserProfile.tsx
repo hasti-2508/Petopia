@@ -20,7 +20,6 @@ import {
   setTraining,
   setTrainingId,
   setTrainingImages,
-  setUser,
 } from "@/redux/user/userSlice";
 import {
   getPetsData,
@@ -33,6 +32,7 @@ import {
   userUpdate,
 } from "@/redux/user/userService";
 import redirectLoggedIn from "@/middleware/redirectToLogin";
+import { useRouter } from "next/navigation";
 
 const imageUrls = [
   "http://localhost:3000/assets/service1.jpeg",
@@ -68,7 +68,7 @@ function UserProfile() {
   const handleTabClick = (tab: string) => {
     dispatch(setActiveTab(tab));
   };
-
+const router = useRouter();
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -76,12 +76,6 @@ function UserProfile() {
         if (result.type === "getUserData/rejected") {
           throw result;
         } else {
-          dispatch(setUser(result.payload));
-
-          dispatch(setEditedUser(result.payload));
-
-          dispatch(setLoading(false));
-
           const petResult = await dispatch(getPetsData(result.payload._id));
           if (petResult.type === "getPetsData/rejected") {
             throw petResult;
@@ -108,7 +102,8 @@ function UserProfile() {
           }
         }
       } catch (error) {
-        toast.error(error.payload);
+        router.push('/home')
+        // toast.error(error.payload);
       }
     };
     dispatch(setLoading(true));

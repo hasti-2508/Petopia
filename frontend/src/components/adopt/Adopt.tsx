@@ -26,21 +26,18 @@ function Adopt() {
   } = useSelector((state: RootState) => state.pet);
 
   const searchFilter = () => {
-    const filterData = originalPetData.filter((data) => {
-      const ageString = String(data.age);
-      if (
-        data.color.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        data.species.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        data.pet_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        data.gender.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        data.breed.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ageString.includes(searchTerm.toLowerCase())
-      ) {
-        return true;
-      }
-      return false;
+    const filteredData = originalPetData.filter((data) => {
+      const searchTerms = [
+        data.color,
+        data.species,
+        data.pet_name,
+        data.gender,
+        data.breed,
+        String(data.age),
+      ].map(term => term.toLowerCase());
+      return searchTerms.some(term => term.includes(searchTerm.toLowerCase()));
     });
-    dispatch(setPetData(filterData));
+    dispatch(setPetData(filteredData));
   };
 
   useEffect(() => {

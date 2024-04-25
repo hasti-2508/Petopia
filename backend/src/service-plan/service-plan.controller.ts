@@ -20,7 +20,9 @@ export class ServicePlanController {
   }
 
   @Get()
-  async getPlans() {
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  async getPlans(): Promise<ServicePlan[]> {
     return await this.servicePlanService.find();
   }
 }

@@ -35,7 +35,19 @@ export class PetService {
     return pet;
   }
 
-  async findPetById(id: string) {
+  async findUserById(id: string): Promise<User> {
+    const isValid = mongoose.Types.ObjectId.isValid(id);
+    if (!isValid) {
+      throw new HttpException('Invalid ID', 400);
+    }
+    const user = await this.UserModel.findOne({ _id: id, isActive: true });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  async findPetById(id: string): Promise<Pet> {
     const isValid = mongoose.Types.ObjectId.isValid(id);
     if (!isValid) {
       throw new HttpException('Invalid ID', 400);
@@ -47,7 +59,7 @@ export class PetService {
     return pet;
   }
 
-  async updatePet(id: string, petDto: PetDto) {
+  async updatePet(id: string, petDto: PetDto): Promise<Pet> {
     const pet = await this.findPetById(id);
     Object.assign(pet, petDto);
     const updatedPet = await pet.save();
@@ -67,19 +79,5 @@ export class PetService {
     await pet.save();
     await owner.save();
     return;
-  }
-
-  async deletePictureUrl(id: string): Promise<Pet> {
-    const pet = await this.findPetById(id);
-    if (!pet.imageUrl) {
-      throw new NotFoundException('Picture not found for the pet');
-    }
-    if (!pet.imageHistory) {
-      pet.imageHistory = [];
-    }
-    pet.imageHistory.unshift(pet.imageUrl);
-    pet.imageUrl = '';
-    const updatedPet = await pet.save();
-    return updatedPet;
   }
 }

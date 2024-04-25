@@ -22,6 +22,8 @@ import {
 } from "@/redux/vet/vetService";
 import toast from "react-hot-toast";
 import redirectLoggedIn from "@/middleware/redirectToLogin";
+import { useRouter } from "next/navigation";
+
 
 const imageUrls = [
   "http://localhost:3000/assets/service1.jpeg",
@@ -31,13 +33,12 @@ const imageUrls = [
 ];
 
 function VetProfile() {
+  const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const {
     vet,
     bookings,
     isChecked,
-    isEditing,
-    editedVet,
     bookingImages,
     activeVetTab,
     isLoading,
@@ -53,7 +54,6 @@ function VetProfile() {
         if (result.type === "getVetData/rejected") {
           throw result;
         } else {
-          dispatch(setEditedVet(result.payload));
           dispatch(setVet(result.payload));
         }
         const bookingDetailsPromises = result.payload.bookings.map(
@@ -67,7 +67,7 @@ function VetProfile() {
         const bookingDetails = await Promise.all(bookingDetailsPromises);
         dispatch(setBookings(bookingDetails));
       } catch (error) {
-        toast.error(error.payload);
+       router.push("/home");
       }
     };
     getUser();
@@ -81,36 +81,6 @@ function VetProfile() {
 
     dispatch(setBookingImages(randomImages));
   }, [bookings]);
-
-  const handleEditClick = () => {
-    dispatch(setVetIsEditing(true));
-  };
-
-  const handleCancelEdit = () => {
-    dispatch(setVetIsEditing(false));
-    dispatch(setEditedVet(vet));
-  };
-
-  const handleSaveEdit = async () => {
-    dispatch(setVetIsEditing(false));
-    try {
-      const vetResult = await dispatch(
-        vetUpdate({ editedVet, vetId: vet._id })
-      );
-      if (vetResult.type === "vetUpdate/rejected") {
-        throw vetResult;
-      } else {
-        return vetResult;
-      }
-    } catch (error) {
-      toast.error(error.payload);
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    dispatch(setEditedVet({ [name]: value }));
-  };
 
   const handleComplete = async (bookingId) => {
     try {

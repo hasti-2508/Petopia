@@ -16,9 +16,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   useEffect(() => {
     async function fetchOwnerName() {
       try {
-        const response = await axiosInstance.get(`/user/${pet.owner[0]}`);
-        const { user } = response.data;
-        setOwner(user);
+        const response = await axiosInstance.get(`/pet/user/${pet.owner[0]}`);
+        setOwner(response.data);
       } catch (error) {
         if (
           axios.isAxiosError(error) &&
@@ -136,10 +135,9 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
     async function fetchOwnerName() {
       try {
         const response = await axios.get(
-          `${process.env.HOST}/user/${pet.owner[0]}`
-        );
-        const { user } = response.data;
-        setOwner(user);
+          `${process.env.HOST}/pet/user/${pet.owner[0]}`
+        );    
+        setOwner(response.data);
       } catch (error) {
         if (
           axios.isAxiosError(error) &&
@@ -160,7 +158,6 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
     }
     fetchOwnerName();
   }, []);
-
   const handlePetDetails = () => {
     toast("Loading...", {
       style: {
@@ -177,7 +174,6 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
       style={{ height: "100%" }}
       className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom position-relative pb-10 fade-in-up"
     >
-      {/* <Link  href={`/adopt/petData/${pet._id}`}> */}
       <button onClick={handlePetDetails}>
         <img
           style={{ height: "280px", width: "500px" }}
@@ -258,10 +254,9 @@ const PetProfileCard = ({ pet, handleDelete }) => {
     async function fetchOwnerName() {
       try {
         const response = await axios.get(
-          `${process.env.HOST}/user/${pet.owner[0]}`
+          `${process.env.HOST}/pet/user/${pet.owner[0]}`
         );
-        const { user } = response.data;
-        setOwner(user);
+        setOwner( response.data);
       } catch (error) {
         if (
           axios.isAxiosError(error) &&

@@ -16,8 +16,10 @@ import { UserCard } from "../user/UserCard";
 import { VetAdminCard, VetCard } from "../vet/VetCard";
 import Pagination from "../pagination/Pagination";
 import redirectLoggedIn from "@/middleware/redirectToLogin";
+import { useRouter } from "next/navigation";
 
 function AdminProfile() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("ServicesBookings");
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -188,7 +190,16 @@ function AdminProfile() {
         );
         setPets(petResponse.data);
       } catch (error) {
-        console.error(error);
+        if (
+          axios.isAxiosError(error) &&
+          error.response &&
+          error.response.status === 403
+        ) {
+          router.push("/home"); 
+        }
+        else{
+          console.error(error)
+        }
       }
     };
 

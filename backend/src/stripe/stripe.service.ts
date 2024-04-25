@@ -18,14 +18,10 @@ export class StripeService {
     @InjectModel(User.name)
     private UserModel: mongoose.Model<User>,
   ) {
-    this.stripe = new Stripe(
-      process.env.STRIPE_SECRET_KEY,
-      {
-        apiVersion: '2023-10-16',
-      },
-    );
+    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2023-10-16',
+    });
   }
-
 
   async checkoutForBooking(id: string) {
     const isValid = await mongoose.Types.ObjectId.isValid(id);
@@ -34,39 +30,38 @@ export class StripeService {
       throw new HttpException('Invalid ID', 400);
     }
     let booking;
-const service = await this.servicePlanBookingModel.findOne({ _id: id });
-const training = await this.TrainingPlanBookingModel.findOne({ _id: id });
+    const service = await this.servicePlanBookingModel.findOne({ _id: id });
+    const training = await this.TrainingPlanBookingModel.findOne({ _id: id });
 
-if(service){
-   booking = service;
-}else if(training){
-  booking = training;
-}
-else{
-  throw new NotFoundException('Booking Not found')
-}
-      const total = booking.totalPrice;
-      const session = await this.stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        success_url: `http://localhost:3000/success?id=${booking.id}`,
-        cancel_url: `http://localhost:3000/PetService`,
-        customer_email: booking.email,
-        client_reference_id: booking.userId,
-        mode: 'payment',
-        line_items: [
-          {
-            price_data: {
-              currency: 'usd',
-              product_data: {
-                name: 'booking on petopia',
-              },
-              unit_amount: total * 100,
+    if (service) {
+      booking = service;
+    } else if (training) {
+      booking = training;
+    } else {
+      throw new NotFoundException('Booking Not found');
+    }
+    const total = booking.totalPrice;
+    const session = await this.stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      success_url: `http://localhost:3000/success?id=${booking.id}`,
+      cancel_url: `http://localhost:3000/PetService`,
+      customer_email: booking.email,
+      client_reference_id: booking.userId,
+      mode: 'payment',
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: 'booking on petopia',
             },
-            quantity: 1,
+            unit_amount: total * 100,
           },
-        ],
-      });
-      return session;
+          quantity: 1,
+        },
+      ],
+    });
+    return session;
   }
 
   async confirmationOfPayment(id: string) {

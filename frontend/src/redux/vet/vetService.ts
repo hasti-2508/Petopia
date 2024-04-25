@@ -2,13 +2,18 @@ import { VetData } from "@/interfaces/vet";
 import axiosInstance from "@/utils/axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-export const getVetData = createAsyncThunk("getVetData", async () => {
+export const getVetData = createAsyncThunk("getVetData", async (_,thunkAPI) => {
   try {
     const response = await axiosInstance.get("/currentUser");
     const data = response.data;
     return data;
   } catch (error) {
-    throw new Error(error.response.data.message);
+    if (error.response && error.response.status === 403) {
+      const errorMessage = error.response.data.message || 'You are not authorized to access this resource.';
+      return thunkAPI.rejectWithValue({ status: 403, message: errorMessage });
+    } else {
+      throw new Error(error.response?.data?.message || 'An error occurred while fetching user data.');
+    }
   }
 });
 

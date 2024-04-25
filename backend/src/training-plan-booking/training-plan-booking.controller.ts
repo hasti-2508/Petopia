@@ -9,9 +9,9 @@ import {
   Query,
   Req,
   UnauthorizedException,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { TrainingPlanBookingService } from './training-plan-booking.service';
 import {
   AssignTrainerDto,
@@ -22,14 +22,17 @@ import { TrainingPlanBooking } from './schemas/training-plan-booking.schema';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 import JwtPayload from 'src/interceptor/interface/jwtpayload';
+import { Role } from 'src/role/role.enum';
+import { Roles } from 'src/role/role.decorator';
+import { RolesGuard } from 'src/role/guard/role.guard';
 
 @Controller('trainingBooking')
 export class TrainingPlanBookingController {
-  constructor(
-    private TrainingPlanBookingService: TrainingPlanBookingService,
-  ) {}
+  constructor(private TrainingPlanBookingService: TrainingPlanBookingService) {}
 
   @Get('')
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
   async getTrainings(
     @Query() query: ExpressQuery,
   ): Promise<TrainingPlanBooking[]> {
@@ -79,7 +82,7 @@ export class TrainingPlanBookingController {
   async assignTrainer(
     @Param('bookingId') bookingId: string,
     @Body() assignTrainerDto: AssignTrainerDto,
-  ) {
+  ): Promise<TrainingPlanBooking> {
     return await this.TrainingPlanBookingService.assignTrainer(
       bookingId,
       assignTrainerDto,
@@ -106,7 +109,9 @@ export class TrainingPlanBookingController {
   }
 
   @Patch('/:id/complete')
-  async markTrainingAsComplete(@Param('id') id: string) {
+  async markTrainingAsComplete(
+    @Param('id') id: string,
+  ): Promise<TrainingPlanBooking> {
     return this.TrainingPlanBookingService.markTrainingAsComplete(id);
   }
 }

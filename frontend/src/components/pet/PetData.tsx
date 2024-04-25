@@ -103,33 +103,33 @@ const PetDetails = () => {
             <div>
               <div className="flex gap-3">
                 <label className="font-bold text-saddle-brown">Name:</label>
-                <p className="text-white">{owner?.user.name}</p>
+                <p className="text-white">{owner?.name}</p>
               </div>
               <div className="flex gap-3">
                 <label className="font-bold text-saddle-brown">
                   Phone Number:
                 </label>
-                <p className="text-white">{owner?.user.phoneNo}</p>
+                <p className="text-white">{owner?.phoneNo}</p>
               </div>
               <div className="flex gap-3">
                 <label className="font-bold text-saddle-brown">Email:</label>
-                <p className="text-white">{owner?.user.email}</p>
+                <p className="text-white">{owner?.email}</p>
               </div>
             </div>
             <div>
               <div className="flex gap-3">
                 <label className="font-bold text-saddle-brown">City:</label>
-                <p className="text-white">{owner?.user.city}</p>
+                <p className="text-white">{owner?.city}</p>
               </div>
               <div className="flex gap-3">
                 <label className="font-bold text-saddle-brown">State:</label>
-                <p className="text-white">{owner?.user.state}</p>
+                <p className="text-white">{owner?.state}</p>
               </div>
               <div className="flex gap-3">
                 <label className="font-bold text-saddle-brown">
                   Pets owned by owner:
                 </label>
-                <p className="text-white">{owner?.user.pets.length}</p>
+                <p className="text-white">{owner?.pets.length}</p>
               </div>
             </div>
           </div>
@@ -153,15 +153,6 @@ const PetDetails = () => {
       <p className="text-red-600 italic container font-bold">
         *Only make any payment upon arrival of the pet at your location.
       </p>
-
-      {/* <div className="flex justify-center">
-        <button
-          onClick={() => handleAdopt()}
-          className="text-white my-12 fs-6 bg-saddle-brown py-2 px-8 rounded-lg text-lg"
-        >
-          Adopt
-        </button>
-      </div> */}
     </div>
   );
 };

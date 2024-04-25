@@ -34,14 +34,14 @@ export class TrainingPlanBookingService {
     const skip = resPerPage * (currentPage - 1);
 
     return await this.TrainingPlanBookingModel.find()
-    .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .limit(resPerPage)
       .skip(skip)
       .exec();
   }
 
   async findBookingById(bookingId: string): Promise<TrainingPlanBooking> {
-    const booking =  await this.TrainingPlanBookingModel.findById(bookingId);
+    const booking = await this.TrainingPlanBookingModel.findById(bookingId);
     return booking;
   }
 
@@ -95,8 +95,13 @@ export class TrainingPlanBookingService {
     const createdBooking = await this.TrainingPlanBookingModel.create(booking);
     return createdBooking.save();
   }
-  async assignTrainer(bookingId: string, assignTrainerDto: AssignTrainerDto) {
-    const trainerId = await new mongoose.Types.ObjectId(assignTrainerDto.trainerId);
+  async assignTrainer(
+    bookingId: string,
+    assignTrainerDto: AssignTrainerDto,
+  ): Promise<TrainingPlanBooking> {
+    const trainerId = await new mongoose.Types.ObjectId(
+      assignTrainerDto.trainerId,
+    );
     const isValidBookingId = await mongoose.Types.ObjectId.isValid(bookingId);
     if (!isValidBookingId) {
       throw new HttpException('Invalid Booking ID', 400);
@@ -119,7 +124,7 @@ export class TrainingPlanBookingService {
     if (booking.isConfirmed === false) {
       throw new HttpException('This booking is not confirmed yet', 409);
     }
-    if(booking.city !== Trainer.city){
+    if (booking.city !== Trainer.city) {
       throw new HttpException('The Vet is from different city!', 402);
     }
 
@@ -172,7 +177,6 @@ export class TrainingPlanBookingService {
       throw new NotFoundException('Booking not found');
     }
 
-
     if (booking.isCompleted === false) {
       throw new HttpException("This booking isn't fulfilled yet!", 409);
     }
@@ -208,17 +212,16 @@ export class TrainingPlanBookingService {
     return booking.save();
   }
 
-  async markTrainingAsComplete(id: string):Promise<TrainingPlanBooking>{
+  async markTrainingAsComplete(id: string): Promise<TrainingPlanBooking> {
     const training = await this.TrainingPlanBookingModel.findById(id);
-    if(!training){
-      throw new NotFoundException("Booking Not Found");
+    if (!training) {
+      throw new NotFoundException('Booking Not Found');
     }
-    if(training){
+    if (training) {
       training.isCompleted = true;
       return training.save();
-    }
-    else{
-      throw new Error('Booking Not Found')
+    } else {
+      throw new Error('Booking Not Found');
     }
   }
 }

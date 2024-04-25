@@ -11,6 +11,7 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
@@ -20,6 +21,9 @@ import { UserService } from './user.service';
 import { PetService } from 'src/pet/pet.service';
 import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 import { Query as ExpressQuery } from 'express-serve-static-core';
+import { Roles } from 'src/role/role.decorator';
+import { RolesGuard } from 'src/role/guard/role.guard';
+import { Role } from 'src/role/role.enum';
 
 @Controller('user')
 export class UserController {
@@ -30,7 +34,7 @@ export class UserController {
 
   @Post('/register')
   async register(@Body() createUserDto: CreateUserDto): Promise<User> {
-    const { name, email, password, phoneNo, address, city, state,imageUrl } =
+    const { name, email, password, phoneNo, address, city, state, imageUrl } =
       createUserDto;
     if (password.length < 6) {
       throw new BadRequestException(
@@ -77,7 +81,7 @@ export class UserController {
       state,
       role: 'user',
       isActive: true,
-      imageUrl
+      imageUrl,
     };
 
     if (!address && !city && !state) {
@@ -98,6 +102,8 @@ export class UserController {
   }
 
   @Get('/:id')
+  @Roles(Role.USER)
+  @UseGuards(RolesGuard)
   async getUserByID(@Param('id') userId: string) {
     try {
       const user = await this.userService.findUserById(userId);
@@ -115,18 +121,16 @@ export class UserController {
   }
 
   @Patch('update/:id')
-  async updateUser(@Body() updateUserDto, @Param('id') userId: string) {
+  async updateUser(
+    @Body() updateUserDto,
+    @Param('id') userId: string,
+  ): Promise<User> {
     return this.userService.updateUser(userId, updateUserDto);
   }
 
   @Delete('delete/:id')
   async deleteUser(@Param('id') userId: string) {
     return this.userService.deleteUser(userId);
-  }
-
-  @Delete('/:id/deleteImage')
-  async deletePictureUrl(@Param('id') userId: string) {
-    return await this.userService.deleteUserPictureUrl(userId);
   }
 
   @Post('/:petId/adopt')

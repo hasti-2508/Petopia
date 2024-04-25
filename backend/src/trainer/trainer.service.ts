@@ -75,31 +75,15 @@ export class TrainerService {
     trainer.save();
   }
 
-  async deleteUserPictureUrl(id: string): Promise<Trainer> {
-    const trainer = await this.findTrainerById(id);
-    if (!trainer.imageUrl) {
-      throw new NotFoundException('Picture not found for the Trainer');
-    }
-    if (!trainer.imageHistory) {
-      trainer.imageHistory = [];
-    }
-    trainer.imageHistory.unshift(trainer.imageUrl);
-    trainer.imageUrl = '';
-    const updatedTrainer = await trainer.save();
-    return updatedTrainer;
-  }
-
-  async confirm(bookingId: string, trainerId) {
+  async confirm(bookingId: string, trainerId): Promise<TrainingPlanBooking> {
     const isValidBookingId = mongoose.Types.ObjectId.isValid(bookingId);
     if (!isValidBookingId) {
       throw new HttpException('Invalid Booking ID', 400);
     }
-
     const booking = await this.TrainingPlanBookingModel.findById(bookingId);
     if (!booking) {
       throw new NotFoundException('Booking not found');
     }
-
     booking.isCompleted = true;
     const trainer = await this.TrainerModel.findById(trainerId);
     if (!trainer) {

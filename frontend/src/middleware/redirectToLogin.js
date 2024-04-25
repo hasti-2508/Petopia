@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const redirectLoggedIn = (WrappedComponent) => {
+const redirectLoggedIn = (WrappedComponent)  => {
   const RedirectLoggedIn = (props) => {
     const router = useRouter();
 

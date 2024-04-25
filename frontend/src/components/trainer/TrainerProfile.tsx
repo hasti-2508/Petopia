@@ -16,6 +16,7 @@ import {
 import toast from "react-hot-toast";
 import { TrainerCard } from "./TrainerCard";
 import redirectLoggedIn from "@/middleware/redirectToLogin";
+import { useRouter } from "next/navigation";
 
 const images = [
   "http://localhost:3000/assets/training1.jpeg",
@@ -26,6 +27,7 @@ const images = [
 ];
 
 function TrainerProfile() {
+  const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const { trainer, trainings, trainingImages, activeTrainerTab } = useSelector(
     (state: RootState) => state.trainer
@@ -39,18 +41,23 @@ function TrainerProfile() {
     const getUser = async () => {
       try {
         const result = await dispatch(getTrainerData());
-        const bookingDetailsPromises = result.payload.bookings.map(
-          async (bookingId: string) => {
-            const bookingResponse = await dispatch(
-              getTrainingBookingData(bookingId)
-            );
-            return bookingResponse.payload;
-          }
-        );
-        const bookingDetails = await Promise.all(bookingDetailsPromises);
-        dispatch(setTrainings(bookingDetails));
+        if (result.type === "getTrainerData/rejected") {
+          throw result;
+        }
+        else{
+          const bookingDetailsPromises = result.payload.bookings.map(
+            async (bookingId: string) => {
+              const bookingResponse = await dispatch(
+                getTrainingBookingData(bookingId)
+              );
+              return bookingResponse.payload;
+            }
+          );
+          const bookingDetails = await Promise.all(bookingDetailsPromises);
+          dispatch(setTrainings(bookingDetails));
+        }
       } catch (error) {
-        toast.error(error.payload);
+        router.push("/home");
       }
     };
     getUser();

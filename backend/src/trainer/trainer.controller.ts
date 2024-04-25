@@ -10,6 +10,7 @@ import {
   Put,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { CreateTrainerDto } from './dto/trainer.dto';
@@ -17,6 +18,10 @@ import { TrainerService } from './trainer.service';
 import { Trainer } from './schemas/trainer.schema';
 import { JwtService } from '@nestjs/jwt';
 import { Query as ExpressQuery } from 'express-serve-static-core';
+import { Roles } from 'src/role/role.decorator';
+import { RolesGuard } from 'src/role/guard/role.guard';
+import { Role } from 'src/role/role.enum';
+import { TrainingPlanBooking } from 'src/training-plan-booking/schemas/training-plan-booking.schema';
 
 @Controller('trainer')
 export class TrainerController {
@@ -38,7 +43,7 @@ export class TrainerController {
       YearsOfExperience,
       NumberOfPetsTrained,
       trainings,
-      imageUrl
+      imageUrl,
     } = createTrainerDto;
     if (password.length < 6) {
       throw new BadRequestException(
@@ -117,16 +122,17 @@ export class TrainerController {
   }
 
   @Get('/:id')
-  async getTrainerByID(@Param('id') trainerId: string) {
+  @Roles(Role.TRAINER)
+  @UseGuards(RolesGuard)
+  async getTrainerByID(@Param('id') trainerId: string): Promise<Trainer> {
     return this.trainerService.findTrainerById(trainerId);
   }
-
 
   @Put('/:id')
   async updateUser(
     @Body() updateUserDto: CreateTrainerDto,
     @Param('id') trainerId: string,
-  ) {
+  ): Promise<Trainer> {
     return this.trainerService.updateTrainer(trainerId, updateUserDto);
   }
 
@@ -135,13 +141,11 @@ export class TrainerController {
     return this.trainerService.deleteTrainer(trainerId);
   }
 
-  @Delete('/:id/deleteImage')
-  async deletePictureUrl(@Param('id') trainerId: string) {
-    return await this.trainerService.deleteUserPictureUrl(trainerId);
-  }
-
   @Post('/:bookingId/confirm')
-  async confirm(@Param('bookingId') bookingId: string, @Req() req) {
+  async confirm(
+    @Param('bookingId') bookingId: string,
+    @Req() req,
+  ): Promise<TrainingPlanBooking> {
     const token = req.cookies.jwt;
     if (!token) {
       throw new NotFoundException('Vet Should be logged in');

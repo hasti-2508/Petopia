@@ -20,7 +20,9 @@ export class TrainingPlanController {
   }
 
   @Get()
-  async getPlans() {
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  async getPlans(): Promise<TrainingPlan[]> {
     return await this.trainingPlanService.find();
   }
 }
