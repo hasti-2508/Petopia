@@ -16,6 +16,8 @@ import { PetDto, PetFilterDto, PetSortDto } from './dto/pet.dto';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import JwtPayload from 'src/interceptor/interface/jwtpayload';
 import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
+import { Pet } from './schemas/pet.schema';
+import { User } from 'src/user/schemas/user.schema';
 
 @Controller('pet')
 export class PetController {
@@ -26,13 +28,22 @@ export class PetController {
     @Query() filterDto: PetFilterDto,
     @Query() sortDto: PetSortDto,
     @Query() query: ExpressQuery,
-  ) {
+  ): Promise<Pet[]> {
     return await this.petService.findPet(filterDto, sortDto, query);
   }
 
   @Get('/:id')
-  async findPetByID(@Param('id') petId: string) {
+  async findPetByID(@Param('id') petId: string): Promise<Pet> {
     return this.petService.findPetById(petId);
+  }
+  @Get('/user/:id')
+  async getUserByID(@Param('id') userId: string): Promise<User> {
+    try {
+      const user = await this.petService.findUserById(userId);
+      return user;
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   @Post('/')
@@ -47,7 +58,10 @@ export class PetController {
   }
 
   @Put('/:id')
-  async updatePet(@Body() petDto: PetDto, @Param('id') petId: string) {
+  async updatePet(
+    @Body() petDto: PetDto,
+    @Param('id') petId: string,
+  ): Promise<Pet> {
     let updatedPet = await this.petService.updatePet(petId, petDto);
     return updatedPet;
   }
@@ -55,10 +69,5 @@ export class PetController {
   @Delete(':id')
   async deletePet(@Param('id') petId: string) {
     return this.petService.deletePet(petId);
-  }
-
-  @Delete('/:id/Image')
-  async deletePictureUrl(@Param('id') petId: string) {
-    return await this.petService.deletePictureUrl(petId);
   }
 }

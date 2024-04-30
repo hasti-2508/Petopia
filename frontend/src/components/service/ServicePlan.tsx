@@ -5,20 +5,15 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import PlanCard from "../booking/PlanCard";
 import toast from "react-hot-toast";
+import redirectLoggedIn from "@/middleware/redirectToLogin";
 
 function ServicePlan() {
   const router = useRouter();
   const handleBookService = (servicePlanId: string) => {
-    toast("Loading...", {
-      style: {
-        borderRadius: "10px",
-        background: "#FBA834",
-        color: "#242d62",
-      },
-      duration: 2000,
-    });
+    setLoading(true);
     const bookingPageUrl = `/servicePlan/bookService?servicePlanId=${servicePlanId}`;
     router.push(bookingPageUrl);
+    setLoading(false);
   };
   const [servicePlans, setServicePlans] = useState<ServicePlanType[]>([]);
   const [loading , setLoading] = useState<boolean>(true);
@@ -40,19 +35,18 @@ function ServicePlan() {
     fetchServicePlans();
   }, []);
   return (
-
     <div>
     {loading ? <div className="flex justify-center items-center my-52">
           <img
             style={{ width: "250px", height: "250px" }}
-            src="http://localhost:3000/assets/AdoptLoading.gif"
+            src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379445/AdoptLoading_esfppq.gif"
             alt="Loading..."
           />
         </div> : (
       <div className="fade-in-up">
       <div className="position-relative ">
         <img
-          src="http://localhost:3000/assets/petGrooming.jpg"
+          src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379477/petGrooming_lkvpfx.jpg"
           alt="Background"
           className="inset-0 w-full h-full object-cover"
         />
@@ -101,7 +95,7 @@ function ServicePlan() {
             style={{ width: "117.5rem", marginLeft: "250px" }}
           >
             <img
-              src="http://localhost:3000/assets/grooming.jpg"
+              src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379459/grooming_aa53wd.jpg"
               className="w-1/4  rounded-2xl  shadow-2xl"
             />
             <div>
@@ -260,4 +254,4 @@ function ServicePlan() {
 
   
 
-export default ServicePlan;
+export default redirectLoggedIn(ServicePlan);

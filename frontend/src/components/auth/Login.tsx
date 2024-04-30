@@ -83,7 +83,7 @@ function Login() {
                   <div className="logo">
                     <img
                       className="rounded-full"
-                      src="http://localhost:3000/assets/user.png"
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379708/user_yqmdpt.png"
                       />
                   </div>
                   <div className="form-group">

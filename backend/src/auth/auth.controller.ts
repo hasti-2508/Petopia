@@ -18,6 +18,9 @@ import { Request, Response } from 'express';
 import { LoginDto, ResetPasswordDto } from './dto/auth.dto';
 import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 import JwtPayload from 'src/interceptor/interface/jwtpayload';
+import { User } from 'src/user/schemas/user.schema';
+import { Trainer } from 'src/trainer/schemas/trainer.schema';
+import { Vet } from 'src/vet/schemas/vet.schema';
 
 @Controller()
 export class AuthController {
@@ -57,7 +60,7 @@ export class AuthController {
 
   @Get('/currentUser')
   @UseInterceptors(JwtInterceptor)
-  async currentUser(@Req() request: Request) {
+  async currentUser(@Req() request: Request): Promise<User | Trainer | Vet> {
     try {
       const data: JwtPayload = request.token;
       if (!data) {

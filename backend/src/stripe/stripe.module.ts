@@ -6,7 +6,6 @@ import { ServicePlanBookingSchema } from 'src/service-plan-booking/schemas/servi
 import { TrainingPlanBookingSchema } from 'src/training-plan-booking/schemas/training-plan-booking.schema';
 import { UserSchema } from 'src/user/schemas/user.schema';
 
-
 @Module({
   imports: [
     MongooseModule.forFeature([

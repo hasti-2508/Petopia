@@ -13,6 +13,7 @@ import {
   setLoading,
 } from "@/redux/pet/petSlice";
 import toast from "react-hot-toast";
+import redirectLoggedIn from "@/middleware/redirectToLogin";
 
 function Adopt() {
   const dispatch: AppDispatch = useDispatch();
@@ -25,21 +26,18 @@ function Adopt() {
   } = useSelector((state: RootState) => state.pet);
 
   const searchFilter = () => {
-    const filterData = originalPetData.filter((data) => {
-      const ageString = String(data.age);
-      if (
-        data.color.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        data.species.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        data.pet_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        data.gender.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        data.breed.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        ageString.includes(searchTerm.toLowerCase())
-      ) {
-        return true;
-      }
-      return false;
+    const filteredData = originalPetData.filter((data) => {
+      const searchTerms = [
+        data.color,
+        data.species,
+        data.pet_name,
+        data.gender,
+        data.breed,
+        String(data.age),
+      ].map(term => term.toLowerCase());
+      return searchTerms.some(term => term.includes(searchTerm.toLowerCase()));
     });
-    dispatch(setPetData(filterData));
+    dispatch(setPetData(filteredData));
   };
 
   useEffect(() => {
@@ -75,24 +73,13 @@ function Adopt() {
     }
   };
 
-  if (!petData) {
-    return (
-      <div className="flex justify-center items-center w-full h-full">
-        <img
-          src="http://localhost:3000/assets/AdoptLoading.gif"
-          alt="Loading..."
-        />
-      </div>
-    );
-  }
-
-  return (
+ return (
     <div>
       {loading ? (
         <div className="flex justify-center items-center my-52">
           <img
             style={{ width: "250px", height: "250px" }}
-            src="http://localhost:3000/assets/AdoptLoading.gif"
+            src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379445/AdoptLoading_esfppq.gif"
             alt="Loading..."
           />
         </div>
@@ -100,7 +87,7 @@ function Adopt() {
         <div className="fade-in-up">
           <div className="flex justify-center items-center w-full h-full mb-4 fade-in-up">
             <img
-              src="http://localhost:3000/assets/adoption.png"
+              src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379443/adoption_wzxvlh.png"
               alt="Background"
               className="object-cover"
             />
@@ -172,4 +159,6 @@ function Adopt() {
   );
 }
 
-export default Adopt;
+export default redirectLoggedIn(Adopt);
+
+

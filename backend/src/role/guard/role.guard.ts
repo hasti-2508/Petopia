@@ -3,6 +3,7 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Role } from '../role.enum';
 
+
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
@@ -18,14 +19,13 @@ export class RolesGuard implements CanActivate {
     if (!requiredRoles) {
       return true;
     }
-
+    
     const request = context.switchToHttp().getRequest();
-    const jwtToken = request.cookies?.jwt;
-
-    if (!jwtToken) {
+    const authorizationHeader = request.headers['authorization'];
+    if (!authorizationHeader || !authorizationHeader.startsWith('Bearer ')) {
       return false;
     }
-
+    const jwtToken = authorizationHeader.split(' ')[1];
     try {
       const decodedToken = this.jwtService.verify(jwtToken);
       const userRole: Role = decodedToken.role;

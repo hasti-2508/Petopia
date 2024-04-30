@@ -109,22 +109,16 @@ const vetSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getVetData.pending, (state) => {
-      state.isLoading = true;
-      state.error = null;
-    });
     builder.addCase(getVetData.fulfilled, (state, action) => {
       state.isLoading = false;
-    });
-    builder.addCase(getVetData.rejected, (state, action) => {
-      state.isLoading = false;
-      state.error = action.error;
+      state.vet = action. payload;
     });
     builder.addCase(notifyVet.fulfilled, (state, action) => {
       state.vet = action.payload;
     });
     builder.addCase(getServiceBookingData.pending, (state) => {
       state.isLoading = true;
+
       state.error = null;
     });
     builder.addCase(getServiceBookingData.fulfilled, (state, action) => {

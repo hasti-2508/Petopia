@@ -10,6 +10,7 @@ import {
   Post,
   Query,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { VetService } from './vet.service';
@@ -17,6 +18,9 @@ import { Vet } from './schemas/vet.schema';
 import { CreateVetDto } from './dto/vet.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Query as ExpressQuery } from 'express-serve-static-core';
+import { RolesGuard } from 'src/role/guard/role.guard';
+import { Roles } from 'src/role/decorator/role.decorator';
+import { Role } from 'src/role/role.enum';
 
 @Controller('vet')
 export class VetController {
@@ -98,7 +102,7 @@ export class VetController {
       imageUrl,
     };
 
-    const existingVet = await this.vetService.findByWithEmail(email);
+    const existingVet = await this.vetService.findByEmail(email);
     if (existingVet) {
       throw new BadRequestException('Email already exists');
     }
@@ -112,27 +116,24 @@ export class VetController {
   }
 
   @Get('/available/')
-  async getAvailableVet() {
+  async getAvailableVet(): Promise<Vet[]> {
     return await this.vetService.findAvailableVet();
   }
 
   @Get('/:id')
-  async getTrainerByID(@Param('id') trainerId: string) {
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
+  async getTrainerByID(@Param('id') trainerId: string): Promise<Vet> {
     return await this.vetService.findVetById(trainerId);
   }
   @Patch('update/:id')
-  async updateUser(@Body() updateUserDto, @Param('id') trainerId: string) {
-    return this.vetService.updateVet(trainerId, updateUserDto);
+  async updateUser(@Body() updateUserDto, @Param('id') trainerId: string):Promise<Vet> {
+    return await this.vetService.updateVet(trainerId, updateUserDto);
   }
 
   @Delete('/:id')
   async deleteTrainer(@Param('id') trainerId: string) {
-    return this.vetService.deleteTrainer(trainerId);
-  }
-
-  @Delete('/:id/deleteImage')
-  async deletePictureUrl(@Param('id') trainerId: string) {
-    return await this.vetService.deleteUserPictureUrl(trainerId);
+    return await this.vetService.deleteTrainer(trainerId);
   }
 
   @Post('/:bookingId/confirm')
@@ -155,5 +156,4 @@ export class VetController {
   async notifyVet(@Param('id') vetId: string) {
     return await this.vetService.notifyVet(vetId);
   }
-
 }

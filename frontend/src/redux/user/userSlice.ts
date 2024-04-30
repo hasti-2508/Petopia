@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
   getServiceData,
   getTrainingData,
+  getUserData,
   petAdd,
   serviceRating,
   userAdd,
@@ -115,9 +116,6 @@ const userSlice = createSlice({
     setPasswordError: (state, action: PayloadAction<string>) => {
       state.passwordError = action.payload;
     },
-    setUser: (state, action: PayloadAction<User>) => {
-      state.user = action.payload;
-    },
     setPets: (state, action: PayloadAction<Pet[]>) => {
       state.pets = action.payload;
     },
@@ -156,6 +154,10 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(getUserData.fulfilled, (state, action) => {
+      state.user = action.payload;
+      state.loading = false;
+    });
     builder.addCase(petAdd.fulfilled, (state, action) => {
       state.isLoading = false;
     });
@@ -180,7 +182,6 @@ export const {
   setUserDataForm,
   setShowPassword,
   setPasswordError,
-  setUser,
   setPets,
   setService,
   setTraining,

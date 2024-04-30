@@ -26,7 +26,7 @@ function Success() {
     <div className="flex justify-center items-center h-screen">
       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-lg">
         <img
-          src="http://localhost:3000/assets/Animation-1712560065931.gif"
+          src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379448/Animation-1712560065931_bfvyng.gif"
           alt=""
           className="mx-auto"
         />

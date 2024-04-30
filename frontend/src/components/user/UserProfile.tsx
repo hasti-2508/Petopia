@@ -10,8 +10,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import {
   setActiveTab,
-  setEditedUser,
-  setIsEditing,
   setLoading,
   setPets,
   setRate,
@@ -21,7 +19,6 @@ import {
   setTraining,
   setTrainingId,
   setTrainingImages,
-  setUser,
 } from "@/redux/user/userSlice";
 import {
   getPetsData,
@@ -31,22 +28,23 @@ import {
   petAdoption,
   serviceRating,
   trainingRating,
-  userUpdate,
 } from "@/redux/user/userService";
+import redirectLoggedIn from "@/middleware/redirectToLogin";
+import { useRouter } from "next/navigation";
 
 const imageUrls = [
-  "http://localhost:3000/assets/service1.jpeg",
-  "http://localhost:3000/assets/service2.jpeg",
-  "http://localhost:3000/assets/service3.jpeg",
-  "http://localhost:3000/assets/service4.jpeg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379492/service1_z2p9ks.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379493/service2_wmunls.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379495/service3_xcrwad.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379495/service4_yuurit.jpg",
 ];
 
 const images = [
-  "http://localhost:3000/assets/training1.jpeg",
-  "http://localhost:3000/assets/training2.jpeg",
-  "http://localhost:3000/assets/training3.jpeg",
-  "http://localhost:3000/assets/training4.jpeg",
-  "http://localhost:3000/assets/training5.jpeg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379498/training1_keizgq.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379501/training2_cj6etc.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379502/training3_rqukle.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379703/training4_jgxepu.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379708/training5_pssugp.jpg",
 ];
 
 function UserProfile() {
@@ -68,7 +66,7 @@ function UserProfile() {
   const handleTabClick = (tab: string) => {
     dispatch(setActiveTab(tab));
   };
-
+const router = useRouter();
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -76,12 +74,6 @@ function UserProfile() {
         if (result.type === "getUserData/rejected") {
           throw result;
         } else {
-          dispatch(setUser(result.payload));
-
-          dispatch(setEditedUser(result.payload));
-
-          dispatch(setLoading(false));
-
           const petResult = await dispatch(getPetsData(result.payload._id));
           if (petResult.type === "getPetsData/rejected") {
             throw petResult;
@@ -108,7 +100,7 @@ function UserProfile() {
           }
         }
       } catch (error) {
-        toast.error(error.payload);
+        router.push('/home')
       }
     };
     dispatch(setLoading(true));
@@ -241,7 +233,7 @@ function UserProfile() {
                     className="flex flex-col mb-3 items-center justify-center fade-in-up"
                   >
                     <img
-                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
                       className="w-1/3 items-center"
                       alt=""
                     />
@@ -403,7 +395,7 @@ function UserProfile() {
                     className="flex flex-col mb-3 items-center justify-center fade-in-up"
                   >
                     <img
-                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
                       className="w-1/3 items-center"
                       alt=""
                     />
@@ -527,7 +519,7 @@ function UserProfile() {
                               data-bs-toggle="modal"
                               data-bs-target="#myModal"
                               onClick={() =>
-                                dispatch(setServiceId(training._id))
+                                dispatch(setTrainingId(training._id))
                               }
                               className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
                               style={{ width: "68px" }}
@@ -565,7 +557,7 @@ function UserProfile() {
                     className="flex flex-col mb-3 items-center justify-center fade-in-up"
                   >
                     <img
-                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
                       className="w-1/3 items-center"
                       alt=""
                     />
@@ -599,7 +591,7 @@ function UserProfile() {
         <img
           style={{ width: "150px", height: "150px" }}
           className=" rounded-pill my-40 "
-          src="http://localhost:3000/assets/profile.gif"
+          src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379485/profile_yxwpc3.gif"
           alt="Loading..."
         />
       </div>
@@ -670,4 +662,4 @@ function UserProfile() {
   );
 }
 
-export default UserProfile;
+export default redirectLoggedIn(UserProfile);

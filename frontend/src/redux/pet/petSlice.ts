@@ -48,6 +48,8 @@ const petSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getPets.fulfilled, (state, action) => {
       state.originalPetData = action.payload;
+      state.petData = action.payload;
+      state.loading = false;
     });
 
     builder.addCase(getOwner.fulfilled, (state, action) => {

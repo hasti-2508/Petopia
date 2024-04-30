@@ -15,8 +15,11 @@ import { TrainerAdminCard, TrainerCard } from "../trainer/TrainerCard";
 import { UserCard } from "../user/UserCard";
 import { VetAdminCard, VetCard } from "../vet/VetCard";
 import Pagination from "../pagination/Pagination";
+import redirectLoggedIn from "@/middleware/redirectToLogin";
+import { useRouter } from "next/navigation";
 
 function AdminProfile() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("ServicesBookings");
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -91,7 +94,7 @@ function AdminProfile() {
     );
     if (isConfirmed) {
       try {
-        const response = await axios.delete(
+        const response = await axiosInstance.delete(
           `${process.env.HOST}/user/delete/${userId}`
         );
         toast.success("User is Deleted");
@@ -108,7 +111,7 @@ function AdminProfile() {
     );
     if (isConfirmed) {
       try {
-        const response = await axios.delete(`${process.env.HOST}/vet/${vetId}`);
+        const response = await axiosInstance.delete(`${process.env.HOST}/vet/${vetId}`);
 
         toast.success("Vet is Deleted");
         setVets(vets.filter((vet) => vet._id !== vetId));
@@ -124,7 +127,7 @@ function AdminProfile() {
     );
     if (isConfirmed) {
       try {
-        const response = await axios.delete(
+        const response = await axiosInstance.delete(
           `${process.env.HOST}/trainer/${trainerId}`
         );
         toast.success("Trainer is Deleted");
@@ -141,7 +144,7 @@ function AdminProfile() {
     );
     if (isConfirmed) {
       try {
-        const response = await axios.delete(`${process.env.HOST}/pet/${petId}`);
+        const response = await axiosInstance.delete(`${process.env.HOST}/pet/${petId}`);
         toast.success("Pet is Deleted");
         setPets(pets.filter((pet) => pet._id !== petId));
       } catch (error) {
@@ -155,39 +158,48 @@ function AdminProfile() {
       try {
         const response = await axiosInstance.get("/currentUser");
         setAdmin(response.data);
-        const serviceResponse = await axios.get(
+        const serviceResponse = await axiosInstance.get(
           `${process.env.HOST}/serviceBooking?page=${serviceCurrentPage}`
         );
         setOriginalServiceData(serviceResponse.data);
         setServices(serviceResponse.data);
 
-        const trainingResponse = await axios.get(
+        const trainingResponse = await axiosInstance.get(
           `${process.env.HOST}/trainingBooking?page=${trainingCurrentPage}`
         );
         setOriginalTrainingData(trainingResponse.data);
         setTrainings(trainingResponse.data);
 
-        const userResponse = await axios.get(
+        const userResponse = await axiosInstance.get(
           `${process.env.HOST}/user?page=${userCurrentPage}`
         );
         setUsers(userResponse.data);
 
-        const vetResponse = await axios.get(
+        const vetResponse = await axiosInstance.get(
           `${process.env.HOST}/vet?page=${vetCurrentPage}`
         );
         setVets(vetResponse.data);
 
-        const trainerResponse = await axios.get(
+        const trainerResponse = await axiosInstance.get(
           `${process.env.HOST}/trainer?page=${trainerCurrentPage}`
         );
         setTrainers(trainerResponse.data);
 
-        const petResponse = await axios.get(
+        const petResponse = await axiosInstance.get(
           `${process.env.HOST}/pet?page=${petCurrentPage}`
         );
         setPets(petResponse.data);
       } catch (error) {
-        console.error(error);
+        if (
+          axios.isAxiosError(error) &&
+          error.response &&
+          error.response.status === 403
+        ) {
+          router.push("/home"); 
+        }
+        else{
+          console.error(error)
+        }
       }
     };
 
@@ -290,7 +302,7 @@ function AdminProfile() {
                   <input
                     type="search"
                     id="default-search"
-                    className="block w-full ml-2 p-4 ps-10 text-sm text-gray-700 border border-dark-blue rounded-lg bg-white  focus:ring-black focus:border-black "
+                    className="block w-full ml-2 p-4 ps-10 text-sm text-gray-700 border border-dark-blue rounded-lg bg-white  focus:ring-black focus:border-black  "
                     placeholder="Search by city, price, booking date & time ...."
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -397,7 +409,7 @@ function AdminProfile() {
       case "TrainingBookings":
         return (
           <div className="fade-in-up">
-            <form className=" max-w-xl mx-auto mt-6 mb-5 fade-in-up">
+            <form className=" max-w-xl mx-auto mt-6 mb-5">
               <div className="relative">
                 <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                   <svg
@@ -417,7 +429,6 @@ function AdminProfile() {
                   </svg>
                 </div>
                 <div className="">
-                  {" "}
                   <input
                     type="search"
                     id="default-search"
@@ -528,14 +539,14 @@ function AdminProfile() {
 
       case "Users":
         return (
-          <div>
+          <div className="fade-in-up">
             <div className="container-fluid mt-3 gap-3 fade-in-up">
               <div className="row ">
-                {users.map((user) => (
-                  <div className="col-md-4 mx-auto">
-                    <div key={Math.random()}>
+                {users.map((user,index) => (
+                  <div className="col-md-4 mx-auto" key={index}>
+                    <div key={index}>
                       <div key={user._id}>
-                        <UserCard user={user} />
+                        <UserCard user={user} key={index} />
                       </div>
                       <div className="flex justify-center">
                         <button
@@ -558,12 +569,12 @@ function AdminProfile() {
         );
       case "Vets":
         return (
-          <div>
+          <div className="fade-in-up">
             <div className="container-fluid mt-3 gap-3 fade-in-up">
               <div className="row">
-                {vets.map((vet) => (
-                  <div className="col-md-4 mx-auto">
-                    <div key={Math.random()}>
+                {vets.map((vet,index) => (
+                  <div className="col-md-4 mx-auto" key={index}>
+                    <div key={index}>
                       <VetAdminCard user={vet} />
                       <div
                         className="flex justify-evenly"
@@ -590,12 +601,12 @@ function AdminProfile() {
 
       case "Trainers":
         return (
-          <div>
+          <div className="fade-in-up">
             <div className="container-fluid mt-3 fade-in-up">
               <div className="row">
-                {trainers.map((trainer) => (
-                  <div className="col-md-4 mx-auto">
-                    <div key={Math.random()}>
+                {trainers.map((trainer,index) => (
+                  <div className="col-md-4 mx-auto" key={index}>
+                    <div key={index}>
                       <TrainerAdminCard user={trainer} />
                       <div className="flex justify-center">
                         <button
@@ -619,12 +630,12 @@ function AdminProfile() {
 
       case "Pets":
         return (
-          <div>
+          <div className="fade-in-up">
             <div className="container-fluid mt-3 fade-in-up">
-              <div className="row">
-                {pets.map((pet) => (
-                  <div className="col-md-4 mx-auto">
-                    <div key={Math.random()}>
+              <div className="row" >
+                {pets.map((pet,index) => (
+                  <div className="col-md-4 mx-auto" key={index}>
+                    <div key={index}>
                       <PetCard pet={pet} />
                       <div
                         className="flex justify-evenly"
@@ -656,7 +667,7 @@ function AdminProfile() {
   return (
     <div>
       <div className=" p-9 ">
-        <div className="text-sm font-medium text-center text-gray-500 fade-in-up ">
+        <div className="text-sm font-medium text-center text-gray-500">
           <ul className="flex flex-wrap -mb-px">
             <li className="me-2">
               <button
@@ -744,4 +755,4 @@ function AdminProfile() {
   );
 }
 
-export default AdminProfile;
+export default redirectLoggedIn(AdminProfile);

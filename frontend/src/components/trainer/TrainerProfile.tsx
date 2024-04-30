@@ -15,16 +15,19 @@ import {
 } from "@/redux/trainer/trainerSlice";
 import toast from "react-hot-toast";
 import { TrainerCard } from "./TrainerCard";
+import redirectLoggedIn from "@/middleware/redirectToLogin";
+import { useRouter } from "next/navigation";
 
 const images = [
-  "http://localhost:3000/assets/training1.jpeg",
-  "http://localhost:3000/assets/training2.jpeg",
-  "http://localhost:3000/assets/training3.jpeg",
-  "http://localhost:3000/assets/training4.jpeg",
-  "http://localhost:3000/assets/training5.jpeg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379498/training1_keizgq.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379501/training2_cj6etc.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379502/training3_rqukle.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379703/training4_jgxepu.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379708/training5_pssugp.jpg",
 ];
 
 function TrainerProfile() {
+  const router = useRouter();
   const dispatch: AppDispatch = useDispatch();
   const { trainer, trainings, trainingImages, activeTrainerTab } = useSelector(
     (state: RootState) => state.trainer
@@ -38,18 +41,23 @@ function TrainerProfile() {
     const getUser = async () => {
       try {
         const result = await dispatch(getTrainerData());
-        const bookingDetailsPromises = result.payload.bookings.map(
-          async (bookingId: string) => {
-            const bookingResponse = await dispatch(
-              getTrainingBookingData(bookingId)
-            );
-            return bookingResponse.payload;
-          }
-        );
-        const bookingDetails = await Promise.all(bookingDetailsPromises);
-        dispatch(setTrainings(bookingDetails));
+        if (result.type === "getTrainerData/rejected") {
+          throw result;
+        }
+        else{
+          const bookingDetailsPromises = result.payload.bookings.map(
+            async (bookingId: string) => {
+              const bookingResponse = await dispatch(
+                getTrainingBookingData(bookingId)
+              );
+              return bookingResponse.payload;
+            }
+          );
+          const bookingDetails = await Promise.all(bookingDetailsPromises);
+          dispatch(setTrainings(bookingDetails));
+        }
       } catch (error) {
-        toast.error(error.payload);
+        router.push("/home");
       }
     };
     getUser();
@@ -215,7 +223,7 @@ function TrainerProfile() {
                     className="flex flex-col mb-3 items-center justify-center fade-in-up"
                   >
                     <img
-                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
                       className="w-1/3 items-center"
                       alt=""
                     />
@@ -351,7 +359,7 @@ function TrainerProfile() {
                     className="flex flex-col mb-3 items-center justify-center fade-in-up"
                   >
                     <img
-                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
                       className="w-1/3 items-center"
                       alt=""
                     />
@@ -425,4 +433,4 @@ function TrainerProfile() {
   );
 }
 
-export default TrainerProfile;
+export default redirectLoggedIn(TrainerProfile);

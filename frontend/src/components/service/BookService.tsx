@@ -130,7 +130,7 @@ function BookService() {
           >
             {!isFirstStep && (
               <button>
-                <img src="http://localhost:3000/assets/left.svg" alt="" />
+                <img src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379465/left_ose3wz.svg" alt="" />
               </button>
             )}
 
@@ -143,7 +143,7 @@ function BookService() {
               </button>
             ) : (
               <button className="">
-                <img src="http://localhost:3000/assets/right.svg" alt="" />
+                <img src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379487/right_lxrjyk.svg" alt="" />
               </button>
             )}
           </div>
@@ -153,7 +153,7 @@ function BookService() {
       {bookingSuccess && (
         <div className="flex justify-center items-center w-full h-full">
           <img
-            src="http://localhost:3000/assets/bookingSuccess.gif"
+            src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379449/bookingSuccess_dqbasy.gif"
             alt="Booking Confirmation"
           />
         </div>

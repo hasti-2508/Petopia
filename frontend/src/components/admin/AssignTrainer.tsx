@@ -4,6 +4,7 @@ import axios from "axios";
 import { Types } from "mongoose";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import axiosInstance from "@/utils/axios";
 
 interface Trainer {
   _id: Types.ObjectId;
@@ -40,7 +41,7 @@ function AssignTrainer() {
   useEffect(() => {
     const fetchTrainers = async () => {
       try {
-        const response = await axios.get<Trainer[]>(
+        const response = await axiosInstance.get<Trainer[]>(
           `${process.env.HOST}/trainer`
         );
         setTrainerList(response.data);
@@ -71,7 +72,7 @@ function AssignTrainer() {
 
     try {
       setLoading(true);
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${
           process.env.HOST
         }/trainingBooking/assign/${trainingPlanId?.toString()}`,
@@ -87,12 +88,21 @@ function AssignTrainer() {
         error.response.status === 409
       ) {
         toast.error("The booking is not confirmed Yet!");
+        router.push('/admin/profile');
       } else if (
         axios.isAxiosError(error) &&
         error.response &&
         error.response.status === 404
       ) {
         toast.error("Booking or Trainer Not Found!");
+        router.push('/admin/profile');
+      } else if (
+        axios.isAxiosError(error) &&
+        error.response &&
+        error.response.status === 402
+      ) {
+        toast.error("city is conflicting between Trainer and User!");
+        router.push('/admin/profile');
       } else {
         toast.error("Error assigning Trainer");
       }

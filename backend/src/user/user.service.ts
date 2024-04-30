@@ -84,20 +84,6 @@ export class UserService {
     user.save();
   }
 
-  async deleteUserPictureUrl(id: string): Promise<User> {
-    const user = await this.findUserById(id);
-    if (!user.imageUrl) {
-      throw new NotFoundException('Picture not found for the User');
-    }
-    if (!user.imageHistory) {
-      user.imageHistory = [];
-    }
-    user.imageHistory.unshift(user.imageUrl);
-    user.imageUrl = '';
-    const updatedUser = await user.save();
-    return updatedUser;
-  }
-
   async isAdopted(petId: string, userId: string) {
     const pet = await this.petModel.findById(petId);
     if (!pet) {
