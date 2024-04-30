@@ -1,7 +1,7 @@
 "use client";
 import { TrainingPlanBooking } from "@/interfaces/trainingPlanBooking";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
-import useMultipleStep from "@/Hooks/useMultipleStep";
+import useMultipleStep from "@/hooks/useMultipleStep";
 import PetDataForm from "../booking/PetDataForm";
 import UserDataForm from "../booking/UserDataForm";
 import DateAndTime from "../booking/DateAndTime";

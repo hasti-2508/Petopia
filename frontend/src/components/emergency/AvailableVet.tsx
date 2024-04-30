@@ -7,8 +7,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { notifyVet } from "@/redux/vet/vetService";
 import { AvailableVetCard } from "../vet/VetCard";
-import toast from "react-hot-toast";
-import redirectLoggedIn from "@/middleware/redirectToLogin";
+import redirectLoggedIn from "@/hoc/redirectToLogin";
 
 function AvailableVet() {
   const router = useRouter();
@@ -23,14 +22,6 @@ function AvailableVet() {
   const makeCall = useCallback(
     async (id: string) => {
       try {
-        // toast("Loading...", {
-        //   style: {
-        //     borderRadius: "10px",
-        //     background: "#FBA834",
-        //     color: "#242d62",
-        //   },
-        //   duration: 1500,
-        // });
         setLoading(true);
         dispatch(notifyVet(id));
         router.push(`/room?roomId=${id}`);

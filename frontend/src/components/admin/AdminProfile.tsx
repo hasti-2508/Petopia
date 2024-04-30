@@ -15,7 +15,7 @@ import { TrainerAdminCard, TrainerCard } from "../trainer/TrainerCard";
 import { UserCard } from "../user/UserCard";
 import { VetAdminCard, VetCard } from "../vet/VetCard";
 import Pagination from "../pagination/Pagination";
-import redirectLoggedIn from "@/middleware/redirectToLogin";
+import redirectLoggedIn from "@/hoc/redirectToLogin";
 import { useRouter } from "next/navigation";
 
 function AdminProfile() {

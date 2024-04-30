@@ -1,6 +1,6 @@
 "use client";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
-import useMultipleStep from "@/Hooks/useMultipleStep";
+import useMultipleStep from "@/hooks/useMultipleStep";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 import { ServicePlanBooking } from "@/interfaces/servicePlanBooking";

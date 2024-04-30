@@ -15,7 +15,7 @@ import {
 } from "@/redux/trainer/trainerSlice";
 import toast from "react-hot-toast";
 import { TrainerCard } from "./TrainerCard";
-import redirectLoggedIn from "@/middleware/redirectToLogin";
+import redirectLoggedIn from "@/hoc/redirectToLogin";
 import { useRouter } from "next/navigation";
 
 const images = [

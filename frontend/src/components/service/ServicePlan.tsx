@@ -1,11 +1,10 @@
 "use client";
 import { ServicePlanType } from "@/interfaces/serviceplan";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import PlanCard from "../booking/PlanCard";
 import toast from "react-hot-toast";
-import redirectLoggedIn from "@/middleware/redirectToLogin";
+import redirectLoggedIn from "@/hoc/redirectToLogin";
 import axiosInstance from "@/utils/axios";
 
 function ServicePlan() {

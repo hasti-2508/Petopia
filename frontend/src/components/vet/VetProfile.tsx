@@ -18,7 +18,7 @@ import {
   setBookingComplete,
 } from "@/redux/vet/vetService";
 import toast from "react-hot-toast";
-import redirectLoggedIn from "@/middleware/redirectToLogin";
+import redirectLoggedIn from "@/hoc/redirectToLogin";
 import { useRouter } from "next/navigation";
 
 

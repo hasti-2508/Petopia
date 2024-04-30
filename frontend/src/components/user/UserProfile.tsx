@@ -29,7 +29,7 @@ import {
   serviceRating,
   trainingRating,
 } from "@/redux/user/userService";
-import redirectLoggedIn from "@/middleware/redirectToLogin";
+import redirectLoggedIn from "@/hoc/redirectToLogin";
 import { useRouter } from "next/navigation";
 
 const imageUrls = [

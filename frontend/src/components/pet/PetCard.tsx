@@ -8,7 +8,6 @@ import { PetCardProps } from "../../interfaces/pet";
 import { User, UserData } from "../../interfaces/user";
 import axiosInstance from "@/utils/axios";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
 
 const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const [owner, setOwner] = useState<User>();
