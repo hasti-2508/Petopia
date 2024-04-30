@@ -8,17 +8,14 @@ import {
   setActiveVetTab,
   setBookingImages,
   setBookings,
-  setEditedVet,
   setIsChecked,
   setVet,
-  setVetIsEditing,
 } from "@/redux/vet/vetSlice";
 import {
   getServiceBookingData,
   getVetData,
   setAvailable,
   setBookingComplete,
-  vetUpdate,
 } from "@/redux/vet/vetService";
 import toast from "react-hot-toast";
 import redirectLoggedIn from "@/middleware/redirectToLogin";
@@ -26,10 +23,10 @@ import { useRouter } from "next/navigation";
 
 
 const imageUrls = [
-  "http://localhost:3000/assets/service1.jpeg",
-  "http://localhost:3000/assets/service2.jpeg",
-  "http://localhost:3000/assets/service3.jpeg",
-  "http://localhost:3000/assets/service4.jpeg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379492/service1_z2p9ks.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379493/service2_wmunls.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379495/service3_xcrwad.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379495/service4_yuurit.jpg",
 ];
 
 function VetProfile() {
@@ -276,7 +273,7 @@ function VetProfile() {
                     className="flex flex-col mb-3 items-center justify-center fade-in-up"
                   >
                     <img
-                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
                       className="w-1/3 items-center"
                       alt=""
                     />
@@ -412,7 +409,7 @@ function VetProfile() {
                     className="flex flex-col mb-3 items-center justify-center fade-in-up  "
                   >
                     <img
-                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
                       className="w-1/3 items-center"
                       alt=""
                     />
@@ -439,7 +436,7 @@ function VetProfile() {
         <img
           style={{ width: "150px", height: "150px" }}
           className=" rounded-pill my-40 "
-          src="http://localhost:3000/assets/profile.gif"
+          src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379485/profile_yxwpc3.gif"
           alt="Loading..."
         />
       </div>

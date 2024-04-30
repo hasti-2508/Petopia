@@ -152,4 +152,5 @@ export class VetService {
       throw new Error('Vet not found');
     }
   }
+
 }

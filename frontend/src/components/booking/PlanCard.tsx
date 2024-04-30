@@ -13,7 +13,7 @@ const PlanCard = ({ plan, handleBookService }) => {
             {plan.services.map((service, index) => (
               <div className="flex gap-4" key={index}>
                 <img
-                  src="http://localhost:3000/assets/bullet.webp"
+                  src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379449/bullet_msybn6.webp"
                   className="w-5 h-5"
                   alt="bullet"
                 />

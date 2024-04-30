@@ -19,11 +19,11 @@ import redirectLoggedIn from "@/middleware/redirectToLogin";
 import { useRouter } from "next/navigation";
 
 const images = [
-  "http://localhost:3000/assets/training1.jpeg",
-  "http://localhost:3000/assets/training2.jpeg",
-  "http://localhost:3000/assets/training3.jpeg",
-  "http://localhost:3000/assets/training4.jpeg",
-  "http://localhost:3000/assets/training5.jpeg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379498/training1_keizgq.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379501/training2_cj6etc.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379502/training3_rqukle.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379703/training4_jgxepu.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379708/training5_pssugp.jpg",
 ];
 
 function TrainerProfile() {
@@ -223,7 +223,7 @@ function TrainerProfile() {
                     className="flex flex-col mb-3 items-center justify-center fade-in-up"
                   >
                     <img
-                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
                       className="w-1/3 items-center"
                       alt=""
                     />
@@ -359,7 +359,7 @@ function TrainerProfile() {
                     className="flex flex-col mb-3 items-center justify-center fade-in-up"
                   >
                     <img
-                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
                       className="w-1/3 items-center"
                       alt=""
                     />

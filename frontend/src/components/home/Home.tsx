@@ -2,13 +2,12 @@
 import Link from "next/link";
 import React from "react";
 
-
 function Home() {
   return (
     <div className=" bg-saddle-brown ">
       <div className="position-relative">
         <img
-          src="http://localhost:3000/assets/pet-banner-tpn-12052020-v1.jpg"
+          src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379125/pet-banner-tpn-12052020-v1_wsem9r.jpg"
           alt="Background"
           className="inset-0 w-full h-full object-cover fade-in-up"
         />
@@ -42,7 +41,7 @@ function Home() {
                   <img
                     style={{ height: "10vh", width: "12vh" }}
                     className="h-20 "
-                    src="http://localhost:3000/assets/3725584.jpg"
+                    src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379262/3725584_fteulg.jpg"
                   />
                   <h5
                     className="card-title font-bold mt-2 "
@@ -70,7 +69,7 @@ function Home() {
                   <img
                     style={{ height: "10vh", width: "10vh" }}
                     className="h-20 "
-                    src="http://localhost:3000/assets/9459988.jpg"
+                    src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379345/9459988_el1lvl.jpg"
                   />
                   <h5
                     className="card-title font-bold mt-2 "
@@ -100,7 +99,7 @@ function Home() {
                   <img
                     style={{ height: "11vh", width: "15vh" }}
                     className="h-20 "
-                    src="http://localhost:3000/assets/veterinarian_03.jpg"
+                    src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379713/veterinarian_03_rlywxg.jpg"
                   />
                   <h5
                     className="card-title font-bold mt-2 "
@@ -128,7 +127,7 @@ function Home() {
                   <img
                     style={{ height: "11vh", width: "15vh" }}
                     className="h-20 "
-                    src="http://localhost:3000/assets/3805957.jpg"
+                    src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379439/3805957_mjnxbb.jpg"
                   />
                   <h5
                     className="card-title font-bold mt-2"
@@ -308,7 +307,7 @@ function Home() {
         </h1>
         <div className="flex px-56">
           <div className="w-full h-full mr-6 mt-32">
-            <img src="http://localhost:3000/assets/home.avif" alt="" />
+            <img src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379460/home_r2xsnm.avif" alt="" />
           </div>
           <div>
             <div className="flex gap-5 ml-11">
@@ -371,7 +370,7 @@ function Home() {
 
             <div className="flex gap-0 mt-9">
               <img
-                src="http://localhost:3000/assets/connect.avif"
+                src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379454/connect_k2fvky.avif"
                 className=" w-1/5 h-1/3 mx-3"
                 alt=""
               />

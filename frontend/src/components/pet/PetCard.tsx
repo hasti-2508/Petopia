@@ -101,7 +101,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
             <div className="fw-bold d-flex gap-4">
               <div>
                 <img
-                  src="http://localhost:3000/assets/user.png"
+                  src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379708/user_yqmdpt.png"
                   alt="Owner Image"
                   className="rounded-circle w-16 "
                 />
@@ -130,7 +130,6 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
 const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
   const [owner, setOwner] = useState<UserData>();
   const router = useRouter();
-
   useEffect(() => {
     async function fetchOwnerName() {
       try {
@@ -159,14 +158,6 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
     fetchOwnerName();
   }, []);
   const handlePetDetails = () => {
-    toast("Loading...", {
-      style: {
-        borderRadius: "10px",
-        background: "#FBA834",
-        color: "#242d62",
-      },
-      duration: 1500,
-    });
     router.push(`adopt/petData/${pet._id}`);
   };
   return (
@@ -228,16 +219,6 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
           <button
             type="button"
             className="text-white bg-primary py-1.5 px-6 my-2 rounded-xl fs-6 "
-            onClick={() => {
-              toast("Loading...", {
-                duration: 500,
-                style: {
-                  borderRadius: "10px",
-                  background: "#FBA834",
-                  color: "#242d62",
-                },
-              });
-            }}
           >
             Adopt
           </button>

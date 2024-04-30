@@ -4,6 +4,7 @@ import axios from "axios";
 import { Types } from "mongoose";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import axiosInstance from "@/utils/axios";
 
 interface Vet {
   _id: Types.ObjectId;
@@ -40,7 +41,7 @@ function AssignVet() {
   useEffect(() => {
     const fetchVets = async () => {
       try {
-        const response = await axios.get<Vet[]>(`${process.env.HOST}/vet`);
+        const response = await axiosInstance.get<Vet[]>(`${process.env.HOST}/vet`);
         setVetList(response.data);
       } catch (error) {
         console.error("Error fetching vet list:", error);
@@ -69,7 +70,7 @@ function AssignVet() {
 
     try {
       setLoading(true);
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         `${
           process.env.HOST
         }/serviceBooking/assign/${servicePlanId?.toString()}`,

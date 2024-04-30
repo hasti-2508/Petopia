@@ -73,24 +73,13 @@ function Adopt() {
     }
   };
 
-  if (!petData) {
-    return (
-      <div className="flex justify-center items-center w-full h-full">
-        <img
-          src="http://localhost:3000/assets/AdoptLoading.gif"
-          alt="Loading..."
-        />
-      </div>
-    );
-  }
-
-  return (
+ return (
     <div>
       {loading ? (
         <div className="flex justify-center items-center my-52">
           <img
             style={{ width: "250px", height: "250px" }}
-            src="http://localhost:3000/assets/AdoptLoading.gif"
+            src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379445/AdoptLoading_esfppq.gif"
             alt="Loading..."
           />
         </div>
@@ -98,7 +87,7 @@ function Adopt() {
         <div className="fade-in-up">
           <div className="flex justify-center items-center w-full h-full mb-4 fade-in-up">
             <img
-              src="http://localhost:3000/assets/adoption.png"
+              src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379443/adoption_wzxvlh.png"
               alt="Background"
               className="object-cover"
             />
@@ -171,3 +160,5 @@ function Adopt() {
 }
 
 export default redirectLoggedIn(Adopt);
+
+

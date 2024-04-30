@@ -22,20 +22,21 @@ import { TrainingPlanBooking } from './schemas/training-plan-booking.schema';
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 import JwtPayload from 'src/interceptor/interface/jwtpayload';
-import { Role } from 'src/role/role.enum';
-import { Roles } from 'src/role/role.decorator';
+import { Roles } from 'src/role/decorator/role.decorator';
 import { RolesGuard } from 'src/role/guard/role.guard';
+import { Role } from 'src/role/role.enum';
 
 @Controller('trainingBooking')
 export class TrainingPlanBookingController {
   constructor(private TrainingPlanBookingService: TrainingPlanBookingService) {}
 
   @Get('')
-  @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
   async getTrainings(
     @Query() query: ExpressQuery,
   ): Promise<TrainingPlanBooking[]> {
+    console.log("i am in controller")
     return await this.TrainingPlanBookingService.findTrainings(query);
   }
 

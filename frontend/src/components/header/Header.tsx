@@ -57,16 +57,7 @@ function Header() {
       toast.success("Error Occurred! Please Try Again Later");
     }
   };
-
   const handleClick = () => {
-    toast("Loading...", {
-      style: {
-        borderRadius: "10px",
-        background: "#FBA834",
-        color: "#242d62",
-      },
-      duration: 1500,
-    });
     router.push("/availableVet");
   };
 
@@ -178,7 +169,7 @@ function Header() {
                     src={
                       imageUrl
                         ? imageUrl
-                        : "http://localhost:3000/assets/user.png"
+                        : "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379708/user_yqmdpt.png"
                     }
                     alt=""
                   />

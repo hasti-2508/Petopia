@@ -18,10 +18,10 @@ import { TrainerService } from './trainer.service';
 import { Trainer } from './schemas/trainer.schema';
 import { JwtService } from '@nestjs/jwt';
 import { Query as ExpressQuery } from 'express-serve-static-core';
-import { Roles } from 'src/role/role.decorator';
-import { RolesGuard } from 'src/role/guard/role.guard';
-import { Role } from 'src/role/role.enum';
 import { TrainingPlanBooking } from 'src/training-plan-booking/schemas/training-plan-booking.schema';
+import { RolesGuard } from 'src/role/guard/role.guard';
+import { Roles } from 'src/role/decorator/role.decorator';
+import { Role } from 'src/role/role.enum';
 
 @Controller('trainer')
 export class TrainerController {
@@ -117,13 +117,13 @@ export class TrainerController {
   }
 
   @Get('/')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
   async getTrainers(@Query() query: ExpressQuery): Promise<Trainer[]> {
     return this.trainerService.findTrainer(query);
   }
 
   @Get('/:id')
-  @Roles(Role.TRAINER)
-  @UseGuards(RolesGuard)
   async getTrainerByID(@Param('id') trainerId: string): Promise<Trainer> {
     return this.trainerService.findTrainerById(trainerId);
   }

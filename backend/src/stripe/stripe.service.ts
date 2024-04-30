@@ -44,7 +44,7 @@ export class StripeService {
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       success_url: `http://localhost:3000/success?id=${booking.id}`,
-      cancel_url: `http://localhost:3000/PetService`,
+      cancel_url: `http://localhost:3000/home`,
       customer_email: booking.email,
       client_reference_id: booking.userId,
       mode: 'payment',

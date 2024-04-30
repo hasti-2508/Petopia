@@ -24,7 +24,7 @@ import {
 import { Query as ExpressQuery } from 'express-serve-static-core';
 import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 import JwtPayload from 'src/interceptor/interface/jwtpayload';
-import { Roles } from 'src/role/role.decorator';
+import { Roles } from 'src/role/decorator/role.decorator';
 import { RolesGuard } from 'src/role/guard/role.guard';
 import { Role } from 'src/role/role.enum';
 
@@ -36,8 +36,8 @@ export class ServicePlanBookingController {
   ) {}
 
   @Get('')
-  @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
   async getBooking(
     @Query() query: ExpressQuery,
   ): Promise<ServicePlanBooking[]> {

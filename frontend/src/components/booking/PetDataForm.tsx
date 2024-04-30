@@ -51,7 +51,7 @@ function PetDataForm({
               }`}
             >
               <img
-                src="http://localhost:3000/assets/cat.png"
+                src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379450/cat_rwhljm.png"
                 style={{ width: "120px", height: "90px" }}
               />
             </button>
@@ -63,7 +63,7 @@ function PetDataForm({
               }`}
             >
               <img
-                src="http://localhost:3000/assets/dog.png"
+                src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379455/dog_ewtc3q.png"
                 style={{ width: "120px", height: "90px" }}
               />
             </button>

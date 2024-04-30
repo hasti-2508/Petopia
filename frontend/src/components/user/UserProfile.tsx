@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
 import {
   setActiveTab,
-  setEditedUser,
   setLoading,
   setPets,
   setRate,
@@ -29,24 +28,23 @@ import {
   petAdoption,
   serviceRating,
   trainingRating,
-  userUpdate,
 } from "@/redux/user/userService";
 import redirectLoggedIn from "@/middleware/redirectToLogin";
 import { useRouter } from "next/navigation";
 
 const imageUrls = [
-  "http://localhost:3000/assets/service1.jpeg",
-  "http://localhost:3000/assets/service2.jpeg",
-  "http://localhost:3000/assets/service3.jpeg",
-  "http://localhost:3000/assets/service4.jpeg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379492/service1_z2p9ks.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379493/service2_wmunls.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379495/service3_xcrwad.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379495/service4_yuurit.jpg",
 ];
 
 const images = [
-  "http://localhost:3000/assets/training1.jpeg",
-  "http://localhost:3000/assets/training2.jpeg",
-  "http://localhost:3000/assets/training3.jpeg",
-  "http://localhost:3000/assets/training4.jpeg",
-  "http://localhost:3000/assets/training5.jpeg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379498/training1_keizgq.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379501/training2_cj6etc.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379502/training3_rqukle.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379703/training4_jgxepu.jpg",
+  "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379708/training5_pssugp.jpg",
 ];
 
 function UserProfile() {
@@ -103,7 +101,6 @@ const router = useRouter();
         }
       } catch (error) {
         router.push('/home')
-        // toast.error(error.payload);
       }
     };
     dispatch(setLoading(true));
@@ -236,7 +233,7 @@ const router = useRouter();
                     className="flex flex-col mb-3 items-center justify-center fade-in-up"
                   >
                     <img
-                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
                       className="w-1/3 items-center"
                       alt=""
                     />
@@ -398,7 +395,7 @@ const router = useRouter();
                     className="flex flex-col mb-3 items-center justify-center fade-in-up"
                   >
                     <img
-                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
                       className="w-1/3 items-center"
                       alt=""
                     />
@@ -560,7 +557,7 @@ const router = useRouter();
                     className="flex flex-col mb-3 items-center justify-center fade-in-up"
                   >
                     <img
-                      src="http://localhost:3000/assets/NoTraining.jpg"
+                      src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
                       className="w-1/3 items-center"
                       alt=""
                     />
@@ -594,7 +591,7 @@ const router = useRouter();
         <img
           style={{ width: "150px", height: "150px" }}
           className=" rounded-pill my-40 "
-          src="http://localhost:3000/assets/profile.gif"
+          src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379485/profile_yxwpc3.gif"
           alt="Loading..."
         />
       </div>

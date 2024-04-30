@@ -21,9 +21,9 @@ import { UserService } from './user.service';
 import { PetService } from 'src/pet/pet.service';
 import { JwtInterceptor } from 'src/interceptor/jwt.interceptor';
 import { Query as ExpressQuery } from 'express-serve-static-core';
-import { Roles } from 'src/role/role.decorator';
-import { RolesGuard } from 'src/role/guard/role.guard';
 import { Role } from 'src/role/role.enum';
+import { RolesGuard } from 'src/role/guard/role.guard';
+import { Roles } from 'src/role/decorator/role.decorator';
 
 @Controller('user')
 export class UserController {
@@ -97,13 +97,15 @@ export class UserController {
   }
 
   @Get('/')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
   async getUsers(@Query() query: ExpressQuery): Promise<User[]> {
     return this.userService.findUser(query);
   }
 
   @Get('/:id')
-  @Roles(Role.USER)
   @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN && Role.USER)
   async getUserByID(@Param('id') userId: string) {
     try {
       const user = await this.userService.findUserById(userId);

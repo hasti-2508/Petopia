@@ -1,11 +1,10 @@
 "use client";
 import React from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/redux/store";
-import { setImageFile, setPetDataForm } from "@/redux/user/userSlice";
+import { setPetDataForm } from "@/redux/user/userSlice";
 import { petAdd } from "@/redux/user/userService";
 import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
 

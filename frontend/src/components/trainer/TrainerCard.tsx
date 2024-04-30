@@ -8,7 +8,7 @@ const TrainerCard = ({ user }) => {
         src={
           user?.imageUrl
             ? user.imageUrl
-            : "http://localhost:3000/assets/user.png"
+            : "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379708/user_yqmdpt.png"
         }
         alt={user?.name}
       />
@@ -81,7 +81,7 @@ const TrainerAdminCard = ({ user }) => {
         src={
           user?.imageUrl
             ? user.imageUrl
-            : "http://localhost:3000/assets/user.png"
+            : "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379708/user_yqmdpt.png"
         }
         alt={user?.name}
       />
