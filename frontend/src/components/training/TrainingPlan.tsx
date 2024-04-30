@@ -1,10 +1,10 @@
 "use client";
 import { TrainingPlanData } from "@/interfaces/trainingPlan";
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import redirectLoggedIn from "@/middleware/redirectToLogin";
+import axiosInstance from "@/utils/axios";
 
 function TrainingPlan() {
   const router = useRouter();
@@ -21,7 +21,7 @@ function TrainingPlan() {
     async function fetchTrainingPlans() {
       try {
         setLoading(true);
-        const response = await axios.get<TrainingPlanData[]>(
+        const response = await axiosInstance.get<TrainingPlanData[]>(
           `${process.env.HOST}/training-plan`
         );
         setTrainingPlans(response.data);

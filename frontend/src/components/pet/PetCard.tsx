@@ -133,7 +133,7 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
   useEffect(() => {
     async function fetchOwnerName() {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `${process.env.HOST}/pet/user/${pet.owner[0]}`
         );    
         setOwner(response.data);
@@ -234,7 +234,7 @@ const PetProfileCard = ({ pet, handleDelete }) => {
   useEffect(() => {
     async function fetchOwnerName() {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `${process.env.HOST}/pet/user/${pet.owner[0]}`
         );
         setOwner( response.data);

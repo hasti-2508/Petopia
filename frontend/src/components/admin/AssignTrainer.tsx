@@ -102,7 +102,6 @@ function AssignTrainer() {
         error.response.status === 402
       ) {
         toast.error("city is conflicting between Trainer and User!");
-        router.push('/admin/profile');
       } else {
         toast.error("Error assigning Trainer");
       }

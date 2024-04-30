@@ -93,7 +93,6 @@ function AssignVet() {
         error.response.status === 402
       ) {
         toast.error("city is conflicting between Vet and User!");
-        router.push('/admin/profile');
       }else if (
         axios.isAxiosError(error) &&
         error.response &&

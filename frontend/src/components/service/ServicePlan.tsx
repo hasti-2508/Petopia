@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import PlanCard from "../booking/PlanCard";
 import toast from "react-hot-toast";
 import redirectLoggedIn from "@/middleware/redirectToLogin";
+import axiosInstance from "@/utils/axios";
 
 function ServicePlan() {
   const router = useRouter();
@@ -22,7 +23,7 @@ function ServicePlan() {
     async function fetchServicePlans() {
       try {
         setLoading(true);
-        const response = await axios.get<ServicePlanType[]>(
+        const response = await axiosInstance.get<ServicePlanType[]>(
           `${process.env.HOST}/service-plan`
         );
         setServicePlans(response.data);
