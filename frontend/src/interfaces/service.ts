@@ -21,7 +21,10 @@
     isConfirmed: boolean;
     isCompleted: boolean;
     isCancelled: boolean;
-    vetId: number;
+    vetId: {
+      name: string;
+      phoneNo:string;
+    };
     averageRating: number;
     ratings: Rating[];
   }

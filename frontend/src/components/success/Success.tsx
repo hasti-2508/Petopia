@@ -19,7 +19,7 @@ function Success() {
       setLoading(false);
       router.push("/home");
     } catch (error) {
-      toast.error("Error in you booking confirmation updation");
+      toast.error("Error in you booking confirmation update");
     }
   };
   return (

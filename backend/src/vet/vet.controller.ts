@@ -127,8 +127,6 @@ export class VetController {
   @Get('/:id')
   @UseGuards(RolesGuard)
   @Roles(Role.ADMIN, Role.USER, Role.TRAINER, Role.VET)
-  @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
   async getTrainerByID(@Param('id') trainerId: string): Promise<Vet> {
     return await this.vetService.findVetById(trainerId);
   }

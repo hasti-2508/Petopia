@@ -21,7 +21,10 @@ export interface Training {
     isConfirmed: boolean;
     isCompleted: boolean;
     isCancelled: boolean;
-    trainerId: number;
+    trainerId: {
+      name: string,
+      phoneNo: string
+    };
     averageRating: number;
     ratings: Rating[];
   }

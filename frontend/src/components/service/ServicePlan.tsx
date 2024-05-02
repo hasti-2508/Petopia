@@ -1,7 +1,7 @@
 "use client";
 import { ServicePlanType } from "@/interfaces/serviceplan";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import PlanCard from "../booking/PlanCard";
 import toast from "react-hot-toast";
 import redirectLoggedIn from "@/hoc/redirectToLogin";
@@ -9,12 +9,12 @@ import axiosInstance from "@/utils/axios";
 
 function ServicePlan() {
   const router = useRouter();
-  const handleBookService = (servicePlanId: string) => {
-    setLoading(true);
-    const bookingPageUrl = `/servicePlan/bookService?servicePlanId=${servicePlanId}`;
-    router.push(bookingPageUrl);
-    setLoading(false);
-  };
+  // const handleBookService = (servicePlanId: string) => {
+  //   setLoading(true);
+  //   const bookingPageUrl = `/servicePlan/bookService?servicePlanId=${servicePlanId}`;
+  //   router.push(bookingPageUrl);
+  //   setLoading(false);
+  // };
   const [servicePlans, setServicePlans] = useState<ServicePlanType[]>([]);
   const [loading , setLoading] = useState<boolean>(true);
 
@@ -34,6 +34,16 @@ function ServicePlan() {
 
     fetchServicePlans();
   }, []);
+
+  const handleBookService = useCallback(
+    async (servicePlanId: string) => {
+      setLoading(true);
+      const bookingPageUrl = `/servicePlan/bookService?servicePlanId=${servicePlanId}`;
+      router.push(bookingPageUrl);
+      setLoading(false);
+    },
+    [router]
+  );
   return (
     <div>
     {loading ? <div className="flex justify-center items-center my-52">
@@ -210,7 +220,7 @@ function ServicePlan() {
           >
             Dog Grooming packages
           </h1>
-     
+
           <div className="flex flex-wrap justify-center gap-8 ">
             {servicePlans
               .filter((plan) => plan.species === "dog")
@@ -248,10 +258,7 @@ function ServicePlan() {
     )}
   </div>
 
-
   );
 }
-
-  
 
 export default redirectLoggedIn(ServicePlan);

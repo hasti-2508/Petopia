@@ -1,6 +1,6 @@
 "use client";
 import { TrainingPlanData } from "@/interfaces/trainingPlan";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import redirectLoggedIn from "@/hoc/redirectToLogin";
@@ -9,12 +9,16 @@ import RateStar from "../rating/RateStar";
 
 function TrainingPlan() {
   const router = useRouter();
-  const handleBookTraining = (trainingPlanId: string) => {
-    setLoading(true);
-    const bookingPageUrl = `/trainingPlan/bookTraining?trainingPlanId=${trainingPlanId}`;
-    router.push(bookingPageUrl);
-    setLoading(false);
-  };
+  const handleBookTraining = useCallback(
+    async (trainingPlanId: string) => {
+      setLoading(true);
+      const bookingPageUrl = `/trainingPlan/bookTraining?trainingPlanId=${trainingPlanId}`;
+      router.push(bookingPageUrl);
+      setLoading(false);
+    },
+    [router]
+  );
+
   const [trainingPlans, setTrainingPlans] = useState<TrainingPlanData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 

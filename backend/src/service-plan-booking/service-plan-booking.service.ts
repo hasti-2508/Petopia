@@ -37,7 +37,8 @@ export class ServicePlanBookingService {
 
     return this.servicePlanBookingModel
       .find()
-      .sort({ createdAt: -1 })
+      .populate('vetId', 'name phoneNo')
+      .sort({ booking_date: 1, booking_time: 1 })
       .limit(resPerPage)
       .skip(skip)
       .exec();

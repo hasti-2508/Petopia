@@ -1,8 +1,8 @@
 "use client";
 import RatingModal from "@/components/rating/Rating";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import RateStar from "../rating/RateStar";
-import { UserCard  } from "./UserCard";
+import { UserCard } from "./UserCard";
 import { PetProfileCard } from "../pet/PetCard";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -63,89 +63,94 @@ function UserProfile() {
     trainingImages,
   } = useSelector((state: RootState) => state.user);
 
-  const handleTabClick = (tab: string) => {
-    dispatch(setActiveTab(tab));
-  };
-const router = useRouter();
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const result = await dispatch(getUserData());
-        if (result.type === "getUserData/rejected") {
-          throw result;
-        } else {
-          const petResult = await dispatch(getPetsData(result.payload._id));
-          if (petResult.type === "getPetsData/rejected") {
-            throw petResult;
-          } else {
-            const { pets } = petResult.payload;
-            dispatch(setPets(pets));
-          }
+  const handleTabClick = useCallback(
+    (tab: string) => {
+      dispatch(setActiveTab(tab));
+    },
+    [dispatch]
+  );
 
-          const serviceResult = await dispatch(
-            getServiceData(result.payload._id)
-          );
-          if (serviceResult.type === "getServiceData/rejected") {
-            throw serviceResult;
-          } else {
-            dispatch(setService(serviceResult.payload));
-          }
-          const trainingResult = await dispatch(
-            getTrainingData(result.payload._id)
-          );
-          if (trainingResult.type === "getTrainingData/rejected") {
-            throw trainingResult;
-          } else {
-            dispatch(setTraining(trainingResult.payload));
-          }
+  const router = useRouter();
+  const getUserProfileData = useCallback(async () => {
+    try {
+      dispatch(setLoading(true));
+      const result = await dispatch(getUserData());
+      if (result.type === "getUserData/rejected") {
+        throw result;
+      } else {
+        const { _id } = result.payload;
+
+        const [petsResult, serviceResult, trainingResult] = await Promise.all([
+          dispatch(getPetsData(_id)),
+          dispatch(getServiceData(_id)),
+          dispatch(getTrainingData(_id)),
+        ]);
+
+        if (
+          petsResult.type === "getPetsData/fulfilled" &&
+          serviceResult.type === "getServiceData/fulfilled" &&
+          trainingResult.type === "getTrainingData/fulfilled"
+        ) {
+          const { pets } = petsResult.payload;
+          dispatch(setPets(pets));
+          dispatch(setService(serviceResult.payload));
+          dispatch(setTraining(trainingResult.payload));
         }
-      } catch (error) {
-        router.push('/home')
       }
-    };
-    dispatch(setLoading(true));
-    getUser();
-  }, []);
+    } catch (error) {
+      console.error("Error fetching user profile data:", error);
+      router.push("/home");
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }, [dispatch, router]);
 
-  const Rating = (value: number) => {
-    dispatch(setRate(value));
-  };
-  const handleTrainingSubmit = async (trainingPlanId: string) => {
-    try {
-      const trainingRatingResult = await dispatch(
-        trainingRating({ trainingPlanId, rating: rate })
-      );
-      if (trainingRatingResult.type === "trainingRating/rejected") {
-        throw trainingRatingResult;
+  useEffect(() => {
+    getUserProfileData();
+  }, [getUserProfileData]);
+
+  const Rating = useCallback(
+    (value: number) => {
+      dispatch(setRate(value));
+    },
+    [dispatch]
+  );
+
+  const handleTrainingSubmit = useCallback(
+    async (trainingPlanId: string) => {
+      try {
+        const trainingRatingResult = await dispatch(
+          trainingRating({ trainingPlanId, rating: rate })
+        );
+        if (trainingRatingResult.type === "trainingRating/rejected") {
+          throw trainingRatingResult;
+        }
+        toast.success("Training rating submitted successfully!");
+        getUserProfileData();
+      } catch (error) {
+        toast.error("You have already rated this Training!");
       }
-      if (trainingRatingResult.type === "trainingRating/fulfilled") {
-        const serviceResult = await dispatch(getTrainingData(user._id));
-        dispatch(setTraining(serviceResult.payload));
-      } else {
-        return trainingRatingResult;
+    },
+    [dispatch, rate, getUserProfileData]
+  );
+
+  const handleServiceSubmit = useCallback(
+    async (servicePlanId: string) => {
+      try {
+        const ratingResult = await dispatch(
+          serviceRating({ servicePlanId, rating: rate })
+        );
+        if (ratingResult.type === "serviceRating/rejected") {
+          throw ratingResult;
+        }
+        toast.success("Service rating submitted successfully!");
+        getUserProfileData();
+      } catch (error) {
+        toast.error("You have already rated this service!");
       }
-    } catch (error) {
-      toast.error("You have already rated this Training!");
-    }
-  };
-  const handleServiceSubmit = async (servicePlanId: string) => {
-    try {
-      const ratingResult = await dispatch(
-        serviceRating({ servicePlanId, rating: rate })
-      );
-      if (ratingResult.type === "serviceRating/rejected") {
-        throw ratingResult;
-      }
-      if (ratingResult.type === "serviceRating/fulfilled") {
-        const serviceResult = await dispatch(getServiceData(user._id));
-        dispatch(setService(serviceResult.payload));
-      } else {
-        return ratingResult;
-      }
-    } catch (error) {
-      toast.error("You have already rated this service!");
-    }
-  };
+    },
+    [dispatch, rate, getUserProfileData]
+  );
 
   const handleDelete = async (petId: string) => {
     try {
@@ -166,18 +171,27 @@ const router = useRouter();
     }
   };
 
-  useEffect(() => {
-    const randomImages = Array.from({ length: service.length }, () => {
+  const randomServiceImages = useMemo(() => {
+    return Array.from({ length: service.length }, () => {
       const randomIndex = Math.floor(Math.random() * imageUrls.length);
       return imageUrls[randomIndex];
     });
-    const randomImages2 = Array.from({ length: training.length }, () => {
-      const randomIndex2 = Math.floor(Math.random() * images.length);
-      return images[randomIndex2];
+  }, [service, imageUrls]);
+  
+  const randomTrainingImages = useMemo(() => {
+    return Array.from({ length: training.length }, () => {
+      const randomIndex = Math.floor(Math.random() * images.length);
+      return images[randomIndex];
     });
-    dispatch(setServiceImages(randomImages));
-    dispatch(setTrainingImages(randomImages2));
-  }, [service,training]);
+  }, [training, images]);
+  
+  useEffect(() => {
+    dispatch(setServiceImages(randomServiceImages));
+  }, [dispatch, randomServiceImages]);
+  
+  useEffect(() => {
+    dispatch(setTrainingImages(randomTrainingImages));
+  }, [dispatch, randomTrainingImages]);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -260,7 +274,7 @@ const router = useRouter();
       case "Services":
         return (
           <div>
-            <div className="container-fluid mt-3">
+            {/* <div className="container-fluid mt-3">
               <div className="row">
                 {service?.length > 0 ? (
                   service?.map((ser, index) => (
@@ -415,7 +429,24 @@ const router = useRouter();
               style={{ width: "133px" }}
             >
               Book Service
-            </Link>
+            </Link> */}
+            <div className="booking__card">
+	<img src="https://images.pexels.com/photos/62623/wing-plane-flying-airplane-62623.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" className="booking__card--image" alt="flight" />
+	<div className="booking__info">
+		<div className="booking__info--top">
+			<h3 className="booking__title">plan Name</h3>
+			<button className="btn btn--primary">View Details</button>
+		</div>
+		<div className="booking__info--middle">
+			<p className="booking__price">$250.00</p>
+			
+		</div>
+		<div className="booking__info--bottom">
+			<button className="btn btn--secondary">Purchase</button>
+			<button className="btn btn--alt">Close</button>
+		</div>
+	</div>
+</div>
           </div>
         );
       case "Trainings":

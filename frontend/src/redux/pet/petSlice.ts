@@ -26,17 +26,17 @@ const petSlice = createSlice({
   name: "pet",
   initialState,
   reducers: {
-    setPetData: (state, action: PayloadAction<Pet[]>) => {
-      state.petData = action.payload;
-    },
-    setOriginalPetData: (state, action: PayloadAction<Pet[]>) => {
-      state.originalPetData = action.payload;
-    },
     setCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload;
     },
     setSearchTerm: (state, action: PayloadAction<string>) => {
       state.searchTerm = action.payload;
+    },
+    setPetData: (state, action: PayloadAction<Pet[]>) => {
+      state.petData = action.payload;
+    },
+    setOriginalPetData: (state, action: PayloadAction<Pet[]>) => {
+      state.originalPetData = action.payload;
     },
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;

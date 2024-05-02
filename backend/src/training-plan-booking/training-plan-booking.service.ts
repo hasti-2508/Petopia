@@ -32,9 +32,9 @@ export class TrainingPlanBookingService {
     const resPerPage = 10;
     const currentPage = Number(qu.page) || 1;
     const skip = resPerPage * (currentPage - 1);
-
     return await this.TrainingPlanBookingModel.find()
-      .sort({ createdAt: -1 })
+      .populate('trainerId', 'name phoneNo')
+      .sort({ booking_date: 1, booking_time: 1 })
       .limit(resPerPage)
       .skip(skip)
       .exec();

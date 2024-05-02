@@ -43,23 +43,6 @@
 
 .fade-in-right {
   opacity: 0;
-  transform: translateX(-20px);
-  animation: fadeInRight 0.5s ease forwards;
-}
-
-@keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.fade-in-right {
-  opacity: 0;
   transform: translateX(50px);
   animation: fadeInRight 1s ease forwards;
 }
@@ -452,4 +435,116 @@ textarea {
   flex-wrap: wrap;
   align-items: center;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
+
+
+
+
+
+/* || BOOKING CARD */
+img {
+	width: 100%;
+	max-width: 300px;
+}
+
+.booking__card {
+	width: 100%;
+	max-width: 300px;
+	background-color: hsl(0, 0%, 95%);
+	border-radius: 7px;
+	box-shadow: 5px 5px 50px hsl(0, 0%, 80%);
+	transition: all 0.2s ease;
+}
+.booking__card:hover {
+	transform: scale(1.015);
+}
+.booking__card--image {
+	height: 180px;
+	object-fit: cover;
+	border-radius: 7px 7px 0 0;
+}
+.booking__info {
+	padding: 1.25em;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 1.5em;
+}
+.booking__info--top {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.booking__title {
+	font-size: 1rem;
+	font-weight: 700;
+	color: hsl(0,0%,50%);
+}
+
+.booking__info--middle {
+    display: flex;
+	flex-direction: column;
+	gap: 0.9em;
+	align-items: flex-start;
+	justify-content: space-between;
+}
+.booking__card--divider {
+	width: 100%;
+	height: 2px;
+	background: hsl(0, 0%, 90%);
+}
+.booking__price {
+	font-size: 1.15rem;
+	font-weight: 900;
+	color: hsl(0, 0%, 25%);
+}
+.booking__description {
+	font-size: 1rem;
+	color: hsl(0, 0%, 50%);
+}
+.booking__promotion {
+	font-size: 0.8rem;
+	color: hsl(0, 0%, 55%);
+}
+
+.booking__info--bottom {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 0.5em;
+}
+
+/* || BUTTONS */
+.btn {
+	border: 0;
+	padding: 0.5em 2em;
+	font-family: inherit;
+	font-weight: 600;
+	cursor: pointer;
+	border-radius: 3px;
+	transition: all 0.2s ease;
+}
+.btn--primary {
+	border: 1px solid hsl(0,0%,90%);
+	background: transparent;
+	color: hsl(0, 0%, 45%);
+}
+.btn--primary:hover {
+	background: hsl(0,0%,90%);
+}
+.btn--secondary {
+	background: rgb(85,80,166);
+	color: hsl(0, 0%, 95%);
+}
+.btn--secondary:hover {
+	background: rgba(85,80,166, 0.9);
+}
+.btn--alt {
+	color: hsl(0, 0%, 45%);
+}
+.btn--alt:hover {
+	color: hsl(0, 0%, 95%);
+	background: hsl(0, 50%, 55%);
 }
