@@ -1120,7 +1120,7 @@ function AdminProfile() {
                           : "even:bg-gray-100"
                       } border-b `}
                     >
-                      <td className=" font-bold text-gray-700 whitespace-nowrap ">
+                      <td className=" font-bold text-gray-700 whitespace-nowrap py-8">
                         {service.user_name}
                       </td>
                       <td>{service.pet_species}</td>
@@ -1302,7 +1302,7 @@ function AdminProfile() {
                           : "even:bg-gray-100"
                       } border-b `}
                     >
-                      <td className="font-bold text-gray-700 whitespace-nowrap">
+                      <td className="font-bold text-gray-700 whitespace-nowrap py-8">
                         {training.user_name}
                       </td>
                       <td>{training.pet_species}</td>

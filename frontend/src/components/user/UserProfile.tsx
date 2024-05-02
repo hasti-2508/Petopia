@@ -1,6 +1,6 @@
 "use client";
 import RatingModal from "@/components/rating/Rating";
-import React, { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import RateStar from "../rating/RateStar";
 import { UserCard } from "./UserCard";
 import { PetProfileCard } from "../pet/PetCard";
@@ -14,7 +14,6 @@ import {
   setPets,
   setRate,
   setService,
-  setServiceId,
   setServiceImages,
   setTraining,
   setTrainingId,
@@ -31,6 +30,7 @@ import {
 } from "@/redux/user/userService";
 import redirectLoggedIn from "@/hoc/redirectToLogin";
 import { useRouter } from "next/navigation";
+import {BookingCard} from "../service/bookingCard";
 
 const imageUrls = [
   "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379492/service1_z2p9ks.jpg",
@@ -125,7 +125,7 @@ function UserProfile() {
         if (trainingRatingResult.type === "trainingRating/rejected") {
           throw trainingRatingResult;
         }
-        toast.success("Training rating submitted successfully!");
+        toast.success("Thank you for rating!");
         getUserProfileData();
       } catch (error) {
         toast.error("You have already rated this Training!");
@@ -143,7 +143,7 @@ function UserProfile() {
         if (ratingResult.type === "serviceRating/rejected") {
           throw ratingResult;
         }
-        toast.success("Service rating submitted successfully!");
+        toast.success("Thank you for rating!");
         getUserProfileData();
       } catch (error) {
         toast.error("You have already rated this service!");
@@ -159,12 +159,12 @@ function UserProfile() {
         throw result;
       } else {
         const petResult = await dispatch(getPetsData(user._id));
-          if (petResult.type === "getPetsData/rejected") {
-            throw petResult;
-          } else {
-            const { pets } = petResult.payload;
-            dispatch(setPets(pets));
-          }
+        if (petResult.type === "getPetsData/rejected") {
+          throw petResult;
+        } else {
+          const { pets } = petResult.payload;
+          dispatch(setPets(pets));
+        }
       }
     } catch (error) {
       toast.error(error.payload);
@@ -177,18 +177,18 @@ function UserProfile() {
       return imageUrls[randomIndex];
     });
   }, [service, imageUrls]);
-  
+
   const randomTrainingImages = useMemo(() => {
     return Array.from({ length: training.length }, () => {
       const randomIndex = Math.floor(Math.random() * images.length);
       return images[randomIndex];
     });
   }, [training, images]);
-  
+
   useEffect(() => {
     dispatch(setServiceImages(randomServiceImages));
   }, [dispatch, randomServiceImages]);
-  
+
   useEffect(() => {
     dispatch(setTrainingImages(randomTrainingImages));
   }, [dispatch, randomTrainingImages]);
@@ -273,134 +273,16 @@ function UserProfile() {
         );
       case "Services":
         return (
-          <div>
-            {/* <div className="container-fluid mt-3">
+          <div >
+            <div className="container-fluid mt-5">
               <div className="row">
                 {service?.length > 0 ? (
                   service?.map((ser, index) => (
                     <div
-                      style={{
-                        height: "670px",
-                        width: "370px",
-                      }}
-                      className=" col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
+                      className="col-md-4 mb-6 flex"
                       key={index}
                     >
-                      <div>
-                        <img
-                          src={serviceImages[index]}
-                          alt={`Service ${index}`}
-                          className="w-full h-48 mb-4 border-2"
-                        />
-                        <div>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2 "
-                            >
-                              Name:
-                            </label>
-                            {ser.user_name}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2 "
-                            >
-                              Pet Species:
-                            </label>
-                            {ser.pet_species}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2 "
-                            >
-                              Pet Gender:
-                            </label>
-                            {ser.pet_gender}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Booking Date:
-                            </label>
-                            {ser.booking_date}
-                          </p>
-                          <p>
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Booking Time:
-                            </label>
-                            {ser.booking_time}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Payment Status:
-                            </label>
-                            {ser.isConfirmed ? `Done` : `Pending`}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Booking Status:
-                            </label>
-                            {ser.isCompleted
-                              ? `Completed`
-                              : `Not Completed Yet`}
-                          </p>
-                        </div>
-                        {ser.isCompleted ? (
-                          <div>
-                            <RateStar averageRating={ser.averageRating} />
-                            <button
-                              type="button"
-                              data-bs-toggle="modal"
-                              data-bs-target="#myModal"
-                              onClick={() => dispatch(setServiceId(ser._id))}
-                              className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
-                              style={{ width: "68px" }}
-                            >
-                              Rate
-                            </button>
-                            <RatingModal
-                              handleRating={Rating}
-                              handleSubmit={handleServiceSubmit}
-                              id={serviceId}
-                            />
-                          </div>
-                        ) : (
-                          <div>
-                            <RateStar averageRating={ser.averageRating} />
-                            <button
-                              onClick={() =>
-                                toast.error(
-                                  "This booking is not completed yet!"
-                                )
-                              }
-                              className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
-                              style={{ width: "68px" }}
-                            >
-                              Rate
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                    <BookingCard workerName="Vet" plan={ser.servicePlanId.serviceName} worker={ser.vetId} index={index} Rating={Rating} handleRatingSubmit={handleServiceSubmit} bookings={service} booking={ser} imageUrl={serviceImages[index]} />
                     </div>
                   ))
                 ) : (
@@ -429,157 +311,21 @@ function UserProfile() {
               style={{ width: "133px" }}
             >
               Book Service
-            </Link> */}
-            <div className="booking__card">
-	<img src="https://images.pexels.com/photos/62623/wing-plane-flying-airplane-62623.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" className="booking__card--image" alt="flight" />
-	<div className="booking__info">
-		<div className="booking__info--top">
-			<h3 className="booking__title">plan Name</h3>
-			<button className="btn btn--primary">View Details</button>
-		</div>
-		<div className="booking__info--middle">
-			<p className="booking__price">$250.00</p>
-			
-		</div>
-		<div className="booking__info--bottom">
-			<button className="btn btn--secondary">Purchase</button>
-			<button className="btn btn--alt">Close</button>
-		</div>
-	</div>
-</div>
+            </Link>
           </div>
         );
       case "Trainings":
         return (
           <div>
-            <div className="container-fluid mt-3 ">
+            <div className=" container-fluid mt-5 ">
               <div className="row">
                 {training?.length > 0 ? (
-                  training?.map((training, index) => (
+                  training?.map((tra, index) => (
                     <div
-                      style={{
-                        height: "670px",
-                        width: "370px",
-                      }}
-                      className="col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
+                      className="fade-in-up col-md-4 mb-6 flex"
                       key={index}
                     >
-                      <div>
-                        <img
-                          src={trainingImages[index]}
-                          alt={`training ${index}`}
-                          className="w-full h-48 mb-4 border-2"
-                        />
-                        <div>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue  mx-2 "
-                            >
-                              Name:
-                            </label>
-                            {training.user_name}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Pet Species:
-                            </label>
-                            {training.pet_species}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Pet Gender:
-                            </label>
-                            {training.pet_gender}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Booking Date:
-                            </label>
-                            {training.booking_date}
-                          </p>
-                          <p>
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Booking Time:
-                            </label>
-                            {training.booking_time}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Payment Status:
-                            </label>
-                            {training.isConfirmed ? `Done` : `Pending`}
-                          </p>
-                          <p>
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2 "
-                            >
-                              Booking Status:
-                            </label>
-                            {training.isCompleted
-                              ? `Completed`
-                              : `Not Completed Yet`}
-                          </p>
-                        </div>
-                        {training.isCompleted ? (
-                          <div>
-                            <RateStar averageRating={training.averageRating} />
-                            <button
-                              type="button"
-                              data-bs-toggle="modal"
-                              data-bs-target="#myModal"
-                              onClick={() =>
-                                dispatch(setTrainingId(training._id))
-                              }
-                              className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
-                              style={{ width: "68px" }}
-                            >
-                              Rate
-                            </button>
-                            <RatingModal
-                              handleRating={Rating}
-                              handleSubmit={handleTrainingSubmit}
-                              id={trainingId}
-                            />
-                          </div>
-                        ) : (
-                          <div>
-                            <RateStar averageRating={training.averageRating} />
-                            <button
-                              onClick={() =>
-                                toast.error(
-                                  "This training is not completed yet!"
-                                )
-                              }
-                              className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
-                              style={{ width: "68px" }}
-                            >
-                              Rate
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                    <BookingCard workerName="Trainer" plan={tra.TrainingPlanId.TrainingName} worker={tra.trainerId} bookings={training} booking={tra} index={index} handleRatingSubmit={handleTrainingSubmit} Rating={Rating} imageUrl={trainingImages[index]}/>
                     </div>
                   ))
                 ) : (

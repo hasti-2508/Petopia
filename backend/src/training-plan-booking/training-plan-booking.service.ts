@@ -41,12 +41,21 @@ export class TrainingPlanBookingService {
   }
 
   async findBookingById(bookingId: string): Promise<TrainingPlanBooking> {
-    const booking = await this.TrainingPlanBookingModel.findById(bookingId);
+    const booking = await this.TrainingPlanBookingModel
+    .findById(bookingId)
+    .populate('TrainingPlanId','TrainingName')
+    .sort({booking_date: 1, booking_time: 1})
+    .exec();
     return booking;
   }
 
   async findByUserId(userId: string): Promise<TrainingPlanBooking[]> {
-    return await this.TrainingPlanBookingModel.find({ userId: userId });
+    return await this.TrainingPlanBookingModel
+    .find({ userId: userId })
+    .populate('TrainingPlanId','TrainingName')
+    .populate('trainerId', 'name phoneNo city address email')
+    .sort({booking_date: 1, booking_time: 1})
+    .exec();
   }
 
   async bookService(

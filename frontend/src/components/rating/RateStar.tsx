@@ -3,13 +3,13 @@ import React from "react";
 function RateStar({ averageRating }) {
   return (
     <div>
-      <div className="flex items-center mt-5 mb-4">
+      <div className="flex items-center">
         {/* Rating stars */}
         <div className="flex items-center space-x-1 rtl:space-x-reverse">
           {[...Array(Math.round(averageRating || 0))].map((_, index) => (
             <svg
               key={index}
-              className="w-4 h-4 text-yellow-300"
+              className="w-6 h-6 text-yellow-300"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
@@ -22,7 +22,7 @@ function RateStar({ averageRating }) {
           {[...Array(5 - Math.round(averageRating || 0))].map((_, index) => (
             <svg
               key={index}
-              className="w-4 h-4 text-gray-200 dark:text-gray-600"
+              className="w-6 h-6 text-gray-200 dark:text-gray-600"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
@@ -33,9 +33,9 @@ function RateStar({ averageRating }) {
           ))}
         </div>
         {/* Average rating */}
-        <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
+        {/* <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
           {averageRating || "N/A"}
-        </span>
+        </span> */}
       </div>
     </div>
   );

@@ -2,10 +2,11 @@
 import Link from "next/link";
 const UserCard = ({ user }) => {
   return (
-    <div className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom">
+    <div className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom" 
+    style={{width: "380px"}}>
       <img
-        style={{ height: "280px", }}
-        className="w-full p-4 img-responsive"
+        style={{ height: "210px", }}
+        className="w-full img-responsive"
         src={
           user?.imageUrl
             ? user.imageUrl

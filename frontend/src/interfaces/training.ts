@@ -2,7 +2,9 @@
 export interface Training {
     _id: string;
     userId: string;
-    TrainingPlanID: string;
+    TrainingPlanId: {
+      TrainingName: string
+    };
     pet_species: string;
     pet_breed: string;
     pet_size: string;

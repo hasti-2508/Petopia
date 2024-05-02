@@ -2,7 +2,9 @@
   export interface Service {
     _id: string;
     userId: string;
-    servicePlanId: string;
+    servicePlanId: {
+      serviceName: string;
+    };
     pet_species: string;
     pet_breed: string;
     pet_size: string;

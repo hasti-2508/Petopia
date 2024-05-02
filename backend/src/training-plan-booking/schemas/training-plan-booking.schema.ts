@@ -5,11 +5,11 @@ import mongoose, { Document, Types } from 'mongoose';
   timestamps: true,
 })
 export class TrainingPlanBooking extends Document {
-  @Prop({ required: true })
-  userId: mongoose.Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
-  @Prop({ required: true })
-  TrainingPlanId: mongoose.Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'TrainingPlan' })
+  TrainingPlanId: Types.ObjectId;
 
   @Prop({ required: true })
   pet_species: string;

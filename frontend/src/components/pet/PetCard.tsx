@@ -47,7 +47,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
       <Link href={`/adopt/petData/${pet._id}`} className="flex justify-center">
         <img
           style={{ height: "250px", width: "370px" }}
-          className="p-4 img-responsive flex justify-center"
+          className="img-responsive flex justify-center"
           src={pet.imageUrl}
           alt={pet.pet_name}
         />
@@ -166,8 +166,8 @@ const PetAdoptCard: React.FC<PetCardProps> = ({ pet }) => {
     >
       <button onClick={handlePetDetails}>
         <img
-          style={{ height: "280px", width: "500px" }}
-          className="w-full p-3 img-responsive rounded-lg"
+          style={{ height: "250px", width: "490px" }}
+          className="w-full img-responsive "
           src={pet.imageUrl}
           alt={pet.pet_name}
         />
@@ -266,8 +266,8 @@ const PetProfileCard = ({ pet, handleDelete }) => {
     <div className="max-w-sm rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom">
       <button onClick={handlePetDetails}>
         <img
-          style={{ height: "250px", width: "380px" }}
-          className="w-full p-4 img-responsive"
+          style={{ height: "230px", width: "380px" }}
+          className="w-full img-responsive"
           src={pet.imageUrl}
           alt={pet.pet_name}
         />
