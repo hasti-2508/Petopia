@@ -9,7 +9,6 @@ import {
   setBookingImages,
   setBookings,
   setIsChecked,
-  setVet,
 } from "@/redux/vet/vetSlice";
 import {
   getServiceBookingData,
@@ -21,7 +20,7 @@ import toast from "react-hot-toast";
 import redirectLoggedIn from "@/hoc/redirectToLogin";
 import { useRouter } from "next/navigation";
 import { BookingTrainingCard } from "../service/bookingCard";
-import { setServiceImages } from "@/redux/user/userSlice";
+
 
 
 const imageUrls = [
@@ -50,11 +49,6 @@ function VetProfile() {
     const getUser = async () => {
       try {
         const result = await dispatch(getVetData());
-        if (result.type === "getVetData/rejected") {
-          throw result;
-        } else {
-          dispatch(setVet(result.payload));
-        }
         const bookingDetailsPromises = result.payload.bookings.map(
           async (bookingId: string) => {
             const bookingResponse = await dispatch(

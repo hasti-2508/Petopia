@@ -17,26 +17,9 @@ function AssignVet() {
   const [filteredVetList, setFilteredVetList] = useState<Vet[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedVet, setSelectedVet] = useState<string>("");
-  const [servicePlanId, setServicePlanId] = useState<Types.ObjectId>();
-  const [loading, setLoading] = useState(false);
+  const [servicePlanId, setServicePlanId] = useState<Types.ObjectId | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      const id = urlParams.get("bookingId");
-      if (id) {
-        try {
-          const objectId = new Types.ObjectId(id);
-          setServicePlanId(objectId);
-        } catch (error) {
-          console.error("Invalid ObjectId:", error);
-        }
-      } else {
-        toast.error("please select booking to assign vet!");
-      }
-    }
-  }, []);
 
   useEffect(() => {
     const fetchVets = async () => {
@@ -52,11 +35,28 @@ function AssignVet() {
   }, []);
 
   useEffect(() => {
-    const filteredVets = vetList.filter((vet) =>
+    const filteredVets = vetList.filter(vet =>
       vet.city.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredVetList(filteredVets);
   }, [vetList, searchTerm]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get("bookingId");
+      if (id) {
+        try {
+          const objectId = new Types.ObjectId(id);
+          setServicePlanId(objectId);
+        } catch (error) {
+          console.error("Invalid ObjectId:", error);
+        }
+      } else {
+        toast.error("Please select a booking to assign a vet!");
+      }
+    }
+  }, []);
 
   const handleVetSelection = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedVet(e.target.value);
@@ -64,62 +64,49 @@ function AssignVet() {
 
   const handleAssignVet = async () => {
     if (!servicePlanId || !selectedVet) {
-      toast.error("Select vet First");
+      toast.error("Select a vet first");
       return;
     }
 
     try {
       setLoading(true);
       const response = await axiosInstance.post(
-        `${
-          process.env.HOST
-        }/serviceBooking/assign/${servicePlanId?.toString()}`,
+        `${process.env.HOST}/serviceBooking/assign/${servicePlanId?.toString()}`,
         { vetId: selectedVet }
       );
       setLoading(false);
-      toast.success("Vet assigned Successfully!");
+      toast.success("Vet assigned successfully!");
       router.push("/admin/profile");
     } catch (error) {
-      if (
-        axios.isAxiosError(error) &&
-        error.response &&
-        error.response.status === 409
-      ) {
-        toast.error("The booking is not confirmed Yet!");
-        router.push('/admin/profile');
-      } else if (
-        axios.isAxiosError(error) &&
-        error.response &&
-        error.response.status === 402
-      ) {
-        toast.error("city is conflicting between Vet and User!");
-      }else if (
-        axios.isAxiosError(error) &&
-        error.response &&
-        error.response.status === 404
-      ) {
-        toast.error("Booking or Vet Not Found!");
-        router.push('/admin/profile');
-      } else {
-        toast.error("Error assigning vet");
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        switch (status) {
+          case 409:
+            toast.error("The booking is not confirmed yet!");
+            break;
+          case 402:
+            toast.error("City is conflicting between vet and user!");
+            break;
+          case 404:
+            toast.error("Booking or vet not found!");
+            break;
+          default:
+            toast.error("Error assigning vet");
+        }
       }
+      router.push('/admin/profile');
     }
   };
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <h1
-        className="text-3xl font-bold mb-4 mt-6"
-        style={{ fontFamily: "open-sans", fontSize: "40px" }}
-      >
+      <h1 className="text-3xl font-bold mb-4 mt-6" style={{ fontFamily: "open-sans", fontSize: "40px" }}>
         Assign Vet
       </h1>
 
       <div className="space-y-4">
         <div className="flex flex-col">
-          <label htmlFor="name" className="mb-1">
-            Search Vets in City:
-          </label>
+          <label htmlFor="name" className="mb-1">Search Vets in City:</label>
           <input
             placeholder="Search vet by city"
             type="text"
@@ -131,34 +118,23 @@ function AssignVet() {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="name" className="mb-1">
-            Select Vet:
-          </label>
+          <label htmlFor="name" className="mb-1">Select Vet:</label>
           <select
             className="border border-gray-300 rounded-md px-4 py-2"
             id="vet"
             onChange={handleVetSelection}
           >
-            {filteredVetList.length <= 0 ? (
-              <option
-                className="border border-gray-300 rounded-md px-4 py-2"
-                value=""
-                disabled
-              >
+            {filteredVetList.length === 0 ? (
+              <option className="border border-gray-300 rounded-md px-4 py-2" value="" disabled>
                 No vets found
               </option>
             ) : (
               <>
-                <option
-                  className="border border-gray-300 rounded-md px-4 py-2"
-                  value=""
-                >
-                  Select a Vet
-                </option>
+                <option className="border border-gray-300 rounded-md px-4 py-2" value="">Select a Vet</option>
                 {filteredVetList.map((vet) => (
                   <option
                     className="border border-gray-300 rounded-md px-4 py-2"
-                    key={Math.random()}
+                    key={vet._id.toString()}
                     value={vet._id.toString()}
                   >
                     {vet.name}-{vet.city}

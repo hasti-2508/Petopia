@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import RateStar from "../rating/RateStar";
-import RatingModal from "../rating/Rating";
+
 
 const BookingCard = ({
   imageUrl,
   bookings,
   booking,
   index,
-  handleRatingSubmit,
-  Rating,
   worker,
   plan,
   workerName,
@@ -16,8 +14,6 @@ const BookingCard = ({
   const [showDetails, setShowDetails] = useState(
     Array(bookings?.length).fill(false)
   );
-  const [id, setId] = useState<string>(null);
-
   const toggleDetails = (index) => {
     setShowDetails((prevState) => {
       const updatedState = [...prevState];
@@ -25,10 +21,6 @@ const BookingCard = ({
       return updatedState;
     });
   };
-  const handleId = (id) => {
-    setId(id);
-  };
-
   return (
     <div
       style={{
@@ -79,17 +71,10 @@ const BookingCard = ({
             const timeParts = booking.booking_time.split(":");
             const hours = parseInt(timeParts[0]);
             const minutes = parseInt(timeParts[1]);
-
-            // Convert 24-hour format to 12-hour format
             let formattedHours = hours % 12;
             if (formattedHours === 0) formattedHours = 12;
-
-            // Determine if it's AM or PM
             const period = hours >= 12 ? "PM" : "AM";
-
-            // Format minutes with leading zero if necessary
             const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-
             return `${formattedHours}:${formattedMinutes} ${period}`;
           })()}
         </p>
@@ -106,17 +91,11 @@ const BookingCard = ({
                   type="button"
                   data-bs-toggle="modal"
                   data-bs-target="#myModal"
-                  onClick={() => handleId(booking._id)}
                   className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
                   style={{ width: "68px" }}
                 >
                   Rate
                 </button>
-                <RatingModal
-                  handleRating={Rating}
-                  handleSubmit={handleRatingSubmit}
-                  id={id}
-                />
               </div>
             )}
           </div>

@@ -26,14 +26,10 @@ interface UserState {
   service: Service[];
   training: Training[];
   rate: number;
-  serviceId: string;
-  trainingId: string;
   activeTab: string;
   loading: boolean;
   serviceImages: string[];
   trainingImages: string[];
-  isEditing: boolean;
-  editedUser: any;
 }
 
 const initialPetDataForm = {
@@ -81,14 +77,10 @@ const initialState: UserState = {
   service: initialService,
   training: initialTraining,
   rate: null,
-  serviceId: "",
-  trainingId: "",
   activeTab: "Profile",
   loading: true,
   serviceImages: [],
   trainingImages: [],
-  isEditing: false,
-  editedUser: null,
 };
 
 const userSlice = createSlice({
@@ -128,12 +120,6 @@ const userSlice = createSlice({
     setRate: (state, action: PayloadAction<number>) => {
       state.rate = action.payload;
     },
-    setServiceId: (state, action: PayloadAction<string>) => {
-      state.serviceId = action.payload;
-    },
-    setTrainingId: (state, action: PayloadAction<string>) => {
-      state.trainingId = action.payload;
-    },
     setActiveTab: (state, action: PayloadAction<string>) => {
       state.activeTab = action.payload;
     },
@@ -145,12 +131,6 @@ const userSlice = createSlice({
     },
     setTrainingImages: (state, action: PayloadAction<string[]>) => {
       state.trainingImages = action.payload;
-    },
-    setIsEditing: (state, action: PayloadAction<boolean>) => {
-      state.isEditing = action.payload;
-    },
-    setEditedUser: (state, action: PayloadAction<any>) => {
-      state.editedUser = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -189,11 +169,7 @@ export const {
   setLoading,
   setServiceImages,
   setTrainingImages,
-  setIsEditing,
-  setEditedUser,
   setRate,
-  setServiceId,
-  setTrainingId,
 } = userSlice.actions;
 
 export default userSlice.reducer;

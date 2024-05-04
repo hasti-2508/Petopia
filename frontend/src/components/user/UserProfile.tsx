@@ -16,7 +16,6 @@ import {
   setService,
   setServiceImages,
   setTraining,
-  setTrainingId,
   setTrainingImages,
 } from "@/redux/user/userSlice";
 import {
@@ -30,7 +29,7 @@ import {
 } from "@/redux/user/userService";
 import redirectLoggedIn from "@/hoc/redirectToLogin";
 import { useRouter } from "next/navigation";
-import {BookingCard} from "../service/bookingCard";
+import { BookingCard } from "../service/bookingCard";
 
 const imageUrls = [
   "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379492/service1_z2p9ks.jpg",
@@ -55,8 +54,6 @@ function UserProfile() {
     service,
     training,
     rate,
-    serviceId,
-    trainingId,
     activeTab,
     loading,
     serviceImages,
@@ -273,22 +270,32 @@ function UserProfile() {
         );
       case "Services":
         return (
-          <div >
+          <div>
             <div className="container-fluid mt-5">
               <div className="row">
                 {service?.length > 0 ? (
                   service?.map((ser, index) => (
-                    <div
-                      className="col-md-4 mb-6 flex"
-                      key={index}
-                    >
-                    <BookingCard workerName="Vet" plan={ser.servicePlanId.serviceName} worker={ser.vetId} index={index} Rating={Rating} handleRatingSubmit={handleServiceSubmit} bookings={service} booking={ser} imageUrl={serviceImages[index]} />
+                    <div className="col-md-4 mb-6 flex" key={index}>
+                      <BookingCard
+                        workerName="Vet"
+                        plan={ser.servicePlanId.serviceName}
+                        worker={ser.vetId}
+                        index={index}
+                        bookings={service}
+                        booking={ser}
+                        imageUrl={serviceImages[index]}
+                      />
+                      <RatingModal
+                        handleRating={Rating}
+                        handleSubmit={handleServiceSubmit}
+                        id={ser._id}
+                      />
                     </div>
                   ))
                 ) : (
                   <div
                     style={{ height: "55vh" }}
-                    className="flex flex-col mb-3 items-center justify-center fade-in-up"
+                    className="flex flex-col mb-3 items-center justify-center"
                   >
                     <img
                       src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
@@ -321,17 +328,27 @@ function UserProfile() {
               <div className="row">
                 {training?.length > 0 ? (
                   training?.map((tra, index) => (
-                    <div
-                      className="fade-in-up col-md-4 mb-6 flex"
-                      key={index}
-                    >
-                    <BookingCard workerName="Trainer" plan={tra.TrainingPlanId.TrainingName} worker={tra.trainerId} bookings={training} booking={tra} index={index} handleRatingSubmit={handleTrainingSubmit} Rating={Rating} imageUrl={trainingImages[index]}/>
+                    <div className="col-md-4 mb-6 flex" key={index}>
+                      <BookingCard
+                        workerName="Trainer"
+                        plan={tra.TrainingPlanId.TrainingName}
+                        worker={tra.trainerId}
+                        bookings={training}
+                        booking={tra}
+                        index={index}
+                        imageUrl={trainingImages[index]}
+                      />
+                      <RatingModal
+                        handleRating={Rating}
+                        handleSubmit={handleTrainingSubmit}
+                        id={tra._id}
+                      />
                     </div>
                   ))
                 ) : (
                   <div
                     style={{ height: "55vh" }}
-                    className="flex flex-col mb-3 items-center justify-center fade-in-up"
+                    className="flex flex-col mb-3 items-center justify-center"
                   >
                     <img
                       src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"

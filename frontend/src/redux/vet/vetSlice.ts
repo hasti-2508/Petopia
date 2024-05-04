@@ -9,8 +9,6 @@ interface VetState {
   error: any;
   bookings: Service[];
   isChecked: boolean;
-  isEditing: boolean;
-  editedVet: any;
   bookingImages: string[];
   activeVetTab: string;
   vetDataForm: Vet;
@@ -45,9 +43,7 @@ const initialState: VetState = {
   isLoading: true,
   error: null,
   bookings: initialService,
-  isEditing: false,
   isChecked: true,
-  editedVet: null,
   bookingImages: [],
   activeVetTab: "Profile",
   vetDataForm: initialVetDataForm,
@@ -62,20 +58,11 @@ const vetSlice = createSlice({
   name: "vet",
   initialState,
   reducers: {
-    setVet: (state, action: PayloadAction<Vet>) => {
-      state.vet = action.payload;
-    },
     setBookings: (state, action: PayloadAction<Service[]>) => {
       state.bookings = action.payload;
     },
     setIsChecked: (state, action: PayloadAction<boolean>) => {
       state.isChecked = action.payload;
-    },
-    setVetIsEditing: (state, action: PayloadAction<boolean>) => {
-      state.isEditing = action.payload;
-    },
-    setEditedVet: (state, action: PayloadAction<any>) => {
-      state.editedVet = action.payload;
     },
     setBookingImages: (state, action: PayloadAction<string[]>) => {
       state.bookingImages = action.payload;
@@ -132,11 +119,8 @@ const vetSlice = createSlice({
 });
 
 export const {
-  setVet,
   setBookings,
-  setVetIsEditing,
   setIsChecked,
-  setEditedVet,
   setActiveVetTab,
   setBookingImages,
   setVetDataForm,
