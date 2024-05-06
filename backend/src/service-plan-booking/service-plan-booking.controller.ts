@@ -45,8 +45,8 @@ export class ServicePlanBookingController {
   }
 
   @Get('booking/:bookingId')
-  @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN, Role.USER , Role.TRAINER, Role.VET)
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.ADMIN, Role.USER , Role.TRAINER, Role.VET)
   async findBookingById(
     @Param('bookingId') bookingId: string,
   ): Promise<ServicePlanBooking> {

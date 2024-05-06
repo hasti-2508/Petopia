@@ -31,7 +31,6 @@ const serviceBookingData: ServicePlanBooking = {
 
 function BookService() {
   const formRef = useRef<HTMLFormElement>(null);
-
   useEffect(() => {
     if (formRef.current) {
       formRef.current.classList.add("animate__animated", "animate__zoomIn");
@@ -119,7 +118,7 @@ function BookService() {
         <form ref={formRef} onSubmit={onSubmit}>
           {step}
           <div
-            className=" text-white"
+            className=" text-white flex "
             style={{
               marginTop: "1.5rem",
               marginBottom: "1.5rem",
@@ -129,8 +128,11 @@ function BookService() {
             }}
           >
             {!isFirstStep && (
-              <button>
-                <img src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379465/left_ose3wz.svg" alt="" />
+              <button onClick={back}>
+                <img
+                  src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379465/left_ose3wz.svg"
+                  alt=""
+                />
               </button>
             )}
 
@@ -142,8 +144,11 @@ function BookService() {
                 Pay
               </button>
             ) : (
-              <button className="">
-                <img src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379487/right_lxrjyk.svg" alt="" />
+              <button>
+                <img
+                  src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379487/right_lxrjyk.svg"
+                  alt=""
+                />
               </button>
             )}
           </div>

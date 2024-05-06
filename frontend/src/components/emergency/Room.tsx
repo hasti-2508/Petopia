@@ -20,7 +20,7 @@ function Room() {
         roomId,
         Date.now().toString(),
         "Hasti Kapadiya"
-      );
+      ); 
       const zc = ZegoUIKitPrebuilt.create(kitToken);
       zc.joinRoom({
         container: elementRef.current,

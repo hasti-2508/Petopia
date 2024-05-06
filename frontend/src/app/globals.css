@@ -3,27 +3,6 @@
 @tailwind utilities;
 
 /* animation classes */
-.floating-ui {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: #e90606;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  animation: floatAnimation 1.5s ease-in-out infinite alternate;
-}
-
-@keyframes floatAnimation {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-20px);
-  }
-}
-
 .fade-in-up {
   opacity: 0;
   transform: translateY(20px);
@@ -436,6 +415,11 @@ textarea {
   align-items: center;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 }
+
+
+
+
+
 
 
 

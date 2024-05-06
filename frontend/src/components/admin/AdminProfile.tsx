@@ -22,21 +22,15 @@ import SearchAdminIcon from "./Icon";
 
 function AdminProfile() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("ServicesBookings");
-  const handleTabClick = (tab: string) => {
-    setActiveTab(tab);
-  };
-
+  const [activeTab, setActiveTab] = useState<string>("ServicesBookings");
   const [users, setUsers] = useState<User[]>([]);
   const [vets, setVets] = useState<Vet[]>([]);
   const [trainers, setTrainers] = useState<Trainer[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
   const [originalServiceData, setOriginalServiceData] = useState<Service[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [services, setServices] = useState<Service[]>([]);
-  const [originalTrainingData, setOriginalTrainingData] = useState<Training[]>(
-    []
-  );
+  const [originalTrainingData, setOriginalTrainingData] = useState<Training[]>([]);
   const [trainings, setTrainings] = useState<Training[]>([]);
   const [pagination, setPagination] = useState({
     userCurrentPage: 1,
@@ -46,6 +40,11 @@ function AdminProfile() {
     serviceCurrentPage: 1,
     trainingCurrentPage: 1,
   });
+
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+  };
+
   //service search
   const searchFilter = () => {
     const filterData = originalServiceData.filter((data) => {
@@ -68,6 +67,7 @@ function AdminProfile() {
   useEffect(() => {
     return setServices(originalServiceData);
   }, [searchTerm]);
+
   //training search
   const searchTrainingFilter = () => {
     const filterData = originalTrainingData.filter((data) => {
@@ -117,7 +117,6 @@ function AdminProfile() {
         const response = await axiosInstance.delete(
           `${process.env.HOST}/vet/${vetId}`
         );
-
         toast.success("Vet is Deleted");
         setVets(vets.filter((vet) => vet._id !== vetId));
       } catch (error) {

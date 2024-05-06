@@ -120,7 +120,7 @@ function TrainerProfile() {
                       className="fade-in-up col-md-4 mb-6 flex"
                       key={index}
                     >
-                      <BookingTrainingCard imageUrl={trainingImages[index]} bookings={trainings} booking={booking} plan={booking.TrainingPlanId.TrainingName} index={index} handleComplete={handleComplete}/>
+                      <BookingTrainingCard averageRating={booking.averageRating} imageUrl={trainingImages[index]} bookings={trainings} booking={booking} plan={booking.TrainingPlanId.TrainingName} index={index} handleComplete={handleComplete}/>
                       </div>
                     ))
                 ) : (
@@ -160,7 +160,7 @@ function TrainerProfile() {
                       className="fade-in-up col-md-4 mb-6 flex"
                       key={index}
                     >
-                      <BookingTrainingCard imageUrl={trainingImages[index]} bookings={trainings} booking={booking} plan={booking.TrainingPlanId.TrainingName} index={index} handleComplete={handleComplete}/>
+                      <BookingTrainingCard averageRating={booking.averageRating} imageUrl={trainingImages[index]} bookings={trainings} booking={booking} plan={booking.TrainingPlanId.TrainingName} index={index} handleComplete={handleComplete}/>
                       </div>
                     ))
                 ) : (

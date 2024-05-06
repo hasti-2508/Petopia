@@ -9,8 +9,7 @@ export interface TrainerData {
     YearsOfExperience: number;
     NumberOfPetsTrained: number
     trainings: string[];
-  }
-  
+  } 
   export interface Trainer {
     _id: string;
     name: string;

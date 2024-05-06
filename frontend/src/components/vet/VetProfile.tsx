@@ -93,7 +93,7 @@ function VetProfile() {
       toast.error(error.payload);
     }
   };
-
+console.log(bookings)
   const handleCheckboxChange = async () => {
     dispatch(setIsChecked(!isChecked));
     try {
@@ -104,7 +104,7 @@ function VetProfile() {
         return availableResult;
       }
     } catch (error) {
-      toast.error(error.payload);
+      console.error(error);
     }
   };
   const renderTabContent = () => {
@@ -165,7 +165,7 @@ function VetProfile() {
                       className="fade-in-up col-md-4 mb-6 flex"
                       key={index}
                     >
-                      <BookingTrainingCard index={index} plan={booking.servicePlanId.serviceName} imageUrl={bookingImages[index]} bookings={bookings} booking={booking} handleComplete={handleComplete}/>
+                      <BookingTrainingCard averageRating={booking.averageRating} index={index} plan={booking.servicePlanId.serviceName} imageUrl={bookingImages[index]} bookings={bookings} booking={booking} handleComplete={handleComplete}/>
                       </div>
                     ))
                 ) : (
@@ -204,7 +204,7 @@ function VetProfile() {
                       className="fade-in-up col-md-4 mb-6 flex"
                       key={index}
                     >
-                      <BookingTrainingCard index={index} plan={booking.servicePlanId.serviceName} imageUrl={bookingImages[index]} bookings={bookings} booking={booking} handleComplete={handleComplete}/>
+                      <BookingTrainingCard averageRating={booking.averageRating} index={index} plan={booking.servicePlanId.serviceName} imageUrl={bookingImages[index]} bookings={bookings} booking={booking} handleComplete={handleComplete}/>
                       </div>
                     ))
                 ) : (

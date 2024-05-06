@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import RateStar from "../rating/RateStar";
-
+import RatingModal from "../rating/Rating";
 
 const BookingCard = ({
   imageUrl,
@@ -117,36 +117,50 @@ const BookingCard = ({
             <h5 className="text-saddle-brown">{workerName} Details:</h5>
             {worker ? (
               <div className="px-6 py-3">
-              <div className="font-bold text-xl mb-2 text-dark-blue ">{worker.name}</div>
-              <div className="text-gray-700 text-base">
-                <div className="row justify-content-between">
-                  <div className="col-md-6 mb-2">
-                    <label htmlFor="species" className="font-bold text-dark-blue  ">
-                      Email:
-                    </label>
-                    <div className="fw-medium">{worker.email}</div>
+                <div className="font-bold text-xl mb-2 text-dark-blue ">
+                  {worker.name}
+                </div>
+                <div className="text-gray-700 text-base">
+                  <div className="row justify-content-between">
+                    <div className="col-md-6 mb-2">
+                      <label
+                        htmlFor="species"
+                        className="font-bold text-dark-blue  "
+                      >
+                        Email:
+                      </label>
+                      <div className="fw-medium">{worker.email}</div>
+                    </div>
+                    <div className="col-md-6">
+                      <label
+                        htmlFor="species"
+                        className="font-bold text-dark-blue  "
+                      >
+                        Address:
+                      </label>
+                      <div className="fw-medium">{worker.address}</div>
+                    </div>
+                    <div className="col-md-6">
+                      <label
+                        htmlFor="species"
+                        className="font-bold text-dark-blue  "
+                      >
+                        Phone No:
+                      </label>
+                      <div className="fw-medium">{worker.phoneNo}</div>
+                    </div>
+                    <div className="col-md-6">
+                      <label
+                        htmlFor="species"
+                        className="font-bold text-dark-blue  "
+                      >
+                        City:
+                      </label>
+                      <div className="fw-medium">{worker.city}</div>
+                    </div>
                   </div>
-                  <div className="col-md-6">
-                    <label htmlFor="species" className="font-bold text-dark-blue  ">
-                      Address:
-                    </label>
-                    <div className="fw-medium">{worker.address}</div>
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="species" className="font-bold text-dark-blue  ">
-                      Phone No:
-                    </label>
-                    <div className="fw-medium">{worker.phoneNo}</div>
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="species" className="font-bold text-dark-blue  ">
-                      City:
-                    </label>
-                    <div className="fw-medium">{worker.city}</div>
-                  </div>           
                 </div>
               </div>
-            </div>
             ) : (
               <div className="text-red-500 text-center mb-1">
                 No {workerName} Assigned yet!
@@ -156,35 +170,47 @@ const BookingCard = ({
           <div className="px-4">
             <h5 className="text-saddle-brown">Pet Details:</h5>
             <div className="px-6 py-3">
-        <div className="text-gray-700 text-base">
-          <div className="row justify-content-between">
-            <div className="col-md-6 mb-2">
-              <label htmlFor="species" className="font-bold text-dark-blue  ">
-                Species:
-              </label>
-              <div className="fw-medium">{booking.pet_species}</div>
+              <div className="text-gray-700 text-base">
+                <div className="row justify-content-between">
+                  <div className="col-md-6 mb-2">
+                    <label
+                      htmlFor="species"
+                      className="font-bold text-dark-blue  "
+                    >
+                      Species:
+                    </label>
+                    <div className="fw-medium">{booking.pet_species}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="species"
+                      className="font-bold text-dark-blue  "
+                    >
+                      Breed:
+                    </label>
+                    <div className="fw-medium">{booking.pet_breed}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="species"
+                      className="font-bold text-dark-blue  "
+                    >
+                      age:
+                    </label>
+                    <div className="fw-medium">{booking.pet_age}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="species"
+                      className="font-bold text-dark-blue  "
+                    >
+                      aggressiveness:
+                    </label>
+                    <div className="fw-medium">{booking.aggressiveness}</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="col-md-6">
-              <label htmlFor="species" className="font-bold text-dark-blue  ">
-                Breed:
-              </label>
-              <div className="fw-medium">{booking.pet_breed}</div>
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="species" className="font-bold text-dark-blue  ">
-                age:
-              </label>
-              <div className="fw-medium">{booking.pet_age}</div>
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="species" className="font-bold text-dark-blue  ">
-                aggressiveness:
-              </label>
-              <div className="fw-medium">{booking.aggressiveness}</div>
-            </div>           
-          </div>
-        </div>
-      </div>
           </div>
         </div>
       )}
@@ -199,6 +225,7 @@ const BookingTrainingCard = ({
   index,
   handleComplete,
   plan,
+  averageRating,
 }) => {
   const [showDetails, setShowDetails] = useState(
     Array(bookings?.length).fill(false)
@@ -306,69 +333,95 @@ const BookingTrainingCard = ({
           <div className="px-4">
             <h5 className="text-amber-500">User Details:</h5>
             <div className="px-6 py-3">
-        <div className="font-bold text-xl mb-2 text-dark-blue ">{booking.user_name}</div>
-        <div className="text-gray-700 text-base">
-          <div className="row justify-content-between">
-            <div className="col-md-6 mb-2">
-              <label htmlFor="species" className="font-bold text-dark-blue  ">
-                Email:
-              </label>
-              <div className="fw-medium">{booking.email}</div>
+              <div className="font-bold text-xl mb-2 text-dark-blue ">
+                {booking.user_name}
+              </div>
+              <div className="text-gray-700 text-base">
+                <div className="row justify-content-between">
+                  <div className="col-md-6 mb-2">
+                    <label
+                      htmlFor="species"
+                      className="font-bold text-dark-blue  "
+                    >
+                      Email:
+                    </label>
+                    <div className="fw-medium">{booking.email}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="species"
+                      className="font-bold text-dark-blue  "
+                    >
+                      Address:
+                    </label>
+                    <div className="fw-medium">{booking.address}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="species"
+                      className="font-bold text-dark-blue  "
+                    >
+                      Phone No:
+                    </label>
+                    <div className="fw-medium">{booking.phoneNo}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="species"
+                      className="font-bold text-dark-blue  "
+                    >
+                      City:
+                    </label>
+                    <div className="fw-medium">{booking.city}</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="col-md-6">
-              <label htmlFor="species" className="font-bold text-dark-blue  ">
-                Address:
-              </label>
-              <div className="fw-medium">{booking.address}</div>
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="species" className="font-bold text-dark-blue  ">
-                Phone No:
-              </label>
-              <div className="fw-medium">{booking.phoneNo}</div>
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="species" className="font-bold text-dark-blue  ">
-                City:
-              </label>
-              <div className="fw-medium">{booking.city}</div>
-            </div>           
-          </div>
-        </div>
-      </div>
           </div>
           <div className="px-4">
             <h5 className="text-amber-500">Pet Details:</h5>
             <div className="px-6 py-3">
-        <div className="text-gray-700 text-base">
-          <div className="row justify-content-between">
-            <div className="col-md-6 mb-2">
-              <label htmlFor="species" className="font-bold text-dark-blue  ">
-                Species:
-              </label>
-              <div className="fw-medium">{booking.pet_species}</div>
+              <div className="text-gray-700 text-base">
+                <div className="row justify-content-between">
+                  <div className="col-md-6 mb-2">
+                    <label
+                      htmlFor="species"
+                      className="font-bold text-dark-blue  "
+                    >
+                      Species:
+                    </label>
+                    <div className="fw-medium">{booking.pet_species}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="species"
+                      className="font-bold text-dark-blue  "
+                    >
+                      Breed:
+                    </label>
+                    <div className="fw-medium">{booking.pet_breed}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="species"
+                      className="font-bold text-dark-blue  "
+                    >
+                      age:
+                    </label>
+                    <div className="fw-medium">{booking.pet_age}</div>
+                  </div>
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="species"
+                      className="font-bold text-dark-blue  "
+                    >
+                      aggressiveness:
+                    </label>
+                    <div className="fw-medium">{booking.aggressiveness}</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="col-md-6">
-              <label htmlFor="species" className="font-bold text-dark-blue  ">
-                Breed:
-              </label>
-              <div className="fw-medium">{booking.pet_breed}</div>
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="species" className="font-bold text-dark-blue  ">
-                age:
-              </label>
-              <div className="fw-medium">{booking.pet_age}</div>
-            </div>
-            <div className="col-md-6">
-              <label htmlFor="species" className="font-bold text-dark-blue  ">
-                aggressiveness:
-              </label>
-              <div className="fw-medium">{booking.aggressiveness}</div>
-            </div>           
-          </div>
-        </div>
-      </div>
           </div>
         </div>
       )}

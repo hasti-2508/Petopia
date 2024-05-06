@@ -24,7 +24,7 @@ function Home() {
           className=" bg-white position-absolute custom-box border-gray-300 border-2 p-4 rounded-xl shadow hover:shadow-2xl mx-auto flex-col items-center"
         >
           <h1
-            className="text-center text-dark-blue font-bold text-2xl"
+            className="text-center text-dark-blue font-bold text-2xl "
             style={{ fontFamily: "open-sans", fontSize: "35px" }}
           >
             Petopia: To make your pet Happy
@@ -261,7 +261,6 @@ function Home() {
                 </div>
               </div>
             </div>
-
             <div className="flex gap-0 mt-9">
               <img
                 src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379454/connect_k2fvky.avif"

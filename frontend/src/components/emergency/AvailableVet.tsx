@@ -55,7 +55,7 @@ function AvailableVet() {
           />
         </div>
       ) : (
-        <div>
+        <div className="fade-in-up">
           <h1
             className="font-bold mb-5 mt-6"
             style={{ fontFamily: "open-sans", fontSize: "35px" }}
@@ -74,11 +74,11 @@ function AvailableVet() {
                 </button>
               </div>
             ))}
-            <p className="text-gray-600 italic mt-8">
+          </div>
+          <p className="text-gray-600 italic mt-8">
               Please allow a moment for a veterinarian to join after you've
               entered.
             </p>
-          </div>
         </div>
       )}
     </div>
