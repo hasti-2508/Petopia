@@ -83,7 +83,7 @@ export class PetController {
 
   @Delete(':id')
   @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.USER)
   async deletePet(@Param('id') petId: string) {
     return this.petService.deletePet(petId);
   }
