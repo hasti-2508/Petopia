@@ -37,17 +37,28 @@ export class ServicePlanBookingService {
 
     return this.servicePlanBookingModel
       .find()
-      .sort({ createdAt: -1 })
+      .populate('servicePlanId','serviceName')
+      .populate('vetId', 'name phoneNo')
+      .sort({ booking_date: 1, booking_time: 1 })
       .limit(resPerPage)
       .skip(skip)
       .exec();
   }
   async findBookingById(bookingId: string): Promise<ServicePlanBooking> {
-    return await this.servicePlanBookingModel.findById(bookingId);
+    return await this.servicePlanBookingModel
+    .findById(bookingId)
+    .populate('servicePlanId','serviceName')
+    .sort({booking_date: 1, booking_time: 1})
+    .exec();
   }
 
   async findByUserId(userId: string): Promise<ServicePlanBooking[]> {
-    const booking = await this.servicePlanBookingModel.find({ userId: userId });
+    const booking = await this.servicePlanBookingModel
+    .find({ userId: userId })
+    .populate('servicePlanId','serviceName')
+    .populate('vetId', 'name phoneNo city email address')
+    .sort({booking_date: 1, booking_time: 1})
+    .exec();
     return booking;
   }
 

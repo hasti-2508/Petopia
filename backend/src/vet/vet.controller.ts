@@ -111,32 +111,46 @@ export class VetController {
   }
 
   @Get('/')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
   async getVet(@Query() query: ExpressQuery): Promise<Vet[]> {
     return await this.vetService.findVet(query);
   }
 
   @Get('/available/')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.USER, Role.TRAINER, Role.VET)
   async getAvailableVet(): Promise<Vet[]> {
     return await this.vetService.findAvailableVet();
   }
 
   @Get('/:id')
   @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.USER, Role.TRAINER, Role.VET)
   async getTrainerByID(@Param('id') trainerId: string): Promise<Vet> {
     return await this.vetService.findVetById(trainerId);
   }
+
   @Patch('update/:id')
-  async updateUser(@Body() updateUserDto, @Param('id') trainerId: string):Promise<Vet> {
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.VET)
+  async updateUser(
+    @Body() updateUserDto,
+    @Param('id') trainerId: string,
+  ): Promise<Vet> {
     return await this.vetService.updateVet(trainerId, updateUserDto);
   }
 
   @Delete('/:id')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
   async deleteTrainer(@Param('id') trainerId: string) {
     return await this.vetService.deleteTrainer(trainerId);
   }
 
   @Post('/:bookingId/confirm')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.USER, Role.TRAINER, Role.VET)
   async confirm(@Param('bookingId') bookingId: string, @Req() req) {
     const token = req.cookies.jwt;
     if (!token) {
@@ -148,11 +162,15 @@ export class VetController {
   }
 
   @Patch(':id/available')
+  @UseGuards(RolesGuard)
+  @Roles(Role.VET)
   async markIsAvailable(@Param('id') id: string) {
     return await this.vetService.markIsAvailable(id);
   }
 
   @Patch('/:id/notify')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.USER, Role.TRAINER, Role.VET)
   async notifyVet(@Param('id') vetId: string) {
     return await this.vetService.notifyVet(vetId);
   }

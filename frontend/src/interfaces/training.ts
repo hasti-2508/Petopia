@@ -2,7 +2,9 @@
 export interface Training {
     _id: string;
     userId: string;
-    TrainingPlanID: string;
+    TrainingPlanId: {
+      TrainingName: string
+    };
     pet_species: string;
     pet_breed: string;
     pet_size: string;
@@ -21,7 +23,10 @@ export interface Training {
     isConfirmed: boolean;
     isCompleted: boolean;
     isCancelled: boolean;
-    trainerId: number;
+    trainerId: {
+      name: string,
+      phoneNo: string
+    };
     averageRating: number;
     ratings: Rating[];
   }

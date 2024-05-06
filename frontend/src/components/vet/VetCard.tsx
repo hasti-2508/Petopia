@@ -3,11 +3,11 @@ const VetCard = ({ user }) => {
   return (
     <div
       className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom"
-      style={{ width: "500px" }}
+      style={{ width: "400px" }}
     >
       <img
-        style={{ height: "320px" }}
-        className="w-full p-4 img-responsive"
+        style={{ height: "190px" }}
+        className="w-full img-responsive"
         src={
           user?.imageUrl
             ? user.imageUrl
@@ -74,8 +74,8 @@ const AvailableVetCard = ({ user }) => {
       style={{ width: "380px" }}
     >
       <img
-        style={{ height: "320px" }}
-        className="w-full p-4 img-responsive"
+        style={{ height: "210px" }}
+        className="w-full img-responsive"
         src={
           user?.imageUrl
             ? user.imageUrl
@@ -138,12 +138,12 @@ const AvailableVetCard = ({ user }) => {
 const VetAdminCard = ({ user }) => {
   return (
     <div
-      style={{ height: "690px" }}
+      style={{ height: "560px", width:"400px" }}
       className="rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom"
     >
       <img
-        style={{ height: "320px" }}
-        className="w-full p-4 img-responsive"
+        style={{ height: "210px" }}
+        className="w-full img-responsive"
         src={
           user?.imageUrl
             ? user.imageUrl

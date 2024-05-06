@@ -36,11 +36,12 @@ export class TrainingPlanBookingController {
   async getTrainings(
     @Query() query: ExpressQuery,
   ): Promise<TrainingPlanBooking[]> {
-    console.log("i am in controller")
     return await this.TrainingPlanBookingService.findTrainings(query);
   }
 
   @Get('booking/:bookingId')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.USER , Role.TRAINER, Role.VET)
   async findBookingById(
     @Param('bookingId') bookingId: string,
   ): Promise<TrainingPlanBooking> {
@@ -50,6 +51,8 @@ export class TrainingPlanBookingController {
   }
 
   @Get('user/:userId')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.USER , Role.TRAINER, Role.VET)
   async getTraining(
     @Param('userId') userId: string,
   ): Promise<TrainingPlanBooking[]> {
@@ -62,6 +65,8 @@ export class TrainingPlanBookingController {
 
   @Post('/:TrainingPlanId')
   @UseInterceptors(JwtInterceptor)
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.USER , Role.TRAINER, Role.VET)
   async create(
     @Req() request,
     @Param('TrainingPlanId') TrainingPlanId: string,
@@ -80,6 +85,8 @@ export class TrainingPlanBookingController {
   }
 
   @Post('/assign/:bookingId')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
   async assignTrainer(
     @Param('bookingId') bookingId: string,
     @Body() assignTrainerDto: AssignTrainerDto,
@@ -91,6 +98,8 @@ export class TrainingPlanBookingController {
   }
 
   @Post(':BookingId/rate')
+  @UseGuards(RolesGuard)
+  @Roles(Role.USER)
   @UseInterceptors(JwtInterceptor)
   async rateVet(
     @Req() request,
@@ -110,6 +119,8 @@ export class TrainingPlanBookingController {
   }
 
   @Patch('/:id/complete')
+  @UseGuards(RolesGuard)
+  @Roles(Role.TRAINER)
   async markTrainingAsComplete(
     @Param('id') id: string,
   ): Promise<TrainingPlanBooking> {

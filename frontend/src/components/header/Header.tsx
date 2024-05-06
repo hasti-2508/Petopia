@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setToken } from "@/redux/auth/authSlice";
 import { currentUser, logout } from "@/redux/auth/authService";
 import Link from "next/link";
+import KommunicateChat from "../chatbot/chatbot";
 
 function Header() {
   const router = useRouter();
@@ -25,7 +26,6 @@ function Header() {
         dispatch(setToken(AuthToken));
       }
     }
-
     if (token) {
       getRole();
     }
@@ -45,18 +45,22 @@ function Header() {
   };
 
   const handleLogout = () => {
-    try {
-      const result = dispatch(logout());
-      localStorage.removeItem("jwt");
-      dispatch(setToken(null));
-      toast.success("Logout Successful!");
-      setTimeout(() => {
-        router.push("/home");
-      }, 1000);
-    } catch (error) {
-      toast.success("Error Occurred! Please Try Again Later");
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (confirmed) {
+      try {
+        const result = dispatch(logout());
+        localStorage.removeItem("jwt");
+        dispatch(setToken(null));
+        toast.success("Logout Successful!");
+        setTimeout(() => {
+          router.push("/home");
+        }, 1000);
+      } catch (error) {
+        toast.success("Error Occurred! Please Try Again Later");
+      }
     }
   };
+
   const handleClick = () => {
     router.push("/availableVet");
   };
@@ -91,7 +95,6 @@ function Header() {
             Petopia
           </span>
         </div>
-
         <ul className="flex flex-col font-medium md:p-0 m-0 md:space-x-8 rtl:space-x-reverse md:flex-row ">
           <li>
             <Link
@@ -129,14 +132,16 @@ function Header() {
         </ul>
 
         <div className="flex items-center space-x-6 ">
-          <ul className="flex flex-col font-medium md:p-0 m-0 md:space-x-8 rtl:space-x-reverse md:flex-row">
-            <li>
-              {userRole === "vet" || userRole === "admin" ? (
-                <div></div>
-              ) : (
-                <div className="fixed bottom-6 right-6">
+          {token && (
+            <>
+              <KommunicateChat />
+              <li>
+                {userRole === "vet" || userRole === "admin" ? (
+                  <div></div>
+                ) : (
+                  <div style={{ position: "relative", display: "inline-block" }}>
                   <button
-                    className="text-white flex items-center bg-red-600 py-3 px-4 rounded-pill fs-6 floating-ui "
+                    className="text-white flex items-center bg-red-600 py-2 px-3 rounded-full"
                     onClick={handleClick}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
@@ -146,90 +151,102 @@ function Header() {
                       className="w-6"
                       alt="Emergency Consultation"
                     />
-                    <span
-                      className={`ml-3 ${
-                        isHovered ? "" : "hidden"
-                      } fade-in-right`}
-                    >
-                      Need a vet Urgently?
-                    </span>
                   </button>
+                  {isHovered && (
+                    <div
+                    className="text-gray-700"
+                      style={{
+                        margin:"0.5rem",
+                        position: "absolute",
+                        top: "100%",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        backgroundColor: "#ffffff",
+                        padding: "0.5rem",
+                        borderRadius: "5px",
+                        zIndex: 999,
+                      }}
+                    >
+                      Emergency?
+                    </div>
+                  )}
                 </div>
-              )}
-            </li>
-          </ul>
-          {token && (
-            <Menu as="div" className="relative ml-3">
-              <div>
-                <Menu.Button className="relative flex rounded-full bg-dark-blue text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                  <span className="absolute -inset-1.5" />
-                  <span className="sr-only">Open user menu</span>
-                  <img
-                    className="w-8 h-8 rounded-full"
-                    src={
-                      imageUrl
-                        ? imageUrl
-                        : "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379708/user_yqmdpt.png"
-                    }
-                    alt=""
-                  />
-                </Menu.Button>
-              </div>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <Menu.Item>
-                    {({ active }) => (
-                      <a
-                        href="#"
-                        onClick={redirectToProfile}
-                        className={classNames(
-                          active
-                            ? "bg-gray-100 text-saddle-brown font-bold font-2xl border-saddle-brown"
-                            : "",
-                          "block px-4 py-2 text-dark-blue hover:text-saddle-brown no-underline"
-                        )}
-                      >
-                        Dashboard
-                      </a>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
-                      <Link
-                        onClick={handleLogout}
-                        href="#"
-                        className={classNames(
-                          active
-                            ? "bg-gray-100 text-saddle-brown font-bold font-2xl border-saddle-brown"
-                            : "",
-                          "block px-4 py-2 text-dark-blue hover:text-saddle-brown no-underline"
-                        )}
-                      >
-                        Sign out
-                      </Link>
-                    )}
-                  </Menu.Item>
-                </Menu.Items>
-              </Transition>
-            </Menu>
+                )}
+              </li>
+              <Menu as="div" className="relative ml-3">
+                <div>
+                  <Menu.Button className="relative flex rounded-full bg-dark-blue text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                    <span className="absolute -inset-1.5" />
+                    <span className="sr-only">Open user menu</span>
+                    <img
+                      className="w-9 h-9 rounded-full"
+                      src={
+                        imageUrl
+                          ? imageUrl
+                          : "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379708/user_yqmdpt.png"
+                      }
+                      alt=""
+                    />
+                  </Menu.Button>
+                </div>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <Menu.Item>
+                      {({ active }) => (
+                        <a
+                          href="#"
+                          onClick={redirectToProfile}
+                          className={classNames(
+                            active
+                              ? "bg-gray-100 text-saddle-brown font-bold font-2xl border-saddle-brown"
+                              : "",
+                            "block px-4 py-2 text-dark-blue hover:text-saddle-brown no-underline"
+                          )}
+                        >
+                          Dashboard
+                        </a>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <Link
+                          onClick={handleLogout}
+                          href=""
+                          className={classNames(
+                            active
+                              ? "bg-gray-100 text-saddle-brown font-bold font-2xl border-saddle-brown"
+                              : "",
+                            "block px-4 py-2 text-dark-blue hover:text-saddle-brown no-underline"
+                          )}
+                        >
+                          Sign out
+                        </Link>
+                      )}
+                    </Menu.Item>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            </>
           )}
           {!token && (
-            <li>
-              <Link
-                className="text-dark-blue flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
-                href="/login"
-              >
-                Login
-              </Link>
-            </li>
+            <>
+              <li>
+                <Link
+                  className="text-dark-blue flex items-center bg-saddle-brown py-2 px-3 rounded-pill fs-6 no-underline"
+                  href="/login"
+                >
+                  Login
+                </Link>
+              </li>
+            </>
           )}
         </div>
       </div>

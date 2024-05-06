@@ -16,7 +16,7 @@ export const login = createAsyncThunk(
   "login",
   async (formData: LoginFormData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${process.env.HOST}/login`, formData);
+      const response = await axiosInstance.post(`${process.env.HOST}/login`, formData);
       const data = response.data;
       localStorage.setItem("jwt", data.token);
       document.cookie = `jwt=${data.token}; path=/`;

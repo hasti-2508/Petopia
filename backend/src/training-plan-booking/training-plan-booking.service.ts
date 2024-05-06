@@ -32,21 +32,30 @@ export class TrainingPlanBookingService {
     const resPerPage = 10;
     const currentPage = Number(qu.page) || 1;
     const skip = resPerPage * (currentPage - 1);
-
     return await this.TrainingPlanBookingModel.find()
-      .sort({ createdAt: -1 })
+      .populate('trainerId', 'name phoneNo')
+      .sort({ booking_date: 1, booking_time: 1 })
       .limit(resPerPage)
       .skip(skip)
       .exec();
   }
 
   async findBookingById(bookingId: string): Promise<TrainingPlanBooking> {
-    const booking = await this.TrainingPlanBookingModel.findById(bookingId);
+    const booking = await this.TrainingPlanBookingModel
+    .findById(bookingId)
+    .populate('TrainingPlanId','TrainingName')
+    .sort({booking_date: 1, booking_time: 1})
+    .exec();
     return booking;
   }
 
   async findByUserId(userId: string): Promise<TrainingPlanBooking[]> {
-    return await this.TrainingPlanBookingModel.find({ userId: userId });
+    return await this.TrainingPlanBookingModel
+    .find({ userId: userId })
+    .populate('TrainingPlanId','TrainingName')
+    .populate('trainerId', 'name phoneNo city address email')
+    .sort({booking_date: 1, booking_time: 1})
+    .exec();
   }
 
   async bookService(

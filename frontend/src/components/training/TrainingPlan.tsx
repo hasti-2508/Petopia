@@ -1,19 +1,24 @@
 "use client";
 import { TrainingPlanData } from "@/interfaces/trainingPlan";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import redirectLoggedIn from "@/middleware/redirectToLogin";
+import redirectLoggedIn from "@/hoc/redirectToLogin";
+import axiosInstance from "@/utils/axios";
+import RateStar from "../rating/RateStar";
 
 function TrainingPlan() {
   const router = useRouter();
-  const handleBookTraining = (trainingPlanId: string) => {
-    setLoading(true);
-    const bookingPageUrl = `/trainingPlan/bookTraining?trainingPlanId=${trainingPlanId}`;
-    router.push(bookingPageUrl);
-    setLoading(false);
-  };
+  const handleBookTraining = useCallback(
+    async (trainingPlanId: string) => {
+      setLoading(true);
+      const bookingPageUrl = `/trainingPlan/bookTraining?trainingPlanId=${trainingPlanId}`;
+      router.push(bookingPageUrl);
+      setLoading(false);
+    },
+    [router]
+  );
+
   const [trainingPlans, setTrainingPlans] = useState<TrainingPlanData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -21,7 +26,7 @@ function TrainingPlan() {
     async function fetchTrainingPlans() {
       try {
         setLoading(true);
-        const response = await axios.get<TrainingPlanData[]>(
+        const response = await axiosInstance.get<TrainingPlanData[]>(
           `${process.env.HOST}/training-plan`
         );
         setTrainingPlans(response.data);
@@ -227,44 +232,7 @@ function TrainingPlan() {
                           </div>
                         ))}
                       </ul>
-                      <div className="flex items-center mt-5 mb-5">
-                        {/* Rating stars */}
-                        <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                          {[...Array(Math.round(plan.average_rating || 0))].map(
-                            (_, index) => (
-                              <svg
-                                key={index}
-                                className="w-4 h-4 text-yellow-300"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 22 20"
-                              >
-                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                              </svg>
-                            )
-                          )}
-                          {/* Empty stars */}
-                          {[
-                            ...Array(5 - Math.round(plan.average_rating || 0)),
-                          ].map((_, index) => (
-                            <svg
-                              key={index}
-                              className="w-4 h-4 text-gray-200 dark:text-gray-600"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="currentColor"
-                              viewBox="0 0 22 20"
-                            >
-                              <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                            </svg>
-                          ))}
-                        </div>
-                        {/* Average rating */}
-                        <span className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
-                          {plan.average_rating || "N/A"}
-                        </span>
-                      </div>
+                      <RateStar averageRating={plan.average_rating} />
                       <div className="flex items-center justify-between">
                         <span className="text-3xl mt-4 font-bold text-gray-900 dark:text-red">
                           ₹{plan.price}

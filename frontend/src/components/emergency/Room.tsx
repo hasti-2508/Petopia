@@ -10,18 +10,17 @@ function Room() {
   const roomId = searchResult.get("roomId");
 
   const elementRef = useRef(null);
-
   useEffect(() => {
     const meeting = async () => {
-      const appID = 2099456814;
-      const server = "677ee4b64711df7671170b0ca9c0fa2a";
+      const appID = Number(process.env.NEXT_PUBLIC_APPID);
+      const server = process.env.NEXT_PUBLIC_SERVER_ID;
       const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
         appID,
         server,
         roomId,
         Date.now().toString(),
         "Hasti Kapadiya"
-      );
+      ); 
       const zc = ZegoUIKitPrebuilt.create(kitToken);
       zc.joinRoom({
         container: elementRef.current,

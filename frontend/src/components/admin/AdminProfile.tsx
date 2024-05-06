@@ -4,45 +4,47 @@ import { Training } from "@/interfaces/training";
 import { User } from "@/interfaces/user";
 import axios from "axios";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Vet } from "@/interfaces/vet";
 import { Trainer } from "@/interfaces/trainer";
 import { Pet } from "@/interfaces/pet";
 import { PetCard } from "../pet/PetCard";
 import axiosInstance from "@/utils/axios";
 import toast from "react-hot-toast";
-import { TrainerAdminCard, TrainerCard } from "../trainer/TrainerCard";
+import { TrainerAdminCard } from "../trainer/TrainerCard";
 import { UserCard } from "../user/UserCard";
-import { VetAdminCard, VetCard } from "../vet/VetCard";
+import { VetAdminCard } from "../vet/VetCard";
 import Pagination from "../pagination/Pagination";
-import redirectLoggedIn from "@/middleware/redirectToLogin";
+import redirectLoggedIn from "@/hoc/redirectToLogin";
 import { useRouter } from "next/navigation";
+import RateStar from "../rating/RateStar";
+import SearchAdminIcon from "./Icon";
 
 function AdminProfile() {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("ServicesBookings");
-  const handleTabClick = (tab: string) => {
-    setActiveTab(tab);
-  };
-
-  const [admin, setAdmin] = useState<User>();
+  const [activeTab, setActiveTab] = useState<string>("ServicesBookings");
   const [users, setUsers] = useState<User[]>([]);
   const [vets, setVets] = useState<Vet[]>([]);
   const [trainers, setTrainers] = useState<Trainer[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
   const [originalServiceData, setOriginalServiceData] = useState<Service[]>([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [services, setServices] = useState<Service[]>([]);
-  const [userCurrentPage, setUserCurrentPage] = useState(1);
-  const [vetCurrentPage, setVetCurrentPage] = useState(1);
-  const [trainerCurrentPage, setTrainerCurrentPage] = useState(1);
-  const [petCurrentPage, setPetCurrentPage] = useState(1);
-  const [serviceCurrentPage, setServiceCurrentPage] = useState(1);
-  const [trainingCurrentPage, setTrainingCurrentPage] = useState(1);
-  const [originalTrainingData, setOriginalTrainingData] = useState<Training[]>(
-    []
-  );
+  const [originalTrainingData, setOriginalTrainingData] = useState<Training[]>([]);
   const [trainings, setTrainings] = useState<Training[]>([]);
+  const [pagination, setPagination] = useState({
+    userCurrentPage: 1,
+    vetCurrentPage: 1,
+    trainerCurrentPage: 1,
+    petCurrentPage: 1,
+    serviceCurrentPage: 1,
+    trainingCurrentPage: 1,
+  });
+
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+  };
+
   //service search
   const searchFilter = () => {
     const filterData = originalServiceData.filter((data) => {
@@ -65,6 +67,7 @@ function AdminProfile() {
   useEffect(() => {
     return setServices(originalServiceData);
   }, [searchTerm]);
+
   //training search
   const searchTrainingFilter = () => {
     const filterData = originalTrainingData.filter((data) => {
@@ -111,8 +114,9 @@ function AdminProfile() {
     );
     if (isConfirmed) {
       try {
-        const response = await axiosInstance.delete(`${process.env.HOST}/vet/${vetId}`);
-
+        const response = await axiosInstance.delete(
+          `${process.env.HOST}/vet/${vetId}`
+        );
         toast.success("Vet is Deleted");
         setVets(vets.filter((vet) => vet._id !== vetId));
       } catch (error) {
@@ -144,7 +148,9 @@ function AdminProfile() {
     );
     if (isConfirmed) {
       try {
-        const response = await axiosInstance.delete(`${process.env.HOST}/pet/${petId}`);
+        const response = await axiosInstance.delete(
+          `${process.env.HOST}/pet/${petId}`
+        );
         toast.success("Pet is Deleted");
         setPets(pets.filter((pet) => pet._id !== petId));
       } catch (error) {
@@ -157,36 +163,35 @@ function AdminProfile() {
     const getUser = async () => {
       try {
         const response = await axiosInstance.get("/currentUser");
-        setAdmin(response.data);
         const serviceResponse = await axiosInstance.get(
-          `${process.env.HOST}/serviceBooking?page=${serviceCurrentPage}`
+          `${process.env.HOST}/serviceBooking?page=${pagination.serviceCurrentPage}`
         );
         setOriginalServiceData(serviceResponse.data);
         setServices(serviceResponse.data);
 
         const trainingResponse = await axiosInstance.get(
-          `${process.env.HOST}/trainingBooking?page=${trainingCurrentPage}`
+          `${process.env.HOST}/trainingBooking?page=${pagination.trainingCurrentPage}`
         );
         setOriginalTrainingData(trainingResponse.data);
         setTrainings(trainingResponse.data);
 
         const userResponse = await axiosInstance.get(
-          `${process.env.HOST}/user?page=${userCurrentPage}`
+          `${process.env.HOST}/user?page=${pagination.userCurrentPage}`
         );
         setUsers(userResponse.data);
 
         const vetResponse = await axiosInstance.get(
-          `${process.env.HOST}/vet?page=${vetCurrentPage}`
+          `${process.env.HOST}/vet?page=${pagination.vetCurrentPage}`
         );
         setVets(vetResponse.data);
 
         const trainerResponse = await axiosInstance.get(
-          `${process.env.HOST}/trainer?page=${trainerCurrentPage}`
+          `${process.env.HOST}/trainer?page=${pagination.trainerCurrentPage}`
         );
         setTrainers(trainerResponse.data);
 
         const petResponse = await axiosInstance.get(
-          `${process.env.HOST}/pet?page=${petCurrentPage}`
+          `${process.env.HOST}/pet?page=${pagination.petCurrentPage}`
         );
         setPets(petResponse.data);
       } catch (error) {
@@ -195,83 +200,38 @@ function AdminProfile() {
           error.response &&
           error.response.status === 403
         ) {
-          router.push("/home"); 
-        }
-        else{
-          console.error(error)
+          router.push("/home");
+        } else {
+          console.error(error);
         }
       }
     };
 
     getUser();
-  }, [
-    userCurrentPage,
-    vetCurrentPage,
-    trainerCurrentPage,
-    petCurrentPage,
-    serviceCurrentPage,
-    trainingCurrentPage,
-  ]);
+  }, [pagination]);
 
-  function handleUserPreviousPage() {
-    if (userCurrentPage > 1) {
-      setUserCurrentPage(userCurrentPage - 1);
-    }
-  }
+  // pagination handlers
+  const handlePreviousPage = useCallback(
+    (key: keyof typeof pagination) => () => {
+      if (pagination[key] > 1) {
+        setPagination((prev) => ({
+          ...prev,
+          [key]: prev[key] - 1,
+        }));
+      }
+    },
+    [pagination]
+  );
 
-  function handleUserNextPage() {
-    setUserCurrentPage(userCurrentPage + 1);
-  }
-
-  function handleVetPreviousPage() {
-    if (vetCurrentPage > 1) {
-      setVetCurrentPage(vetCurrentPage - 1);
-    }
-  }
-
-  function handleVetNextPage() {
-    setVetCurrentPage(vetCurrentPage + 1);
-  }
-
-  function handleTrainerPreviousPage() {
-    if (trainerCurrentPage > 1) {
-      setTrainerCurrentPage(trainerCurrentPage - 1);
-    }
-  }
-
-  function handleTrainerNextPage() {
-    setTrainerCurrentPage(trainerCurrentPage + 1);
-  }
-
-  function handlePetPreviousPage() {
-    if (petCurrentPage > 1) {
-      setPetCurrentPage(petCurrentPage - 1);
-    }
-  }
-
-  function handlePetNextPage() {
-    setPetCurrentPage(petCurrentPage + 1);
-  }
-
-  function handleServicePreviousPage() {
-    if (serviceCurrentPage > 1) {
-      setServiceCurrentPage(serviceCurrentPage - 1);
-    }
-  }
-
-  function handleServiceNextPage() {
-    setServiceCurrentPage(serviceCurrentPage + 1);
-  }
-
-  function handleTrainingPreviousPage() {
-    if (trainingCurrentPage > 1) {
-      setTrainingCurrentPage(trainingCurrentPage - 1);
-    }
-  }
-
-  function handleTrainingNextPage() {
-    setTrainingCurrentPage(trainingCurrentPage + 1);
-  }
+  const handleNextPage = useCallback(
+    (key: keyof typeof pagination) => () => {
+      setPagination((prev) => ({
+        ...prev,
+        [key]: prev[key] + 1,
+      }));
+    },
+    [pagination]
+  );
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -281,24 +241,9 @@ function AdminProfile() {
             <form className=" max-w-xl mx-auto mt-6 mb-5">
               <div className="relative">
                 <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                  <svg
-                    className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                    />
-                  </svg>
+                  <SearchAdminIcon />
                 </div>
-                <div className="">
-                  {" "}
+                <div>
                   <input
                     type="search"
                     id="default-search"
@@ -323,10 +268,10 @@ function AdminProfile() {
               <table className="w-full text-dark-blue ">
                 <thead
                   style={{ fontSize: "16px" }}
-                  className=" text-red-200 bg-dark-blue"
+                  className=" text-red-200 bg-dark-blue text-center"
                 >
                   <tr>
-                    <th scope="col" className="px-6 py-3">
+                    <th scope="col" className="px-4 py-2">
                       Client name
                     </th>
                     <th scope="col" className="px-6 py-3">
@@ -344,15 +289,24 @@ function AdminProfile() {
                     <th scope="col" className="px-6 py-3">
                       Time
                     </th>
-                    <th scope="col" className="px-6 py-3">
-                      Status
+                    <th scope="col" className="px-4 py-3">
+                      Payment
                     </th>
                     <th scope="col" className="px-6 py-3">
                       Action
                     </th>
+                    <th scope="col" className="px-6 py-3">
+                      Vet
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Status
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Rating
+                    </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="text-center font-medium text-balance">
                   {services.map((service, index) => (
                     <tr
                       key={index}
@@ -362,38 +316,74 @@ function AdminProfile() {
                           : "even:bg-gray-100"
                       } border-b `}
                     >
-                      <td className="px-6 py-4 font-bold text-gray-700 whitespace-nowrap ">
+                      <td className=" font-bold text-gray-700 whitespace-nowrap py-8">
                         {service.user_name}
                       </td>
-                      <td className="px-6 py-4">{service.pet_species}</td>
-                      <td className="px-6 py-4 ">{service.totalPrice}</td>
-                      <td className="px-6 py-4">{service.city}</td>
-                      <td className="px-6 py-4">{service.booking_date}</td>
-                      <td className="px-6 py-4">{service.booking_time}</td>
-                      <td className="px-6 py-4">
+                      <td>{service.pet_species}</td>
+                      <td>{service.totalPrice}</td>
+                      <td>{service.city}</td>
+                      <td>{service.booking_date}</td>
+                      <td>
+                        {(() => {
+                          const timeParts = service.booking_time.split(":");
+                          const hours = parseInt(timeParts[0]);
+                          const minutes = parseInt(timeParts[1]);
+                          let formattedHours = hours % 12;
+                          if (formattedHours === 0) formattedHours = 12;
+                          const period = hours >= 12 ? "PM" : "AM";
+                          const formattedMinutes =
+                            minutes < 10 ? `0${minutes}` : minutes;
+                          return `${formattedHours}:${formattedMinutes} ${period}`;
+                        })()}
+                      </td>
+                      <td>
                         {service.isConfirmed ? (
-                          <button className="bg-green-500 text-white px-3 py-2 rounded-md mr-2 w-56 font-bold">
+                          <button className="bg-green-500 text-white px-3 py-2 rounded-md mr-2 w-32  font-bold">
                             Paid
                           </button>
                         ) : (
-                          <button className="bg-red-500 text-white px-3 py-2 rounded-md mr-2 w-56 font-bold">
+                          <button className="bg-red-500 text-white px-3 py-2 rounded-md mr-2 w-32 font-bold">
                             Not Paid
                           </button>
                         )}
                       </td>
-                      <td className="px-6 py-4">
+                      <td>
                         {service.vetId ? (
-                          <span className="bg-saddle-brown text-white px-3 py-2 rounded-md mr-2 font-bold">
+                          <span className="bg-amber-500 text-white px-3 py-2 rounded-md mr-2 w-32 font-bold">
                             Assigned
                           </span>
                         ) : (
                           <Link
-                            className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline font-bold"
+                            className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 w-32 no-underline font-bold"
                             href={`/assignVet?bookingId=${service._id}`}
                           >
                             Assign Vet
                           </Link>
                         )}
+                      </td>
+                      <td>
+                        {service.vetId ? (
+                          <>
+                            <div>{service.vetId.name}</div>
+                            <div>{service.vetId.phoneNo}</div>
+                          </>
+                        ) : (
+                          "none"
+                        )}
+                      </td>
+                      <td>
+                        {service.isCompleted ? (
+                          <button className="text-blue-500 px-3 py-2 rounded-md mr-2 w-56 font-bold">
+                            Completed
+                          </button>
+                        ) : (
+                          <button className="text-red-500  px-3 py-2 rounded-md mr-2 w-56 font-bold">
+                            Not Completed
+                          </button>
+                        )}
+                      </td>
+                      <td>
+                        <RateStar averageRating={service.averageRating} />
                       </td>
                     </tr>
                   ))}
@@ -401,8 +391,8 @@ function AdminProfile() {
               </table>
             </div>
             <Pagination
-              Previous={handleServicePreviousPage}
-              Next={handleServiceNextPage}
+              Previous={handlePreviousPage("serviceCurrentPage")}
+              Next={handleNextPage("serviceCurrentPage")}
             />
           </div>
         );
@@ -412,21 +402,7 @@ function AdminProfile() {
             <form className=" max-w-xl mx-auto mt-6 mb-5">
               <div className="relative">
                 <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                  <svg
-                    className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                    />
-                  </svg>
+                  <SearchAdminIcon />
                 </div>
                 <div className="">
                   <input
@@ -453,7 +429,7 @@ function AdminProfile() {
               <table className="w-full text-dark-blue  ">
                 <thead
                   style={{ fontSize: "16px" }}
-                  className=" text-red-200 bg-dark-blue"
+                  className=" text-red-200 bg-dark-blue text-center"
                 >
                   <tr>
                     <th scope="col" className="px-6 py-3">
@@ -475,14 +451,23 @@ function AdminProfile() {
                       Time
                     </th>
                     <th scope="col" className="px-6 py-3">
-                      Status
+                      Payment
                     </th>
                     <th scope="col" className="px-6 py-3">
                       Action
                     </th>
+                    <th scope="col" className="px-6 py-3">
+                      Trainer
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Status
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Rating
+                    </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="text-center font-medium text-balance">
                   {trainings.map((training, index) => (
                     <tr
                       key={index}
@@ -492,38 +477,75 @@ function AdminProfile() {
                           : "even:bg-gray-100"
                       } border-b `}
                     >
-                      <td className="px-6 py-4 font-bold text-gray-700 whitespace-nowrap">
+                      <td className="font-bold text-gray-700 whitespace-nowrap py-8">
                         {training.user_name}
                       </td>
-                      <td className="px-6 py-4">{training.pet_species}</td>
-                      <td className="px-6 py-4">{training.totalPrice}</td>
-                      <td className="px-6 py-4">{training.city}</td>
-                      <td className="px-6 py-4">{training.booking_date}</td>
-                      <td className="px-6 py-4">{training.booking_time}</td>
-                      <td className="px-6 py-4">
+                      <td>{training.pet_species}</td>
+                      <td>{training.totalPrice}</td>
+                      <td>{training.city}</td>
+                      <td>{training.booking_date}</td>
+                      <td>
+                        {(() => {
+                          const timeParts = training.booking_time.split(":");
+                          const hours = parseInt(timeParts[0]);
+                          const minutes = parseInt(timeParts[1]);
+                          let formattedHours = hours % 12;
+                          if (formattedHours === 0) formattedHours = 12;
+                          const period = hours >= 12 ? "PM" : "AM";
+                          const formattedMinutes =
+                            minutes < 10 ? `0${minutes}` : minutes;
+
+                          return `${formattedHours}:${formattedMinutes} ${period}`;
+                        })()}
+                      </td>
+                      <td>
                         {training.isConfirmed ? (
-                          <button className="bg-green-500 text-white px-3 py-1 rounded-md mr-2 w-56 font-bold">
+                          <button className="bg-green-500 text-white px-3 py-2 rounded-md mr-2 w-32 font-bold">
                             Paid
                           </button>
                         ) : (
-                          <button className="bg-red-500 text-white px-3 py-1 rounded-md mr-2 w-56 font-bold">
+                          <button className="bg-red-500 text-white px-3 py-2 rounded-md mr-2 w-32 font-bold">
                             Not Paid
                           </button>
                         )}
                       </td>
-                      <td className="px-6 py-4">
+                      <td>
                         {training.trainerId ? (
-                          <span className="bg-saddle-brown text-white px-3 py-1 rounded-md mr-2 font-bold">
+                          <button className="bg-amber-500 text-white px-3 py-2 rounded-md mr-2 w-32 font-bold">
                             Assigned
-                          </span>
+                          </button>
                         ) : (
                           <Link
-                            className="bg-blue-600 text-white px-3 py-1 rounded-md mr-2 no-underline font-bold"
+                            className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2  no-underline font-bold"
                             href={`/assignTrainer?bookingId=${training._id}`}
                           >
                             Assign Trainer
                           </Link>
                         )}
+                      </td>
+                      <td>
+                        {training.trainerId ? (
+                          <>
+                            <div>{training.trainerId.name}</div>
+                            <div>{training.trainerId.phoneNo}</div>
+                          </>
+                        ) : (
+                          "none"
+                        )}
+                      </td>
+                      <td>
+                        {training.isCompleted ? (
+                          <button className="text-blue-500 px-3 py-2 rounded-md mr-2 w-56 font-bold">
+                            Completed
+                          </button>
+                        ) : (
+                          <button className="text-red-500  px-3 py-2 rounded-md mr-2 w-56 font-bold">
+                            Not Completed
+                          </button>
+                        )}
+                      </td>
+                      <td>
+                        <RateStar averageRating={training.averageRating} />
                       </td>
                     </tr>
                   ))}
@@ -531,8 +553,8 @@ function AdminProfile() {
               </table>
             </div>
             <Pagination
-              Previous={handleTrainingPreviousPage}
-              Next={handleTrainingNextPage}
+              Previous={handlePreviousPage("trainingCurrentPage")}
+              Next={handleNextPage("trainingCurrentPage")}
             />
           </div>
         );
@@ -542,7 +564,7 @@ function AdminProfile() {
           <div className="fade-in-up">
             <div className="container-fluid mt-3 gap-3 fade-in-up">
               <div className="row ">
-                {users.map((user,index) => (
+                {users.map((user, index) => (
                   <div className="col-md-4 mx-auto" key={index}>
                     <div key={index}>
                       <div key={user._id}>
@@ -560,8 +582,8 @@ function AdminProfile() {
                   </div>
                 ))}
                 <Pagination
-                  Previous={handleUserPreviousPage}
-                  Next={handleUserNextPage}
+                  Previous={handlePreviousPage("userCurrentPage")}
+                  Next={handleNextPage("userCurrentPage")}
                 />
               </div>
             </div>
@@ -572,7 +594,7 @@ function AdminProfile() {
           <div className="fade-in-up">
             <div className="container-fluid mt-3 gap-3 fade-in-up">
               <div className="row">
-                {vets.map((vet,index) => (
+                {vets.map((vet, index) => (
                   <div className="col-md-4 mx-auto" key={index}>
                     <div key={index}>
                       <VetAdminCard user={vet} />
@@ -592,8 +614,8 @@ function AdminProfile() {
                 ))}
               </div>
               <Pagination
-                Previous={handleVetPreviousPage}
-                Next={handleVetNextPage}
+                Previous={handlePreviousPage("vetCurrentPage")}
+                Next={handleNextPage("vetCurrentPage")}
               />
             </div>
           </div>
@@ -604,7 +626,7 @@ function AdminProfile() {
           <div className="fade-in-up">
             <div className="container-fluid mt-3 fade-in-up">
               <div className="row">
-                {trainers.map((trainer,index) => (
+                {trainers.map((trainer, index) => (
                   <div className="col-md-4 mx-auto" key={index}>
                     <div key={index}>
                       <TrainerAdminCard user={trainer} />
@@ -620,8 +642,8 @@ function AdminProfile() {
                   </div>
                 ))}
                 <Pagination
-                  Previous={handleTrainerPreviousPage}
-                  Next={handleTrainerNextPage}
+                  Previous={handlePreviousPage("trainerCurrentPage")}
+                  Next={handleNextPage("trainerCurrentPage")}
                 />
               </div>
             </div>
@@ -632,8 +654,8 @@ function AdminProfile() {
         return (
           <div className="fade-in-up">
             <div className="container-fluid mt-3 fade-in-up">
-              <div className="row" >
-                {pets.map((pet,index) => (
+              <div className="row">
+                {pets.map((pet, index) => (
                   <div className="col-md-4 mx-auto" key={index}>
                     <div key={index}>
                       <PetCard pet={pet} />
@@ -652,8 +674,8 @@ function AdminProfile() {
                   </div>
                 ))}
                 <Pagination
-                  Previous={handlePetPreviousPage}
-                  Next={handlePetNextPage}
+                  Previous={handlePreviousPage("petCurrentPage")}
+                  Next={handleNextPage("petCurrentPage")}
                 />
               </div>
             </div>

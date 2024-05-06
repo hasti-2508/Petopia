@@ -2,7 +2,9 @@
   export interface Service {
     _id: string;
     userId: string;
-    servicePlanId: string;
+    servicePlanId: {
+      serviceName: string;
+    };
     pet_species: string;
     pet_breed: string;
     pet_size: string;
@@ -21,7 +23,10 @@
     isConfirmed: boolean;
     isCompleted: boolean;
     isCancelled: boolean;
-    vetId: number;
+    vetId: {
+      name: string;
+      phoneNo:string;
+    };
     averageRating: number;
     ratings: Rating[];
   }

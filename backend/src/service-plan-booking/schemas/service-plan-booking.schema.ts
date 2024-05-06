@@ -6,11 +6,11 @@ import mongoose, { Document, Types } from 'mongoose';
 })
 export class ServicePlanBooking extends Document{
 
-  @Prop({ required: true })
-  userId: mongoose.Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  userId: Types.ObjectId;
 
-  @Prop({ required: true })
-  servicePlanId: mongoose.Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'ServicePlan' })
+  servicePlanId: Types.ObjectId;
 
   @Prop()
   pet_species: string;

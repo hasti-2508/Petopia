@@ -124,11 +124,15 @@ export class TrainerController {
   }
 
   @Get('/:id')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.USER , Role.TRAINER, Role.VET)
   async getTrainerByID(@Param('id') trainerId: string): Promise<Trainer> {
     return this.trainerService.findTrainerById(trainerId);
   }
 
   @Put('/:id')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.USER , Role.TRAINER, Role.VET)
   async updateUser(
     @Body() updateUserDto: CreateTrainerDto,
     @Param('id') trainerId: string,
@@ -137,11 +141,15 @@ export class TrainerController {
   }
 
   @Delete('/:id')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
   async deleteTrainer(@Param('id') trainerId: string) {
     return this.trainerService.deleteTrainer(trainerId);
   }
 
   @Post('/:bookingId/confirm')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.USER , Role.TRAINER, Role.VET)
   async confirm(
     @Param('bookingId') bookingId: string,
     @Req() req,

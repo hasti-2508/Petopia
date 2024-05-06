@@ -9,7 +9,6 @@ import {
   setBookingImages,
   setBookings,
   setIsChecked,
-  setVet,
 } from "@/redux/vet/vetSlice";
 import {
   getServiceBookingData,
@@ -18,8 +17,10 @@ import {
   setBookingComplete,
 } from "@/redux/vet/vetService";
 import toast from "react-hot-toast";
-import redirectLoggedIn from "@/middleware/redirectToLogin";
+import redirectLoggedIn from "@/hoc/redirectToLogin";
 import { useRouter } from "next/navigation";
+import { BookingTrainingCard } from "../service/bookingCard";
+
 
 
 const imageUrls = [
@@ -48,11 +49,6 @@ function VetProfile() {
     const getUser = async () => {
       try {
         const result = await dispatch(getVetData());
-        if (result.type === "getVetData/rejected") {
-          throw result;
-        } else {
-          dispatch(setVet(result.payload));
-        }
         const bookingDetailsPromises = result.payload.bookings.map(
           async (bookingId: string) => {
             const bookingResponse = await dispatch(
@@ -97,7 +93,7 @@ function VetProfile() {
       toast.error(error.payload);
     }
   };
-
+console.log(bookings)
   const handleCheckboxChange = async () => {
     dispatch(setIsChecked(!isChecked));
     try {
@@ -108,7 +104,7 @@ function VetProfile() {
         return availableResult;
       }
     } catch (error) {
-      toast.error(error.payload);
+      console.error(error);
     }
   };
   const renderTabContent = () => {
@@ -158,7 +154,7 @@ function VetProfile() {
         return (
           <div>
             <div className="container-fluid mt-3">
-              <div className="row gap-5">
+              <div className="row">
                 {bookings.length > 0 &&
                 bookings.filter((booking) => !booking.isCompleted).length >
                   0 ? (
@@ -166,105 +162,10 @@ function VetProfile() {
                     .filter((booking) => !booking.isCompleted)
                     .map((booking, index) => (
                       <div
-                        style={{
-                          height: "630px",
-                          width: "430px",
-                        }}
-                        className="mx-auto col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
-                        key={index}
-                      >
-                        <div>
-                          <img
-                            src={bookingImages[index]}
-                            alt={`Service ${index}`}
-                            className="w-full h-48 mb-4 border-2"
-                          />
-                          <div>
-                            <p>
-                              {" "}
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2 "
-                              >
-                                Name:
-                              </label>
-                              {booking.user_name}
-                            </p>
-                            <p>
-                              {" "}
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2 "
-                              >
-                                Email:
-                              </label>
-                              {booking.email}
-                            </p>
-                            <p>
-                              {" "}
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2 "
-                              >
-                                City:
-                              </label>
-                              {booking.city}
-                            </p>
-                            <p>
-                              {" "}
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2 "
-                              >
-                                Pet Species:
-                              </label>
-                              {booking.pet_species}
-                            </p>
-                            <p>
-                              {" "}
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2  "
-                              >
-                                Booking Date:
-                              </label>
-                              {booking.booking_date}
-                            </p>
-                            <p>
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2  "
-                              >
-                                Booking Time:
-                              </label>
-                              {booking.booking_time}
-                            </p>
-                            <p>
-                              {" "}
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2  "
-                              >
-                                Payment Status:
-                              </label>
-                              {booking.isConfirmed ? `Done` : `Pending`}
-                            </p>
-                            <div className="my-4 ">
-                              {booking.isCompleted ? (
-                                <span className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline my-3">
-                                  Completed
-                                </span>
-                              ) : (
-                                <button
-                                  className="bg-blue-600 text-white px-3 py-2 rounded-md mr-2 no-underline"
-                                  onClick={() => handleComplete(booking._id)}
-                                >
-                                  Complete
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                      className="fade-in-up col-md-4 mb-6 flex"
+                      key={index}
+                    >
+                      <BookingTrainingCard averageRating={booking.averageRating} index={index} plan={booking.servicePlanId.serviceName} imageUrl={bookingImages[index]} bookings={bookings} booking={booking} handleComplete={handleComplete}/>
                       </div>
                     ))
                 ) : (
@@ -293,114 +194,17 @@ function VetProfile() {
         return (
           <div>
             <div className="container-fluid mt-3">
-              <div className="row gap-5">
+              <div className="row ">
                 {bookings.length > 0 &&
                 bookings.filter((booking) => booking.isCompleted).length > 0 ? (
                   bookings
                     .filter((booking) => booking.isCompleted)
                     .map((booking, index) => (
                       <div
-                        style={{
-                          height: "630px",
-                          width: "400px",
-                        }}
-                        className="col-md-4 col-sm-12 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom py-4 mx-auto fade-in-up"
-                        key={index}
-                      >
-                        <div>
-                          <img
-                            src={bookingImages[index]}
-                            alt={`Service ${index}`}
-                            className="w-full h-48 mb-4 border-2"
-                            style={{ width: "350px" }}
-                          />
-                          <div>
-                            <p>
-                              {" "}
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2 "
-                              >
-                                Name:
-                              </label>
-                              {booking.user_name}
-                            </p>
-                            <p>
-                              {" "}
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2 "
-                              >
-                                Email:
-                              </label>
-                              {booking.email}
-                            </p>
-                            <p>
-                              {" "}
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2 "
-                              >
-                                City:
-                              </label>
-                              {booking.city}
-                            </p>
-                            <p>
-                              {" "}
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2 "
-                              >
-                                Pet Species:
-                              </label>
-                              {booking.pet_species}
-                            </p>
-                            <p>
-                              {" "}
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2  "
-                              >
-                                Booking Date:
-                              </label>
-                              {booking.booking_date}
-                            </p>
-                            <p>
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2  "
-                              >
-                                Booking Time:
-                              </label>
-                              {booking.booking_time}
-                            </p>
-                            <p>
-                              {" "}
-                              <label
-                                htmlFor="species"
-                                className="font-bold text-dark-blue mx-2  "
-                              >
-                                Payment Status:
-                              </label>
-                              {booking.isConfirmed ? `Done` : `Pending`}
-                            </p>
-
-                            <div className="my-4 mx-auto">
-                              {booking.isCompleted ? (
-                                <span className="bg-green-600 text-white px-3 py-2 rounded-md  no-underline my-3">
-                                  Completed
-                                </span>
-                              ) : (
-                                <button
-                                  className="bg-blue-600 text-white px-3 py-2 rounded-md  no-underline"
-                                  onClick={() => handleComplete(booking._id)}
-                                >
-                                  Complete
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        </div>
+                      className="fade-in-up col-md-4 mb-6 flex"
+                      key={index}
+                    >
+                      <BookingTrainingCard averageRating={booking.averageRating} index={index} plan={booking.servicePlanId.serviceName} imageUrl={bookingImages[index]} bookings={bookings} booking={booking} handleComplete={handleComplete}/>
                       </div>
                     ))
                 ) : (

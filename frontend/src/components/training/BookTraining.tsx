@@ -1,7 +1,7 @@
 "use client";
 import { TrainingPlanBooking } from "@/interfaces/trainingPlanBooking";
 import React, { FormEvent, useEffect, useRef, useState } from "react";
-import useMultipleStep from "@/Hooks/useMultipleStep";
+import useMultipleStep from "@/hooks/useMultipleStep";
 import PetDataForm from "../booking/PetDataForm";
 import UserDataForm from "../booking/UserDataForm";
 import DateAndTime from "../booking/DateAndTime";
@@ -133,7 +133,7 @@ function BookTraining() {
             }}
           >
             {!isFirstStep && (
-              <button>
+              <button onClick={back}>
                 <img src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379465/left_ose3wz.svg" alt="" />
               </button>
             )}
@@ -145,7 +145,7 @@ function BookTraining() {
                 Pay
               </button>
             ) : (
-              <button className="">
+              <button type="submit">
                 <img src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379487/right_lxrjyk.svg" alt="" />
               </button>
             )}

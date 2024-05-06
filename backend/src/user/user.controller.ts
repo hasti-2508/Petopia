@@ -105,7 +105,7 @@ export class UserController {
 
   @Get('/:id')
   @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN && Role.USER)
+  @Roles(Role.ADMIN, Role.USER, Role.VET, Role.TRAINER)
   async getUserByID(@Param('id') userId: string) {
     try {
       const user = await this.userService.findUserById(userId);
@@ -123,6 +123,8 @@ export class UserController {
   }
 
   @Patch('update/:id')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.USER)
   async updateUser(
     @Body() updateUserDto,
     @Param('id') userId: string,
@@ -131,11 +133,15 @@ export class UserController {
   }
 
   @Delete('delete/:id')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
   async deleteUser(@Param('id') userId: string) {
     return this.userService.deleteUser(userId);
   }
 
   @Post('/:petId/adopt')
+  @UseGuards(RolesGuard)
+  @Roles(Role.USER)
   @UseInterceptors(JwtInterceptor)
   async isAdopted(@Param('petId') petId: string, @Req() request) {
     const data = request.token;

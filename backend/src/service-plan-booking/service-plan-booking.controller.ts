@@ -45,6 +45,8 @@ export class ServicePlanBookingController {
   }
 
   @Get('booking/:bookingId')
+  // @UseGuards(RolesGuard)
+  // @Roles(Role.ADMIN, Role.USER , Role.TRAINER, Role.VET)
   async findBookingById(
     @Param('bookingId') bookingId: string,
   ): Promise<ServicePlanBooking> {
@@ -52,6 +54,8 @@ export class ServicePlanBookingController {
   }
 
   @Get('user/:userId')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.USER , Role.TRAINER, Role.VET)
   async getService(
     @Param('userId') userId: string,
   ): Promise<ServicePlanBooking[]> {
@@ -63,6 +67,8 @@ export class ServicePlanBookingController {
   }
 
   @Post('/:servicePlanId')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN, Role.USER , Role.TRAINER, Role.VET)
   @UseInterceptors(JwtInterceptor)
   async create(
     @Req() request,
@@ -86,6 +92,8 @@ export class ServicePlanBookingController {
   }
 
   @Post('/assign/:bookingId')
+  @UseGuards(RolesGuard)
+  @Roles(Role.ADMIN)
   async assignVet(
     @Param('bookingId') bookingId: string,
     @Body() assignVetDto: AssignVetDto,
@@ -95,6 +103,8 @@ export class ServicePlanBookingController {
 
   @Post(':BookingId/rate')
   @UseInterceptors(JwtInterceptor)
+  @UseGuards(RolesGuard)
+  @Roles(Role.USER)
   async rateVet(
     @Req() request,
     @Param('BookingId') BookingId: string,
@@ -113,6 +123,8 @@ export class ServicePlanBookingController {
   }
 
   @Patch(':id/complete')
+  @UseGuards(RolesGuard)
+  @Roles(Role.VET)
   async markBookingAsComplete(
     @Param('id') id: string,
   ): Promise<ServicePlanBooking> {

@@ -1,8 +1,8 @@
 "use client";
 import RatingModal from "@/components/rating/Rating";
-import React, { useEffect } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import RateStar from "../rating/RateStar";
-import { UserCard  } from "./UserCard";
+import { UserCard } from "./UserCard";
 import { PetProfileCard } from "../pet/PetCard";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -14,10 +14,8 @@ import {
   setPets,
   setRate,
   setService,
-  setServiceId,
   setServiceImages,
   setTraining,
-  setTrainingId,
   setTrainingImages,
 } from "@/redux/user/userSlice";
 import {
@@ -29,8 +27,9 @@ import {
   serviceRating,
   trainingRating,
 } from "@/redux/user/userService";
-import redirectLoggedIn from "@/middleware/redirectToLogin";
+import redirectLoggedIn from "@/hoc/redirectToLogin";
 import { useRouter } from "next/navigation";
+import { BookingCard } from "../service/bookingCard";
 
 const imageUrls = [
   "https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379492/service1_z2p9ks.jpg",
@@ -55,97 +54,100 @@ function UserProfile() {
     service,
     training,
     rate,
-    serviceId,
-    trainingId,
     activeTab,
     loading,
     serviceImages,
     trainingImages,
   } = useSelector((state: RootState) => state.user);
 
-  const handleTabClick = (tab: string) => {
-    dispatch(setActiveTab(tab));
-  };
-const router = useRouter();
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const result = await dispatch(getUserData());
-        if (result.type === "getUserData/rejected") {
-          throw result;
-        } else {
-          const petResult = await dispatch(getPetsData(result.payload._id));
-          if (petResult.type === "getPetsData/rejected") {
-            throw petResult;
-          } else {
-            const { pets } = petResult.payload;
-            dispatch(setPets(pets));
-          }
+  const handleTabClick = useCallback(
+    (tab: string) => {
+      dispatch(setActiveTab(tab));
+    },
+    [dispatch]
+  );
 
-          const serviceResult = await dispatch(
-            getServiceData(result.payload._id)
-          );
-          if (serviceResult.type === "getServiceData/rejected") {
-            throw serviceResult;
-          } else {
-            dispatch(setService(serviceResult.payload));
-          }
-          const trainingResult = await dispatch(
-            getTrainingData(result.payload._id)
-          );
-          if (trainingResult.type === "getTrainingData/rejected") {
-            throw trainingResult;
-          } else {
-            dispatch(setTraining(trainingResult.payload));
-          }
+  const router = useRouter();
+  const getUserProfileData = useCallback(async () => {
+    try {
+      dispatch(setLoading(true));
+      const result = await dispatch(getUserData());
+      if (result.type === "getUserData/rejected") {
+        throw result;
+      } else {
+        const { _id } = result.payload;
+
+        const [petsResult, serviceResult, trainingResult] = await Promise.all([
+          dispatch(getPetsData(_id)),
+          dispatch(getServiceData(_id)),
+          dispatch(getTrainingData(_id)),
+        ]);
+
+        if (
+          petsResult.type === "getPetsData/fulfilled" &&
+          serviceResult.type === "getServiceData/fulfilled" &&
+          trainingResult.type === "getTrainingData/fulfilled"
+        ) {
+          const { pets } = petsResult.payload;
+          dispatch(setPets(pets));
+          dispatch(setService(serviceResult.payload));
+          dispatch(setTraining(trainingResult.payload));
         }
-      } catch (error) {
-        router.push('/home')
       }
-    };
-    dispatch(setLoading(true));
-    getUser();
-  }, []);
+    } catch (error) {
+      console.error("Error fetching user profile data:", error);
+      router.push("/home");
+    } finally {
+      dispatch(setLoading(false));
+    }
+  }, [dispatch, router]);
 
-  const Rating = (value: number) => {
-    dispatch(setRate(value));
-  };
-  const handleTrainingSubmit = async (trainingPlanId: string) => {
-    try {
-      const trainingRatingResult = await dispatch(
-        trainingRating({ trainingPlanId, rating: rate })
-      );
-      if (trainingRatingResult.type === "trainingRating/rejected") {
-        throw trainingRatingResult;
+  useEffect(() => {
+    getUserProfileData();
+  }, [getUserProfileData]);
+
+  const Rating = useCallback(
+    (value: number) => {
+      dispatch(setRate(value));
+    },
+    [dispatch]
+  );
+
+  const handleTrainingSubmit = useCallback(
+    async (trainingPlanId: string) => {
+      try {
+        const trainingRatingResult = await dispatch(
+          trainingRating({ trainingPlanId, rating: rate })
+        );
+        if (trainingRatingResult.type === "trainingRating/rejected") {
+          throw trainingRatingResult;
+        }
+        toast.success("Thank you for rating!");
+        getUserProfileData();
+      } catch (error) {
+        toast.error("You have already rated this Training!");
       }
-      if (trainingRatingResult.type === "trainingRating/fulfilled") {
-        const serviceResult = await dispatch(getTrainingData(user._id));
-        dispatch(setTraining(serviceResult.payload));
-      } else {
-        return trainingRatingResult;
+    },
+    [dispatch, rate, getUserProfileData]
+  );
+
+  const handleServiceSubmit = useCallback(
+    async (servicePlanId: string) => {
+      try {
+        const ratingResult = await dispatch(
+          serviceRating({ servicePlanId, rating: rate })
+        );
+        if (ratingResult.type === "serviceRating/rejected") {
+          throw ratingResult;
+        }
+        toast.success("Thank you for rating!");
+        getUserProfileData();
+      } catch (error) {
+        toast.error("You have already rated this service!");
       }
-    } catch (error) {
-      toast.error("You have already rated this Training!");
-    }
-  };
-  const handleServiceSubmit = async (servicePlanId: string) => {
-    try {
-      const ratingResult = await dispatch(
-        serviceRating({ servicePlanId, rating: rate })
-      );
-      if (ratingResult.type === "serviceRating/rejected") {
-        throw ratingResult;
-      }
-      if (ratingResult.type === "serviceRating/fulfilled") {
-        const serviceResult = await dispatch(getServiceData(user._id));
-        dispatch(setService(serviceResult.payload));
-      } else {
-        return ratingResult;
-      }
-    } catch (error) {
-      toast.error("You have already rated this service!");
-    }
-  };
+    },
+    [dispatch, rate, getUserProfileData]
+  );
 
   const handleDelete = async (petId: string) => {
     try {
@@ -154,30 +156,39 @@ const router = useRouter();
         throw result;
       } else {
         const petResult = await dispatch(getPetsData(user._id));
-          if (petResult.type === "getPetsData/rejected") {
-            throw petResult;
-          } else {
-            const { pets } = petResult.payload;
-            dispatch(setPets(pets));
-          }
+        if (petResult.type === "getPetsData/rejected") {
+          throw petResult;
+        } else {
+          const { pets } = petResult.payload;
+          dispatch(setPets(pets));
+        }
       }
     } catch (error) {
       toast.error(error.payload);
     }
   };
 
-  useEffect(() => {
-    const randomImages = Array.from({ length: service.length }, () => {
+  const randomServiceImages = useMemo(() => {
+    return Array.from({ length: service.length }, () => {
       const randomIndex = Math.floor(Math.random() * imageUrls.length);
       return imageUrls[randomIndex];
     });
-    const randomImages2 = Array.from({ length: training.length }, () => {
-      const randomIndex2 = Math.floor(Math.random() * images.length);
-      return images[randomIndex2];
+  }, [service, imageUrls]);
+
+  const randomTrainingImages = useMemo(() => {
+    return Array.from({ length: training.length }, () => {
+      const randomIndex = Math.floor(Math.random() * images.length);
+      return images[randomIndex];
     });
-    dispatch(setServiceImages(randomImages));
-    dispatch(setTrainingImages(randomImages2));
-  }, [service,training]);
+  }, [training, images]);
+
+  useEffect(() => {
+    dispatch(setServiceImages(randomServiceImages));
+  }, [dispatch, randomServiceImages]);
+
+  useEffect(() => {
+    dispatch(setTrainingImages(randomTrainingImages));
+  }, [dispatch, randomTrainingImages]);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -260,139 +271,31 @@ const router = useRouter();
       case "Services":
         return (
           <div>
-            <div className="container-fluid mt-3">
+            <div className="container-fluid mt-5">
               <div className="row">
                 {service?.length > 0 ? (
                   service?.map((ser, index) => (
-                    <div
-                      style={{
-                        height: "670px",
-                        width: "370px",
-                      }}
-                      className=" col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
-                      key={index}
-                    >
-                      <div>
-                        <img
-                          src={serviceImages[index]}
-                          alt={`Service ${index}`}
-                          className="w-full h-48 mb-4 border-2"
-                        />
-                        <div>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2 "
-                            >
-                              Name:
-                            </label>
-                            {ser.user_name}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2 "
-                            >
-                              Pet Species:
-                            </label>
-                            {ser.pet_species}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2 "
-                            >
-                              Pet Gender:
-                            </label>
-                            {ser.pet_gender}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Booking Date:
-                            </label>
-                            {ser.booking_date}
-                          </p>
-                          <p>
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Booking Time:
-                            </label>
-                            {ser.booking_time}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Payment Status:
-                            </label>
-                            {ser.isConfirmed ? `Done` : `Pending`}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Booking Status:
-                            </label>
-                            {ser.isCompleted
-                              ? `Completed`
-                              : `Not Completed Yet`}
-                          </p>
-                        </div>
-                        {ser.isCompleted ? (
-                          <div>
-                            <RateStar averageRating={ser.averageRating} />
-                            <button
-                              type="button"
-                              data-bs-toggle="modal"
-                              data-bs-target="#myModal"
-                              onClick={() => dispatch(setServiceId(ser._id))}
-                              className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
-                              style={{ width: "68px" }}
-                            >
-                              Rate
-                            </button>
-                            <RatingModal
-                              handleRating={Rating}
-                              handleSubmit={handleServiceSubmit}
-                              id={serviceId}
-                            />
-                          </div>
-                        ) : (
-                          <div>
-                            <RateStar averageRating={ser.averageRating} />
-                            <button
-                              onClick={() =>
-                                toast.error(
-                                  "This booking is not completed yet!"
-                                )
-                              }
-                              className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
-                              style={{ width: "68px" }}
-                            >
-                              Rate
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                    <div className="col-md-4 mb-6 flex" key={index}>
+                      <BookingCard
+                        workerName="Vet"
+                        plan={ser.servicePlanId.serviceName}
+                        worker={ser.vetId}
+                        index={index}
+                        bookings={service}
+                        booking={ser}
+                        imageUrl={serviceImages[index]}
+                      />
+                      <RatingModal
+                        handleRating={Rating}
+                        handleSubmit={handleServiceSubmit}
+                        id={ser._id}
+                      />
                     </div>
                   ))
                 ) : (
                   <div
                     style={{ height: "55vh" }}
-                    className="flex flex-col mb-3 items-center justify-center fade-in-up"
+                    className="flex flex-col mb-3 items-center justify-center"
                   >
                     <img
                       src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"
@@ -421,140 +324,31 @@ const router = useRouter();
       case "Trainings":
         return (
           <div>
-            <div className="container-fluid mt-3 ">
+            <div className=" container-fluid mt-5 ">
               <div className="row">
                 {training?.length > 0 ? (
-                  training?.map((training, index) => (
-                    <div
-                      style={{
-                        height: "670px",
-                        width: "370px",
-                      }}
-                      className="col-md-5 mr-7 mb-6 flex justify-between rounded overflow-hidden shadow border border-light border-1 rounded-3 bg-light-subtle card-custom p-4"
-                      key={index}
-                    >
-                      <div>
-                        <img
-                          src={trainingImages[index]}
-                          alt={`training ${index}`}
-                          className="w-full h-48 mb-4 border-2"
-                        />
-                        <div>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue  mx-2 "
-                            >
-                              Name:
-                            </label>
-                            {training.user_name}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Pet Species:
-                            </label>
-                            {training.pet_species}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Pet Gender:
-                            </label>
-                            {training.pet_gender}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Booking Date:
-                            </label>
-                            {training.booking_date}
-                          </p>
-                          <p>
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Booking Time:
-                            </label>
-                            {training.booking_time}
-                          </p>
-                          <p>
-                            {" "}
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2  "
-                            >
-                              Payment Status:
-                            </label>
-                            {training.isConfirmed ? `Done` : `Pending`}
-                          </p>
-                          <p>
-                            <label
-                              htmlFor="species"
-                              className="font-bold text-dark-blue mx-2 "
-                            >
-                              Booking Status:
-                            </label>
-                            {training.isCompleted
-                              ? `Completed`
-                              : `Not Completed Yet`}
-                          </p>
-                        </div>
-                        {training.isCompleted ? (
-                          <div>
-                            <RateStar averageRating={training.averageRating} />
-                            <button
-                              type="button"
-                              data-bs-toggle="modal"
-                              data-bs-target="#myModal"
-                              onClick={() =>
-                                dispatch(setTrainingId(training._id))
-                              }
-                              className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
-                              style={{ width: "68px" }}
-                            >
-                              Rate
-                            </button>
-                            <RatingModal
-                              handleRating={Rating}
-                              handleSubmit={handleTrainingSubmit}
-                              id={trainingId}
-                            />
-                          </div>
-                        ) : (
-                          <div>
-                            <RateStar averageRating={training.averageRating} />
-                            <button
-                              onClick={() =>
-                                toast.error(
-                                  "This training is not completed yet!"
-                                )
-                              }
-                              className="text-gray-700 flex items-center bg-saddle-brown py-2 px-3 rounded-xl fs-6 no-underline justify-end  ml-auto"
-                              style={{ width: "68px" }}
-                            >
-                              Rate
-                            </button>
-                          </div>
-                        )}
-                      </div>
+                  training?.map((tra, index) => (
+                    <div className="col-md-4 mb-6 flex" key={index}>
+                      <BookingCard
+                        workerName="Trainer"
+                        plan={tra.TrainingPlanId.TrainingName}
+                        worker={tra.trainerId}
+                        bookings={training}
+                        booking={tra}
+                        index={index}
+                        imageUrl={trainingImages[index]}
+                      />
+                      <RatingModal
+                        handleRating={Rating}
+                        handleSubmit={handleTrainingSubmit}
+                        id={tra._id}
+                      />
                     </div>
                   ))
                 ) : (
                   <div
                     style={{ height: "55vh" }}
-                    className="flex flex-col mb-3 items-center justify-center fade-in-up"
+                    className="flex flex-col mb-3 items-center justify-center"
                   >
                     <img
                       src="https://res.cloudinary.com/dgmdafnyt/image/upload/v1714379478/NoTraining_iunkho.jpg"

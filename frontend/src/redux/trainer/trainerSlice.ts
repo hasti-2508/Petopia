@@ -54,14 +54,14 @@ const trainerSlice = createSlice({
   name: "trainer",
   initialState,
   reducers: {
-    setTrainings: (state, action: PayloadAction<Training[]>) => {
-      state.trainings = action.payload;
-    },
     setTrainingsImages: (state, action: PayloadAction<string[]>) => {
       state.trainingImages = action.payload;
     },
     setActiveTrainerTab: (state, action: PayloadAction<string>) => {
       state.activeTrainerTab = action.payload;
+    },
+    setTrainings: (state, action: PayloadAction<Training[]>) => {
+      state.trainings = action.payload;
     },
     setTrainerDataForm: (
       state,
